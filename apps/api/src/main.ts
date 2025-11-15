@@ -34,8 +34,39 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.use(cookieParser());
+  
+  // Configurar CORS para aceptar todas las URLs de Vercel
+  const allowedOrigins = process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+    : ['http://localhost:3000'];
+  
+  // Función para validar origen (acepta localhost y cualquier URL de vercel.app)
+  const originValidator = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+    if (!origin) {
+      // Permitir requests sin origin (ej: Postman, curl)
+      return callback(null, true);
+    }
+    
+    // Permitir localhost en desarrollo
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+    
+    // Permitir cualquier URL de Vercel
+    if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Permitir orígenes explícitos en FRONTEND_URL
+    if (allowedOrigins.some(allowed => origin === allowed || origin.startsWith(allowed))) {
+      return callback(null, true);
+    }
+    
+    callback(null, false);
+  };
+  
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: originValidator,
     credentials: true,
   });
 
