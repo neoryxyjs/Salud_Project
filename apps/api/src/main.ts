@@ -7,27 +7,32 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   // Ejecutar migraciones automáticamente en producción
   if (process.env.NODE_ENV === 'production') {
+    console.log('🔄 Running database migrations...');
+    console.log('Current working directory:', process.cwd());
+    console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
+    
+    // Determinar la ruta correcta del schema
+    // En producción, el schema está en /app/prisma/schema.prisma
+    const schemaPath = process.cwd().includes('/app/apps/api') 
+      ? '../../prisma/schema.prisma'
+      : './prisma/schema.prisma';
+    
+    console.log('Using schema path:', schemaPath);
+    
     try {
-      console.log('🔄 Running database migrations...');
-      // Intentar migrate deploy primero (si hay migraciones)
-      try {
-        execSync('npx prisma migrate deploy --schema=./prisma/schema.prisma', {
-          stdio: 'inherit',
-          cwd: process.cwd(),
-        });
-        console.log('✅ Migrations completed successfully');
-      } catch (migrateError) {
-        // Si migrate deploy falla, intentar db push (para primera vez)
-        console.log('⚠️ migrate deploy failed, trying db push...');
-        execSync('npx prisma db push --schema=./prisma/schema.prisma --accept-data-loss', {
-          stdio: 'inherit',
-          cwd: process.cwd(),
-        });
-        console.log('✅ Database schema synchronized');
-      }
-    } catch (error) {
-      console.error('⚠️ Migration error (may already be applied):', error.message);
-      // No fallar si las migraciones ya están aplicadas
+      // Intentar db push primero (más confiable para primera vez)
+      console.log('Attempting db push...');
+      execSync(`npx prisma db push --schema=${schemaPath} --accept-data-loss --skip-generate`, {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+        env: { ...process.env },
+      });
+      console.log('✅ Database schema synchronized successfully');
+    } catch (error: any) {
+      console.error('❌ Database migration failed:', error.message);
+      console.error('Error details:', error);
+      // En producción, es crítico que las tablas existan
+      throw new Error(`Database migration failed: ${error.message}`);
     }
   }
 
