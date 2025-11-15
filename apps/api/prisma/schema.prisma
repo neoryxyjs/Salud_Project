@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  leads     Lead[]
+  createdAt DateTime @default(now())
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  SUPPORT
+  USER
+}
+
+model Insurer {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  logoUrl   String?
+  plans     Plan[]
+  createdAt DateTime @default(now())
+}
+
+model Plan {
+  id            String     @id @default(cuid())
+  insurerId     String
+  insurer       Insurer    @relation(fields: [insurerId], references: [id])
+  name          String
+  code          String?
+  regionCodes   String[]
+  basePriceCLP  Int
+  coverageHosp  Int?
+  coverageAmb   Int?
+  coverageEr    Int?
+  annualCapUF   Float?
+  networkTags   String[]
+  features      Json?
+  score         Float?
+  isActive      Boolean    @default(true)
+  tiers         PriceTier[]
+  leads         Lead[]
+  createdAt     DateTime   @default(now())
+}
+
+model PriceTier {
+  id        String   @id @default(cuid())
+  planId    String
+  plan      Plan     @relation(fields: [planId], references: [id], onDelete: Cascade)
+  ageFrom   Int
+  ageTo     Int
+  cargas    Int
+  region    String
+  priceCLP  Int
+}
+
+model Lead {
+  id        String   @id @default(cuid())
+  planId    String?
+  plan      Plan?    @relation(fields: [planId], references: [id])
+  name      String
+  email     String?
+  phone     String?
+  region    String?
+  utm       Json?
+  status    String   @default("new")
+  notes     String?
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+}
+
