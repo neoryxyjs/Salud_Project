@@ -31,7 +31,39 @@ async function bootstrap() {
     console.log('Schema exists:', fs.existsSync(schemaPath));
     
     try {
-      // Intentar db push primero (más confiable para primera vez)
+      // Primero intentar agregar la columna updatedAt manualmente si no existe
+      // Esto evita el error cuando hay datos existentes
+      try {
+        console.log('Preparing updatedAt column for existing data...');
+        const { PrismaClient } = require('@prisma/client');
+        const prisma = new PrismaClient();
+        
+        // Ejecutar SQL directamente para agregar la columna si no existe
+        await prisma.$executeRawUnsafe(`
+          DO $$ 
+          BEGIN
+            IF NOT EXISTS (
+              SELECT 1 FROM information_schema.columns 
+              WHERE table_name = 'Lead' AND column_name = 'updatedAt'
+            ) THEN
+              ALTER TABLE "Lead" 
+              ADD COLUMN "updatedAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+              RAISE NOTICE 'Column updatedAt added successfully';
+            ELSE
+              RAISE NOTICE 'Column updatedAt already exists';
+            END IF;
+          END $$;
+        `);
+        
+        await prisma.$disconnect();
+        console.log('✅ updatedAt column prepared');
+      } catch (colError: any) {
+        // Si falla, continuar con db push normal
+        console.log('⚠️  Could not pre-add updatedAt column, will try db push...');
+        console.log('   Error:', colError.message);
+      }
+
+      // Intentar db push (más confiable para primera vez)
       console.log('Attempting db push...');
       execSync(`npx prisma db push --schema=${schemaPath} --accept-data-loss --skip-generate`, {
         stdio: 'inherit',

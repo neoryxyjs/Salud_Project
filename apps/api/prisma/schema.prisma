@@ -80,7 +80,7 @@ model Lead {
   user      User?          @relation(fields: [userId], references: [id])
   activities LeadActivity[]
   createdAt DateTime       @default(now())
-  updatedAt DateTime       @updatedAt
+  updatedAt DateTime       @default(now()) @updatedAt
 }
 
 model LeadActivity {
