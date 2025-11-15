@@ -10,10 +10,13 @@ cmds = [
 [phases.build]
 cmds = [
   "cd apps/api",
-  "npx prisma generate --schema=./prisma/schema.prisma",
-  "npm run build",
-  "ls -la dist || echo 'Build failed - dist directory not found'"
+  "npx prisma generate --schema=./prisma/schema.prisma || echo 'Prisma generate failed'",
+  "npm run build || (echo 'Build failed' && exit 1)",
+  "pwd",
+  "ls -la",
+  "ls -la dist/ || echo 'dist directory does not exist'",
+  "test -f dist/main.js && echo 'main.js exists' || echo 'main.js NOT FOUND'"
 ]
 
 [start]
-cmd = "cd apps/api && ls -la dist && node dist/main.js"
+cmd = "cd apps/api && pwd && ls -la && test -f dist/main.js && node dist/main.js || (echo 'ERROR: dist/main.js not found' && ls -la dist/ && exit 1)"
