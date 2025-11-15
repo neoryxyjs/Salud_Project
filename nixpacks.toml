@@ -11,7 +11,7 @@ cmds = [
 cmds = [
   "cd apps/api",
   "npx prisma generate --schema=./prisma/schema.prisma",
-  "npx nest build"
+  "npm run build"
 ]
 
 [start]
