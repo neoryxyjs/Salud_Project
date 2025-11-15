@@ -12,12 +12,23 @@ async function bootstrap() {
     console.log('DATABASE_URL:', process.env.DATABASE_URL ? 'Set' : 'Not set');
     
     // Determinar la ruta correcta del schema
-    // En producción, el schema está en /app/prisma/schema.prisma
-    const schemaPath = process.cwd().includes('/app/apps/api') 
-      ? '../../prisma/schema.prisma'
-      : './prisma/schema.prisma';
+    // En producción (Railway), el schema está en /app/prisma/schema.prisma
+    // En desarrollo local, puede estar en ./prisma/schema.prisma o ../../prisma/schema.prisma
+    let schemaPath = './prisma/schema.prisma';
+    
+    // Verificar si el schema existe en la ruta actual
+    const fs = require('fs');
+    if (!fs.existsSync(schemaPath)) {
+      // Intentar ruta relativa desde apps/api
+      schemaPath = '../../prisma/schema.prisma';
+      if (!fs.existsSync(schemaPath)) {
+        // Intentar ruta absoluta
+        schemaPath = '/app/prisma/schema.prisma';
+      }
+    }
     
     console.log('Using schema path:', schemaPath);
+    console.log('Schema exists:', fs.existsSync(schemaPath));
     
     try {
       // Intentar db push primero (más confiable para primera vez)
