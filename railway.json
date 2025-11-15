@@ -2,7 +2,8 @@
   "$schema": "https://railway.app/railway.schema.json",
   "$comment": "Esta configuración es solo para el servicio API. El frontend debe estar en Vercel.",
   "build": {
-    "builder": "NIXPACKS"
+    "builder": "NIXPACKS",
+    "nixpacksConfigPath": "nixpacks.toml"
   },
   "deploy": {
     "startCommand": "cd apps/api && node dist/main.js",
