@@ -1,6 +1,19 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { api } from '@/lib/api';
 
 export default function CRMDashboardPage() {
+  const { data: stats, isLoading } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: async () => {
+      const { data } = await api.get('/leads/stats/summary');
+      return data;
+    },
+    retry: false,
+  });
+
   return (
     <div className="space-y-6">
       <div>
@@ -16,7 +29,9 @@ export default function CRMDashboardPage() {
             <CardTitle className="text-sm font-medium">Total Leads</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">-</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? '-' : stats?.total || 0}
+            </div>
             <p className="text-xs text-muted-foreground">Desde el inicio</p>
           </CardContent>
         </Card>
@@ -25,7 +40,9 @@ export default function CRMDashboardPage() {
             <CardTitle className="text-sm font-medium">Nuevos</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">-</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? '-' : stats?.newThisMonth || 0}
+            </div>
             <p className="text-xs text-muted-foreground">Este mes</p>
           </CardContent>
         </Card>
@@ -34,7 +51,9 @@ export default function CRMDashboardPage() {
             <CardTitle className="text-sm font-medium">Contactados</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">-</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? '-' : stats?.contactedThisMonth || 0}
+            </div>
             <p className="text-xs text-muted-foreground">Este mes</p>
           </CardContent>
         </Card>
@@ -43,7 +62,9 @@ export default function CRMDashboardPage() {
             <CardTitle className="text-sm font-medium">Calificados</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">-</div>
+            <div className="text-2xl font-bold">
+              {isLoading ? '-' : stats?.qualifiedThisMonth || 0}
+            </div>
             <p className="text-xs text-muted-foreground">Este mes</p>
           </CardContent>
         </Card>

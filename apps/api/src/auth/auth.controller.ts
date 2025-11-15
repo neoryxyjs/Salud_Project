@@ -66,5 +66,18 @@ export class AuthController {
   async getMe(@Request() req) {
     return req.user;
   }
+
+  @Post('logout')
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  async logout(@Res({ passthrough: true }) res: Response) {
+    res.cookie('access_token', '', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+      maxAge: 0,
+    });
+    return { message: 'Sesión cerrada exitosamente' };
+  }
 }
 

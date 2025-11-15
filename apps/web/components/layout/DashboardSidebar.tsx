@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { LayoutDashboard, Users, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
+import { useMutation } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 
 const menuItems = [
   {
@@ -21,6 +23,25 @@ const menuItems = [
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post('/auth/logout');
+      return data;
+    },
+    onSuccess: () => {
+      router.push('/auth/login');
+    },
+    onError: () => {
+      // Aún así redirigir al login si hay error
+      router.push('/auth/login');
+    },
+  });
+
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-background">
@@ -48,11 +69,14 @@ export function DashboardSidebar() {
         })}
       </nav>
       <div className="border-t p-4">
-        <Button variant="ghost" className="w-full justify-start" asChild>
-          <Link href="/auth/login">
-            <LogOut className="mr-2 h-4 w-4" />
-            Cerrar Sesión
-          </Link>
+        <Button
+          variant="ghost"
+          className="w-full justify-start"
+          onClick={handleLogout}
+          disabled={logoutMutation.isPending}
+        >
+          <LogOut className="mr-2 h-4 w-4" />
+          {logoutMutation.isPending ? 'Cerrando...' : 'Cerrar Sesión'}
         </Button>
       </div>
     </div>

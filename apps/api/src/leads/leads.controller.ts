@@ -7,10 +7,12 @@ import {
   Param,
   Query,
   UseGuards,
+  Request,
 } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
+import { CreateActivityDto } from './dto/create-activity.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { Roles } from '../auth/roles.decorator';
@@ -50,8 +52,30 @@ export class LeadsController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  update(@Param('id') id: string, @Body() updateLeadDto: UpdateLeadDto) {
-    return this.leadsService.update(id, updateLeadDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateLeadDto: UpdateLeadDto,
+    @Request() req,
+  ) {
+    return this.leadsService.update(id, updateLeadDto, req.user?.id);
+  }
+
+  @Post(':id/activities')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  createActivity(
+    @Param('id') id: string,
+    @Body() createActivityDto: CreateActivityDto,
+    @Request() req,
+  ) {
+    return this.leadsService.createActivity(id, createActivityDto, req.user?.id);
+  }
+
+  @Get('stats/summary')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  getStats() {
+    return this.leadsService.getStats();
   }
 }
 

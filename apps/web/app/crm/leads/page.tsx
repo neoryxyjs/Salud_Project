@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import { MoreHorizontal, Search } from 'lucide-react';
+import { MoreHorizontal, Search, Phone, Mail, FileText, Clock } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -39,6 +39,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { Separator } from '@/components/ui/separator';
 
 const statusOptions = [
   { value: 'new', label: 'Nuevo', color: 'default' },
@@ -54,6 +55,8 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [newActivityType, setNewActivityType] = useState('note');
+  const [newActivityDescription, setNewActivityDescription] = useState('');
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -84,8 +87,32 @@ export default function LeadsPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['leads'] });
-      setIsDialogOpen(false);
-      setSelectedLead(null);
+      // Recargar el lead actualizado
+      if (selectedLead) {
+        api.get(`/leads/${selectedLead.id}`).then(({ data }) => {
+          setSelectedLead(data);
+        });
+      }
+    },
+  });
+
+  const addActivityMutation = useMutation({
+    mutationFn: async ({ leadId, type, description, metadata }: any) => {
+      const { data } = await api.post(`/leads/${leadId}/activities`, {
+        type,
+        description,
+        metadata,
+      });
+      return data;
+    },
+    onSuccess: () => {
+      // Recargar el lead con el nuevo historial
+      if (selectedLead) {
+        api.get(`/leads/${selectedLead.id}`).then(({ data }) => {
+          setSelectedLead(data);
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
     },
   });
 
@@ -93,9 +120,17 @@ export default function LeadsPage() {
     updateMutation.mutate({ id: leadId, status: newStatus });
   };
 
-  const handleEdit = (lead: any) => {
-    setSelectedLead(lead);
-    setIsDialogOpen(true);
+  const handleEdit = async (lead: any) => {
+    // Cargar el lead completo con historial
+    try {
+      const { data } = await api.get(`/leads/${lead.id}`);
+      setSelectedLead(data);
+      setIsDialogOpen(true);
+    } catch (error) {
+      console.error('Error al cargar lead:', error);
+      setSelectedLead(lead);
+      setIsDialogOpen(true);
+    }
   };
 
   const handleSave = () => {
@@ -244,35 +279,59 @@ export default function LeadsPage() {
       )}
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Editar Lead</DialogTitle>
+            <DialogTitle>Detalles del Lead</DialogTitle>
             <DialogDescription>
-              Actualiza el estado y notas del lead
+              Información completa y historial de acciones
             </DialogDescription>
           </DialogHeader>
           {selectedLead && (
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <Label>Estado</Label>
-                <Select
-                  value={selectedLead.status}
-                  onValueChange={(value) =>
-                    setSelectedLead({ ...selectedLead, status: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {statusOptions.map((status) => (
-                      <SelectItem key={status.value} value={status.value}>
-                        {status.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+            <div className="space-y-6">
+              {/* Información del Lead */}
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Nombre</Label>
+                  <p className="text-sm font-medium">{selectedLead.name}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Email</Label>
+                  <p className="text-sm">{selectedLead.email || '-'}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Teléfono</Label>
+                  <p className="text-sm">{selectedLead.phone || '-'}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Región</Label>
+                  <p className="text-sm">{selectedLead.region || '-'}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Plan</Label>
+                  <p className="text-sm">{selectedLead.plan?.name || '-'}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Estado</Label>
+                  <Select
+                    value={selectedLead.status}
+                    onValueChange={(value) =>
+                      setSelectedLead({ ...selectedLead, status: value })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {statusOptions.map((status) => (
+                        <SelectItem key={status.value} value={status.value}>
+                          {status.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
+
               <div className="space-y-2">
                 <Label>Notas</Label>
                 <Textarea
@@ -281,15 +340,123 @@ export default function LeadsPage() {
                     setSelectedLead({ ...selectedLead, notes: e.target.value })
                   }
                   placeholder="Agrega notas sobre este lead..."
+                  rows={3}
                 />
+              </div>
+
+              <Separator />
+
+              {/* Historial de Actividades */}
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <Label className="text-base font-semibold">Historial de Actividades</Label>
+                </div>
+                <div className="space-y-3 max-h-60 overflow-y-auto">
+                  {selectedLead.activities && selectedLead.activities.length > 0 ? (
+                    selectedLead.activities.map((activity: any) => {
+                      const getActivityIcon = (type: string) => {
+                        switch (type) {
+                          case 'call':
+                            return <Phone className="h-4 w-4" />;
+                          case 'email':
+                            return <Mail className="h-4 w-4" />;
+                          case 'note':
+                            return <FileText className="h-4 w-4" />;
+                          default:
+                            return <Clock className="h-4 w-4" />;
+                        }
+                      };
+
+                      return (
+                        <div
+                          key={activity.id}
+                          className="flex items-start gap-3 p-3 border rounded-lg bg-muted/50"
+                        >
+                          <div className="mt-0.5">
+                            {getActivityIcon(activity.type)}
+                          </div>
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-medium">{activity.description}</p>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>
+                                {new Date(activity.createdAt).toLocaleString('es-CL', {
+                                  dateStyle: 'short',
+                                  timeStyle: 'short',
+                                })}
+                              </span>
+                              {activity.user && (
+                                <>
+                                  <span>•</span>
+                                  <span>{activity.user.email}</span>
+                                </>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })
+                  ) : (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      No hay actividades registradas
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Agregar Nueva Actividad */}
+              <div className="space-y-4">
+                <Label className="text-base font-semibold">Agregar Nueva Actividad</Label>
+                <div className="space-y-2">
+                  <Label>Tipo de Actividad</Label>
+                  <Select value={newActivityType} onValueChange={setNewActivityType}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="call">Llamada</SelectItem>
+                      <SelectItem value="email">Email</SelectItem>
+                      <SelectItem value="note">Nota</SelectItem>
+                      <SelectItem value="update">Actualización</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Descripción</Label>
+                  <Textarea
+                    value={newActivityDescription}
+                    onChange={(e) => setNewActivityDescription(e.target.value)}
+                    placeholder="Describe la actividad..."
+                    rows={3}
+                  />
+                </div>
+                <Button
+                  onClick={() => {
+                    if (newActivityDescription.trim()) {
+                      addActivityMutation.mutate({
+                        leadId: selectedLead.id,
+                        type: newActivityType,
+                        description: newActivityDescription,
+                      });
+                      setNewActivityDescription('');
+                    }
+                  }}
+                  disabled={!newActivityDescription.trim() || addActivityMutation.isPending}
+                  className="w-full"
+                >
+                  {addActivityMutation.isPending ? 'Agregando...' : 'Agregar Actividad'}
+                </Button>
               </div>
             </div>
           )}
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancelar
+              Cerrar
             </Button>
-            <Button onClick={handleSave}>Guardar</Button>
+            <Button onClick={handleSave} disabled={updateMutation.isPending}>
+              {updateMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

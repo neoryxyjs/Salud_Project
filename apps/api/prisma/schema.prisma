@@ -8,12 +8,13 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  leads     Lead[]
-  createdAt DateTime @default(now())
+  id           String         @id @default(cuid())
+  email        String         @unique
+  password     String
+  role         Role           @default(USER)
+  leads        Lead[]
+  activities   LeadActivity[]
+  createdAt    DateTime       @default(now())
 }
 
 enum Role {
@@ -65,18 +66,32 @@ model PriceTier {
 }
 
 model Lead {
-  id        String   @id @default(cuid())
+  id        String         @id @default(cuid())
   planId    String?
-  plan      Plan?    @relation(fields: [planId], references: [id])
+  plan      Plan?          @relation(fields: [planId], references: [id])
   name      String
   email     String?
   phone     String?
   region    String?
   utm       Json?
-  status    String   @default("new")
+  status    String         @default("new")
   notes     String?
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  user      User?          @relation(fields: [userId], references: [id])
+  activities LeadActivity[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model LeadActivity {
+  id          String   @id @default(cuid())
+  leadId      String
+  lead        Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  type        String   // 'call', 'email', 'note', 'status_change', 'update'
+  description String
+  userId      String?
+  user        User?    @relation(fields: [userId], references: [id])
+  metadata    Json?    // Para guardar información adicional (duración de llamada, etc.)
+  createdAt   DateTime @default(now())
 }
 
