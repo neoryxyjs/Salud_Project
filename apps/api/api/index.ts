@@ -14,8 +14,15 @@ async function bootstrap() {
   }
 
   try {
-    // Intentar importar desde dist primero (producción)
-    const { AppModule } = await import('../dist/app.module');
+    // Intentar importar desde dist (producción) o src (desarrollo)
+    let AppModule;
+    try {
+      // @ts-ignore - dist se genera en build time
+      AppModule = (await import('../dist/app.module')).AppModule;
+    } catch {
+      // Fallback a src si dist no existe (desarrollo)
+      AppModule = (await import('../src/app.module')).AppModule;
+    }
     
     const expressApp = express();
     nestApp = await NestFactory.create(
