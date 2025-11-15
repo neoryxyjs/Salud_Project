@@ -196,7 +196,18 @@ export default function LeadsPage() {
                   (s) => s.value === lead.status
                 );
                 return (
-                  <TableRow key={lead.id}>
+                  <TableRow 
+                    key={lead.id}
+                    className="cursor-pointer hover:bg-muted/50 transition-colors"
+                    onClick={(e) => {
+                      // Evitar que se active cuando se hace clic en el menú de acciones
+                      const target = e.target as HTMLElement;
+                      if (target.closest('button') || target.closest('[role="menuitem"]')) {
+                        return;
+                      }
+                      handleEdit(lead);
+                    }}
+                  >
                     <TableCell className="font-medium">{lead.name}</TableCell>
                     <TableCell>{lead.email || '-'}</TableCell>
                     <TableCell>{lead.phone || '-'}</TableCell>
@@ -212,7 +223,10 @@ export default function LeadsPage() {
                     <TableCell>
                       {new Date(lead.createdAt).toLocaleDateString('es-CL')}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell 
+                      className="text-right"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="icon">
@@ -221,7 +235,7 @@ export default function LeadsPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem onClick={() => handleEdit(lead)}>
-                            Editar
+                            Ver Detalles
                           </DropdownMenuItem>
                           {statusOptions.map((status) => (
                             <DropdownMenuItem
