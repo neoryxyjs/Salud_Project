@@ -15,11 +15,6 @@
     "db:migrate": "turbo run db:migrate",
     "db:seed": "turbo run db:seed"
   },
-  "workspaces": {
-    "@queplan-clone/api": {
-      "build": "cd apps/api && npx prisma generate --schema=./prisma/schema.prisma && npx nest build"
-    }
-  },
   "devDependencies": {
     "turbo": "^1.10.16"
   },
