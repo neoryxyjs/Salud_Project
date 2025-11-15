@@ -27,10 +27,13 @@ export class AuthController {
   ) {
     try {
       const result = await this.authService.login(loginDto);
+      // En producción, usar 'none' para permitir cookies cross-origin
+      // En desarrollo, usar 'lax' para mayor seguridad local
+      const sameSite = process.env.NODE_ENV === 'production' ? 'none' : 'lax';
       res.cookie('access_token', result.access_token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
+        sameSite: sameSite,
         maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
       });
       return { user: result.user };
@@ -46,10 +49,13 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.register(registerDto);
+    // En producción, usar 'none' para permitir cookies cross-origin
+    // En desarrollo, usar 'lax' para mayor seguridad local
+    const sameSite = process.env.NODE_ENV === 'production' ? 'none' : 'lax';
     res.cookie('access_token', result.access_token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
+      sameSite: sameSite,
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
     return { user: result.user };

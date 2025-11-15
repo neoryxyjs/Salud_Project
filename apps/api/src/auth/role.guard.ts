@@ -1,4 +1,4 @@
-import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Role } from '@prisma/client';
 
@@ -19,7 +19,20 @@ export class RolesGuard implements CanActivate {
     }
 
     const { user } = context.switchToHttp().getRequest();
-    return requiredRoles.some((role) => user?.role === role);
+    
+    // Si no hay usuario autenticado, lanzar error 401
+    if (!user) {
+      throw new UnauthorizedException('Usuario no autenticado');
+    }
+
+    // Verificar si el usuario tiene uno de los roles requeridos
+    const hasRole = requiredRoles.some((role) => user.role === role);
+    
+    if (!hasRole) {
+      throw new UnauthorizedException('No tienes permisos para acceder a este recurso');
+    }
+
+    return true;
   }
 }
 
