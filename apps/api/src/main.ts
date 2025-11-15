@@ -74,8 +74,27 @@ async function bootstrap() {
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      exceptionFactory: (errors) => {
+        console.error('Validation errors:', errors);
+        return errors;
+      },
     }),
   );
+
+  // Manejo global de errores
+  app.use((err: any, req: any, res: any, next: any) => {
+    console.error('Global error handler:', err);
+    if (res.headersSent) {
+      return next(err);
+    }
+    const status = err.status || err.statusCode || 500;
+    const message = err.message || 'Internal server error';
+    res.status(status).json({
+      statusCode: status,
+      message,
+      error: process.env.NODE_ENV === 'development' ? err.stack : undefined,
+    });
+  });
 
   const port = process.env.PORT || 3001;
   await app.listen(port);

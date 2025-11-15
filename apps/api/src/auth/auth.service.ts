@@ -13,34 +13,44 @@ export class AuthService {
   ) {}
 
   async login(loginDto: LoginDto) {
-    const user = await this.prisma.user.findUnique({
-      where: { email: loginDto.email },
-    });
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { email: loginDto.email },
+      });
 
-    if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      if (!user) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const isPasswordValid = await bcrypt.compare(
+        loginDto.password,
+        user.password,
+      );
+
+      if (!isPasswordValid) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+      const payload = { sub: user.id, email: user.email, role: user.role };
+      const token = this.jwtService.sign(payload);
+
+      return {
+        access_token: token,
+        user: {
+          id: user.id,
+          email: user.email,
+          role: user.role,
+        },
+      };
+    } catch (error) {
+      console.error('AuthService login error:', error);
+      // Si es UnauthorizedException, re-lanzarlo
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      // Para otros errores, lanzar un error genérico
+      throw new Error(`Login failed: ${error.message}`);
     }
-
-    const isPasswordValid = await bcrypt.compare(
-      loginDto.password,
-      user.password,
-    );
-
-    if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
-    }
-
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const token = this.jwtService.sign(payload);
-
-    return {
-      access_token: token,
-      user: {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-      },
-    };
   }
 
   async register(registerDto: RegisterDto) {
