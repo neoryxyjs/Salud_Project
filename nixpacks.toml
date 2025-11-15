@@ -3,26 +3,37 @@ nixPkgs = ["nodejs-18_x"]
 
 [phases.install]
 cmds = [
+  "echo '=== PHASE: INSTALL ==='",
+  "pwd",
   "npm install",
-  "cd apps/api && npm install"
+  "cd apps/api && npm install && cd ../.."
 ]
 
 [phases.build]
 cmds = [
+  "echo '=== PHASE: BUILD ==='",
+  "pwd",
   "cd apps/api",
   "echo 'Current directory:' && pwd",
-  "echo 'Installing dependencies...'",
+  "echo 'Listing files:' && ls -la",
+  "echo 'Installing dependencies in apps/api...'",
   "npm install",
+  "echo 'Checking for node_modules:' && ls -la node_modules | head -5",
   "echo 'Generating Prisma Client...'",
-  "npx prisma generate --schema=./prisma/schema.prisma",
+  "npx prisma generate --schema=./prisma/schema.prisma || (echo 'PRISMA GENERATE FAILED' && exit 1)",
+  "echo 'Prisma Client generated'",
   "echo 'Building NestJS application...'",
-  "npm run build",
-  "echo 'Build completed. Checking dist directory...'",
+  "npm run build || (echo 'BUILD FAILED' && exit 1)",
+  "echo 'Build command completed'",
+  "echo 'Checking dist directory...'",
   "pwd",
   "ls -la",
+  "echo 'Contents of dist directory:'",
   "ls -la dist/ || (echo 'ERROR: dist directory does not exist' && exit 1)",
-  "test -f dist/main.js && echo 'SUCCESS: main.js exists' || (echo 'ERROR: main.js NOT FOUND' && ls -la dist/ && exit 1)"
+  "echo 'Looking for main.js:'",
+  "test -f dist/main.js && echo '✅ SUCCESS: main.js exists' || (echo '❌ ERROR: main.js NOT FOUND' && echo 'Files in dist:' && ls -la dist/ && exit 1)",
+  "echo 'Build phase completed successfully'"
 ]
 
 [start]
-cmd = "cd apps/api && pwd && ls -la && test -f dist/main.js && node dist/main.js || (echo 'ERROR: dist/main.js not found' && ls -la dist/ && exit 1)"
+cmd = "cd apps/api && echo '=== STARTING APPLICATION ===' && pwd && echo 'Checking for dist/main.js...' && test -f dist/main.js && echo '✅ Found main.js, starting...' && node dist/main.js || (echo '❌ ERROR: dist/main.js not found' && echo 'Current directory contents:' && ls -la && echo 'Dist directory contents:' && ls -la dist/ 2>/dev/null || echo 'Dist directory does not exist' && exit 1)"
