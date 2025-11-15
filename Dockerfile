@@ -21,13 +21,19 @@ COPY prisma ./prisma
 WORKDIR /app/apps/api
 
 # Generar Prisma Client
-RUN npx prisma generate --schema=./prisma/schema.prisma
+RUN echo "Generating Prisma Client..." && npx prisma generate --schema=./prisma/schema.prisma
+
+# Verificar estructura antes del build
+RUN echo "Current directory:" && pwd && echo "Files:" && ls -la
 
 # Build de NestJS
-RUN npm run build
+RUN echo "Building NestJS..." && npm run build
+
+# Verificar estructura después del build
+RUN echo "After build - Current directory:" && pwd && echo "Files in current dir:" && ls -la && echo "Files in dist:" && ls -la dist/ || echo "dist directory does not exist"
 
 # Verificar que main.js existe
-RUN test -f dist/main.js || (echo "ERROR: dist/main.js not found" && ls -la dist/ && exit 1)
+RUN test -f dist/main.js && echo "✅ main.js found" || (echo "❌ ERROR: dist/main.js not found" && echo "Contents of dist:" && ls -la dist/ && echo "Looking for main.js in subdirectories:" && find dist -name "main.js" || echo "main.js not found anywhere" && exit 1)
 
 # Producción
 FROM node:18-alpine AS runner
