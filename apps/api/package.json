@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "nest start --watch",
     "build": "npx prisma generate --schema=./prisma/schema.prisma && npx nest build",
-    "start": "node dist/main",
+    "start": "node dist/main.js",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "db:generate": "prisma generate --schema=./prisma/schema.prisma",
