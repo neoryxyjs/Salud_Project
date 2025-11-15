@@ -38,6 +38,27 @@ export default function ComparadorPage() {
   const [cargas, setCargas] = useState<string>('');
   const [maxPrice, setMaxPrice] = useState<number[]>([500000]);
 
+  // Obtener todos los planes sin filtros para calcular el precio máximo
+  const { data: allPlans } = useQuery({
+    queryKey: ['plans-max-price'],
+    queryFn: async () => {
+      const { data } = await api.get('/plans');
+      return data;
+    },
+    staleTime: 5 * 60 * 1000, // Cache por 5 minutos
+  });
+
+  // Calcular el precio máximo de TODOS los planes (sin filtros)
+  const maxPriceValue = allPlans?.length
+    ? Math.max(...allPlans.map((p: any) => {
+        // Calcular el precio máximo considerando todos los tiers
+        const tierPrices = p.tiers?.map((t: any) => t.priceCLP) || [];
+        const maxTierPrice = tierPrices.length > 0 ? Math.max(...tierPrices) : 0;
+        return Math.max(p.basePriceCLP || 0, maxTierPrice);
+      }))
+    : 500000;
+
+  // Query para planes filtrados
   const { data: plans, isLoading } = useQuery({
     queryKey: ['plans', region, age[0], cargas, maxPrice[0]],
     queryFn: async () => {
@@ -51,10 +72,6 @@ export default function ComparadorPage() {
       return data;
     },
   });
-
-  const maxPriceValue = plans?.length
-    ? Math.max(...plans.map((p: any) => p.calculatedPrice || p.basePriceCLP))
-    : 500000;
 
   return (
     <div className="container py-8">

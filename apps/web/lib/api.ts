@@ -15,3 +15,17 @@ export const api = axios.create({
   withCredentials: true,
 });
 
+// Interceptor para manejar errores 401 (no autenticado)
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      // Si estamos en el cliente y no estamos en la página de login
+      if (typeof window !== 'undefined' && !window.location.pathname.includes('/auth/login')) {
+        // No redirigir automáticamente aquí, dejar que cada componente maneje el error
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+

@@ -24,45 +24,41 @@ export class PlansService {
     });
 
     // Filter and calculate prices based on filters
-    let filteredPlans = plans;
+    let filteredPlans = plans.map((plan) => {
+      // Try to find matching tier
+      const matchingTier = plan.tiers.find(
+        (tier) =>
+          (!filters.region || tier.region === filters.region) &&
+          (!filters.age ||
+            (filters.age >= tier.ageFrom && filters.age <= tier.ageTo)) &&
+          (!filters.cargas || tier.cargas === filters.cargas),
+      );
 
-    if (filters.region || filters.age || filters.cargas) {
-      filteredPlans = plans
-        .map((plan) => {
-          // Try to find matching tier
-          const matchingTier = plan.tiers.find(
-            (tier) =>
-              (!filters.region || tier.region === filters.region) &&
-              (!filters.age ||
-                (filters.age >= tier.ageFrom && filters.age <= tier.ageTo)) &&
-              (!filters.cargas || tier.cargas === filters.cargas),
-          );
+      const price = matchingTier
+        ? matchingTier.priceCLP
+        : plan.basePriceCLP;
 
-          const price = matchingTier
-            ? matchingTier.priceCLP
-            : plan.basePriceCLP;
-
-          return {
-            ...plan,
-            calculatedPrice: price,
-          };
-        })
-        .filter((plan) => {
-          if (filters.maxPrice && plan.calculatedPrice > filters.maxPrice) {
-            return false;
-          }
-          if (filters.region && !plan.regionCodes.includes(filters.region)) {
-            return false;
-          }
-          return true;
-        })
-        .sort((a, b) => a.calculatedPrice - b.calculatedPrice);
-    } else {
-      filteredPlans = plans.map((plan) => ({
+      return {
         ...plan,
-        calculatedPrice: plan.basePriceCLP,
-      }));
-    }
+        calculatedPrice: price,
+      };
+    });
+
+    // Apply filters
+    filteredPlans = filteredPlans.filter((plan) => {
+      // Filter by maxPrice
+      if (filters.maxPrice && plan.calculatedPrice > filters.maxPrice) {
+        return false;
+      }
+      // Filter by region (check regionCodes)
+      if (filters.region && !plan.regionCodes.includes(filters.region)) {
+        return false;
+      }
+      return true;
+    });
+
+    // Sort by price
+    filteredPlans.sort((a, b) => a.calculatedPrice - b.calculatedPrice);
 
     return filteredPlans;
   }

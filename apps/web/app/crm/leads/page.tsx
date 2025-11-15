@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Table,
@@ -48,13 +49,14 @@ const statusOptions = [
 ];
 
 export default function LeadsPage() {
+  const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ['leads', page, search],
     queryFn: async () => {
       const params = new URLSearchParams({
@@ -65,7 +67,15 @@ export default function LeadsPage() {
       const { data } = await api.get(`/leads?${params.toString()}`);
       return data;
     },
+    retry: false,
   });
+
+  // Redirigir al login si hay error 401
+  useEffect(() => {
+    if (error && (error as any).response?.status === 401) {
+      router.push('/auth/login');
+    }
+  }, [error, router]);
 
   const updateMutation = useMutation({
     mutationFn: async ({ id, ...updates }: any) => {
