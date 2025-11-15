@@ -57,6 +57,7 @@ WORKDIR /app
 # Copiar solo lo necesario
 COPY --from=base /app/apps/api/dist ./dist
 COPY --from=base /app/apps/api/package.json ./
+COPY --from=base /app/prisma ./prisma
 
 # Copiar node_modules desde la raíz del monorepo (workspaces)
 COPY --from=base /app/node_modules ./node_modules
@@ -64,6 +65,6 @@ COPY --from=base /app/node_modules ./node_modules
 # Exponer puerto
 EXPOSE 3001
 
-# Comando de inicio
+# Comando de inicio (las migraciones se ejecutarán automáticamente en main.ts)
 CMD ["node", "dist/main.js"]
 
