@@ -39,6 +39,57 @@ async function bootstrap() {
         env: { ...process.env },
       });
       console.log('✅ Database schema synchronized successfully');
+      
+      // Ejecutar seed automáticamente después de crear las tablas
+      // Solo si la variable RUN_SEED está configurada o si es la primera vez
+      if (process.env.RUN_SEED === 'true' || !process.env.SEED_EXECUTED) {
+        try {
+          console.log('🌱 Running database seed...');
+          const seedPath = schemaPath.replace('schema.prisma', 'seed.ts');
+          // Intentar diferentes rutas para el seed
+          let seedFile = seedPath;
+          if (!fs.existsSync(seedFile)) {
+            seedFile = seedPath.replace('./prisma/', '../../prisma/');
+          }
+          if (!fs.existsSync(seedFile)) {
+            seedFile = '/app/prisma/seed.ts';
+          }
+          
+          console.log('Using seed path:', seedFile);
+          console.log('Seed file exists:', fs.existsSync(seedFile));
+          
+          if (fs.existsSync(seedFile)) {
+            // Intentar con ts-node primero, luego con node si ts-node no está disponible
+            try {
+              execSync(`npx ts-node ${seedFile}`, {
+                stdio: 'inherit',
+                cwd: process.cwd(),
+                env: { ...process.env },
+              });
+              console.log('✅ Database seeded successfully');
+              // Marcar que el seed se ejecutó
+              process.env.SEED_EXECUTED = 'true';
+            } catch (tsNodeError: any) {
+              console.warn('⚠️ ts-node failed, trying with node directly...');
+              // Si ts-node falla, intentar compilar y ejecutar
+              execSync(`npx tsx ${seedFile}`, {
+                stdio: 'inherit',
+                cwd: process.cwd(),
+                env: { ...process.env },
+              });
+              console.log('✅ Database seeded successfully');
+              process.env.SEED_EXECUTED = 'true';
+            }
+          } else {
+            console.warn('⚠️ Seed file not found, skipping seed');
+          }
+        } catch (seedError: any) {
+          console.warn('⚠️ Seed failed (may already be seeded):', seedError.message);
+          // No fallar si el seed ya se ejecutó
+        }
+      } else {
+        console.log('⏭️  Skipping seed (already executed or RUN_SEED not set)');
+      }
     } catch (error: any) {
       console.error('❌ Database migration failed:', error.message);
       console.error('Error details:', error);
