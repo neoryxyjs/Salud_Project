@@ -40,3 +40,7 @@ yarn-error.log*
 # Prisma
 prisma/migrations/
 
+# Documentation (personal notes)
+*.md
+!README.md
+
