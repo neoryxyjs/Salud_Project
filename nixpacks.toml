@@ -11,8 +11,9 @@ cmds = [
 cmds = [
   "cd apps/api",
   "npx prisma generate --schema=./prisma/schema.prisma",
-  "npm run build"
+  "npm run build",
+  "ls -la dist || echo 'Build failed - dist directory not found'"
 ]
 
 [start]
-cmd = "cd apps/api && node dist/main.js"
+cmd = "cd apps/api && ls -la dist && node dist/main.js"
