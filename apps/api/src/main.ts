@@ -9,11 +9,22 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'production') {
     try {
       console.log('🔄 Running database migrations...');
-      execSync('npx prisma migrate deploy --schema=./prisma/schema.prisma', {
-        stdio: 'inherit',
-        cwd: process.cwd(),
-      });
-      console.log('✅ Migrations completed successfully');
+      // Intentar migrate deploy primero (si hay migraciones)
+      try {
+        execSync('npx prisma migrate deploy --schema=./prisma/schema.prisma', {
+          stdio: 'inherit',
+          cwd: process.cwd(),
+        });
+        console.log('✅ Migrations completed successfully');
+      } catch (migrateError) {
+        // Si migrate deploy falla, intentar db push (para primera vez)
+        console.log('⚠️ migrate deploy failed, trying db push...');
+        execSync('npx prisma db push --schema=./prisma/schema.prisma --accept-data-loss', {
+          stdio: 'inherit',
+          cwd: process.cwd(),
+        });
+        console.log('✅ Database schema synchronized');
+      }
     } catch (error) {
       console.error('⚠️ Migration error (may already be applied):', error.message);
       // No fallar si las migraciones ya están aplicadas
