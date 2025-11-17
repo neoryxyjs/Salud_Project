@@ -25,10 +25,6 @@ export class CreateLeadDto {
   currentInsurer?: string;
 
   @IsOptional()
-  @IsString()
-  paymentRegion?: string;
-
-  @IsOptional()
   @IsArray()
   @IsString({ each: true })
   reasons?: string[];

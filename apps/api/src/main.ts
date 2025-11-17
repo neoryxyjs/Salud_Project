@@ -73,8 +73,9 @@ async function bootstrap() {
       console.log('✅ Database schema synchronized successfully');
       
       // Ejecutar seed automáticamente después de crear las tablas
-      // Solo si la variable RUN_SEED está configurada o si es la primera vez
-      if (process.env.RUN_SEED === 'true' || !process.env.SEED_EXECUTED) {
+      // Solo si la variable RUN_SEED está explícitamente configurada como 'true'
+      // NO ejecutar automáticamente para evitar crear leads de ejemplo
+      if (process.env.RUN_SEED === 'true') {
         try {
           console.log('🌱 Running database seed...');
           const seedPath = schemaPath.replace('schema.prisma', 'seed.ts');

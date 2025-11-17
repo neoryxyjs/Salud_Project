@@ -26,7 +26,6 @@ export default function FormularioPage() {
     phone: '',
     region: '',
     currentInsurer: '',
-    paymentRegion: '',
   });
   const [rut, setRut] = useState('');
   const [rutError, setRutError] = useState('');
@@ -77,7 +76,6 @@ export default function FormularioPage() {
         phone: '',
         region: '',
         currentInsurer: '',
-        paymentRegion: '',
       });
       setRut('');
       setRutError('');
@@ -279,26 +277,9 @@ export default function FormularioPage() {
                       <SelectItem value="colmena">Colmena Golden Cross</SelectItem>
                       <SelectItem value="consalud">Consalud</SelectItem>
                       <SelectItem value="cruz-blanca">Cruz Blanca</SelectItem>
+                      <SelectItem value="esencial">Esencial Isapre</SelectItem>
                       <SelectItem value="nueva-masvida">Nueva Masvida</SelectItem>
                       <SelectItem value="vida-tres">Vida Tres</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="paymentRegion">Región donde paga su Isapre</Label>
-                  <Select 
-                    value={formData.paymentRegion} 
-                    onValueChange={(value) => setFormData({ ...formData, paymentRegion: value })}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Seleccionar región de pago" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {CHILEAN_REGIONS.map((region) => (
-                        <SelectItem key={region.value} value={region.value}>
-                          {region.label}
-                        </SelectItem>
-                      ))}
                     </SelectContent>
                   </Select>
                 </div>
