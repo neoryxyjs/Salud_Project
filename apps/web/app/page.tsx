@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,9 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase, FileDown } from 'lucide-react';
+import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase, FileDown, Calendar } from 'lucide-react';
 import { api } from '@/lib/api';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
 
 const REASONS = [
@@ -22,6 +23,104 @@ const REASONS = [
   { id: 'no_gusta', label: 'No me gusta mi Isapre actual' },
   { id: 'otros', label: 'Otros' },
 ];
+
+function NewsSection() {
+  const { data: news, isLoading } = useQuery({
+    queryKey: ['news'],
+    queryFn: async () => {
+      const { data } = await api.get('/news?limit=3');
+      return data;
+    },
+    staleTime: 7 * 24 * 60 * 60 * 1000, // Cache por 7 días (semanal)
+    retry: 2,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="grid gap-6 md:grid-cols-3">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="animate-pulse">
+            <CardHeader>
+              <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-muted rounded w-1/2"></div>
+            </CardHeader>
+            <CardContent>
+              <div className="h-20 bg-muted rounded"></div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (!news || news.length === 0) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-muted-foreground">No hay noticias disponibles en este momento.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid gap-6 md:grid-cols-3">
+      {news.map((item: any, index: number) => (
+        <Card key={index} className="hover:shadow-lg transition-shadow border-2 h-full flex flex-col">
+          {item.image && (
+            <div className="w-full h-48 bg-muted overflow-hidden rounded-t-lg relative">
+              <Image 
+                src={item.image} 
+                alt={item.title}
+                fill
+                className="object-cover"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+          <CardHeader className="flex-1">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground mb-2">
+              <Calendar className="h-3 w-3" />
+              <span>
+                {item.publishedAt 
+                  ? new Date(item.publishedAt).toLocaleDateString('es-CL', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })
+                  : 'Fecha no disponible'}
+              </span>
+            </div>
+            <CardTitle className="text-lg line-clamp-2">{item.title}</CardTitle>
+            <CardDescription className="text-sm line-clamp-3">
+              {item.description}
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="mt-auto">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">{item.source}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                asChild
+              >
+                <a 
+                  href={item.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1"
+                >
+                  Leer más
+                  <ExternalLink className="h-3 w-3" />
+                </a>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
 
 export default function HomePage() {
   const router = useRouter();
@@ -640,6 +739,7 @@ export default function HomePage() {
             Mantente informado sobre las últimas noticias del sector de salud en Chile.
           </p>
         </div>
+        <NewsSection />
       </section>
 
       {/* Sección Descargas */}
