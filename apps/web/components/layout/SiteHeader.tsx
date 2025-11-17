@@ -2,6 +2,13 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChevronDown } from 'lucide-react';
 
 export function SiteHeader() {
   return (
@@ -13,10 +20,60 @@ export function SiteHeader() {
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
             <Link
-              href="/comparador"
+              href="/"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
             >
-              Comparador
+              Inicio
+            </Link>
+            <Link
+              href="/quienes-somos"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Quienes Somos
+            </Link>
+            <Link
+              href="/plataforma"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Plataforma
+            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-foreground/80 text-foreground/60 outline-none">
+                Instituciones
+                <ChevronDown className="h-4 w-4" />
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                <DropdownMenuItem asChild>
+                  <Link href="/instituciones/superintendencia">Superintendencia</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/instituciones/isapres-chile">Isapres Chile</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Link
+              href="/noticias"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Noticias
+            </Link>
+            <Link
+              href="/descargas"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Descargas
+            </Link>
+            <Link
+              href="/mujeres"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Mujeres
+            </Link>
+            <Link
+              href="/ley-corta"
+              className="transition-colors hover:text-foreground/80 text-foreground/60"
+            >
+              Ley Corta
             </Link>
           </nav>
         </div>
