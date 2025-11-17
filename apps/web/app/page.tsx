@@ -226,16 +226,16 @@ export default function HomePage() {
           <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
         </div>
         
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-8 text-center relative z-10">
-          <div className="space-y-4">
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-6 text-center relative z-10">
+          <div className="space-y-6 w-full">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
               Compara Planes de Salud
               <br />
               <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
                 Encuentra el Mejor Plan
               </span>
             </h1>
-            <p className="max-w-[42rem] leading-relaxed text-muted-foreground sm:text-xl sm:leading-8 text-balance">
+            <p className="max-w-[42rem] mx-auto leading-relaxed text-muted-foreground sm:text-xl sm:leading-8 text-balance">
               Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
             </p>
           </div>
