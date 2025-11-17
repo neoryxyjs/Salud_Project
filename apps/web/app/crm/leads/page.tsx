@@ -81,7 +81,6 @@ export default function LeadsPage() {
     currentInsurer: '',
     reasons: [] as string[],
     comments: '',
-    planId: '',
     status: 'new',
     notes: '',
   });
@@ -98,16 +97,6 @@ export default function LeadsPage() {
       if (statusFilter) params.append('status', statusFilter);
       if (regionFilter) params.append('region', regionFilter);
       const { data } = await api.get(`/leads?${params.toString()}`);
-      return data;
-    },
-    retry: false,
-  });
-
-  // Obtener planes para el selector
-  const { data: plansData } = useQuery({
-    queryKey: ['plans'],
-    queryFn: async () => {
-      const { data } = await api.get('/plans');
       return data;
     },
     retry: false,
@@ -818,7 +807,6 @@ export default function LeadsPage() {
                   currentInsurer: newLead.currentInsurer || undefined,
                   reasons: newLead.reasons.length > 0 ? newLead.reasons : undefined,
                   comments: newLead.comments || undefined,
-                  planId: newLead.planId || undefined,
                   status: newLead.status,
                   notes: newLead.notes || undefined,
                 });
