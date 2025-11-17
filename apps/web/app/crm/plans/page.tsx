@@ -884,7 +884,7 @@ export default function PlansPage() {
           <DialogHeader>
             <DialogTitle>Eliminar Plan</DialogTitle>
             <DialogDescription>
-              ¿Estás seguro de que deseas eliminar el plan "{planToDelete?.name}"? Esta acción no se puede deshacer.
+              ¿Estás seguro de que deseas eliminar el plan &quot;{planToDelete?.name}&quot;? Esta acción no se puede deshacer.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
