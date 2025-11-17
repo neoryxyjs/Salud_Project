@@ -42,7 +42,7 @@ export class NewsService {
 
   private async getNewsFromNewsAPI(apiKey: string, limit: number): Promise<NewsItem[]> {
     try {
-      // Buscar noticias sobre Isapres en Chile
+      // Buscar noticias sobre Isapres en Chile con timeout
       const response = await axios.get('https://newsapi.org/v2/everything', {
         params: {
           q: 'isapres OR isapre Chile',
@@ -51,6 +51,7 @@ export class NewsService {
           pageSize: limit,
           apiKey: apiKey,
         },
+        timeout: 5000, // 5 segundos de timeout
       });
 
       if (response.data.articles && response.data.articles.length > 0) {
@@ -64,9 +65,9 @@ export class NewsService {
         }));
       }
       return [];
-    } catch (error) {
-      this.logger.error('Error fetching from NewsAPI', error);
-      throw error;
+    } catch (error: any) {
+      this.logger.warn('Error fetching from NewsAPI:', error.message);
+      return [];
     }
   }
 
@@ -90,9 +91,16 @@ export class NewsService {
       },
     ];
 
-    for (const feed of rssFeeds) {
+    // Crear promesas con timeout para cada feed
+    const feedPromises = rssFeeds.map(async (feed) => {
       try {
-        const feedData = await this.parser.parseURL(feed.url);
+        // Usar Promise.race para agregar timeout
+        const feedData = await Promise.race([
+          this.parser.parseURL(feed.url),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 5000)
+          ),
+        ]) as any;
         
         if (feedData.items) {
           const relevantItems = feedData.items
@@ -109,12 +117,23 @@ export class NewsService {
               source: feed.source,
             }));
 
-          newsItems.push(...relevantItems);
+          return relevantItems;
         }
-      } catch (error) {
-        this.logger.warn(`Error fetching RSS from ${feed.source}`, error);
+        return [];
+      } catch (error: any) {
+        this.logger.warn(`Error fetching RSS from ${feed.source}:`, error.message);
+        return [];
       }
+    });
 
+    // Ejecutar todas las promesas en paralelo
+    const results = await Promise.allSettled(feedPromises);
+    
+    for (const result of results) {
+      if (result.status === 'fulfilled') {
+        newsItems.push(...result.value);
+      }
+      
       if (newsItems.length >= limit) {
         break;
       }
@@ -129,7 +148,7 @@ export class NewsService {
     return newsItems.slice(0, limit);
   }
 
-  private getDefaultNews(): NewsItem[] {
+  getDefaultNews(): NewsItem[] {
     return [
       {
         title: 'Sistema de Isapres: Últimas actualizaciones y cambios normativos',
