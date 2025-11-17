@@ -182,7 +182,6 @@ export default function LeadsPage() {
         currentInsurer: '',
         reasons: [],
         comments: '',
-        planId: '',
         status: 'new',
         notes: '',
       });
@@ -445,10 +444,6 @@ export default function LeadsPage() {
                 <div className="space-y-2">
                   <Label>Isapre Actual</Label>
                   <p className="text-sm">{selectedLead.currentInsurer || '-'}</p>
-                </div>
-                <div className="space-y-2">
-                  <Label>Plan</Label>
-                  <p className="text-sm">{selectedLead.plan?.name || '-'}</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Estado</Label>
@@ -714,25 +709,10 @@ export default function LeadsPage() {
                 <Label htmlFor="new-current-insurer">Isapre Actual</Label>
                 <Input
                   id="new-current-insurer"
-                  placeholder="Banmédica"
+                  placeholder="Ej: Banmédica, Colmena, etc."
                   value={newLead.currentInsurer}
                   onChange={(e) => setNewLead({ ...newLead, currentInsurer: e.target.value })}
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-plan">Plan</Label>
-                <Select value={newLead.planId} onValueChange={(value) => setNewLead({ ...newLead, planId: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Seleccionar plan (opcional)" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {plansData?.map((plan: any) => (
-                      <SelectItem key={plan.id} value={plan.id}>
-                        {plan.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="new-status">Estado</Label>
