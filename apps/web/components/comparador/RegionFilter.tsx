@@ -16,15 +16,20 @@ interface RegionFilterProps {
 }
 
 export function RegionFilter({ value, onChange }: RegionFilterProps) {
+  const handleValueChange = (newValue: string) => {
+    // Convertir "all" de vuelta a "" para el backend
+    onChange(newValue === 'all' ? '' : newValue);
+  };
+
   return (
     <div className="space-y-2">
       <Label>Región</Label>
-      <Select value={value} onValueChange={onChange}>
+      <Select value={value || 'all'} onValueChange={handleValueChange}>
         <SelectTrigger>
           <SelectValue placeholder="Selecciona una región" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="">Todas las regiones</SelectItem>
+          <SelectItem value="all">Todas las regiones</SelectItem>
           {CHILEAN_REGIONS.map((region) => (
             <SelectItem key={region.value} value={region.value}>
               {region.label}
