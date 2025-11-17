@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { CheckCircle2, ArrowLeft } from 'lucide-react';
+import { CheckCircle2, ArrowLeft, MessageCircle, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
@@ -21,6 +21,17 @@ export default function FormularioPage() {
   const [rut, setRut] = useState('');
   const [rutError, setRutError] = useState('');
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+  const [showSuccessNotification, setShowSuccessNotification] = useState(false);
+  const [submittedPhone, setSubmittedPhone] = useState('');
+
+  // Número de WhatsApp
+  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || '+56994959513';
+  
+  const handleWhatsAppClick = () => {
+    const message = encodeURIComponent(`Hola, acabo de enviar mi solicitud de asesoría. Mi teléfono es: ${submittedPhone}`);
+    const whatsappUrl = `https://wa.me/${whatsappNumber.replace(/[^0-9]/g, '')}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+  };
 
   useEffect(() => {
     // Capturar UTM parameters de la URL
@@ -46,8 +57,20 @@ export default function FormularioPage() {
       const { data: response } = await api.post(url, data);
       return response;
     },
-    onSuccess: () => {
-      // Opcional: redirigir o mostrar mensaje de éxito
+    onSuccess: (data, variables) => {
+      setSubmittedPhone(variables.phone || '');
+      setShowSuccessNotification(true);
+      // Resetear formulario
+      setFormData({
+        name: '',
+        email: '',
+        phone: '',
+        region: '',
+      });
+      setRut('');
+      setRutError('');
+      // Scroll suave hacia arriba para mostrar la notificación
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     },
   });
 
@@ -85,6 +108,47 @@ export default function FormularioPage() {
 
   return (
     <div className="container flex items-center justify-center min-h-[calc(100vh-200px)] py-12">
+      {/* Notificación de éxito */}
+      {showSuccessNotification && (
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md animate-in slide-in-from-top-4 duration-500">
+          <Card className="border-2 border-green-500 shadow-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
+            <CardContent className="p-6">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="h-12 w-12 rounded-full bg-green-500 flex items-center justify-center">
+                    <CheckCircle2 className="h-6 w-6 text-white" />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-3">
+                  <div>
+                    <h3 className="font-bold text-lg text-green-900 dark:text-green-100">
+                      ¡Solicitud enviada exitosamente!
+                    </h3>
+                    <p className="text-sm text-green-800 dark:text-green-200 mt-1">
+                      Hemos recibido tu información. Nos pondremos en contacto contigo pronto.
+                    </p>
+                  </div>
+                  <Button
+                    onClick={handleWhatsAppClick}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+                    size="sm"
+                  >
+                    <MessageCircle className="mr-2 h-4 w-4" />
+                    Contactar vía WhatsApp
+                  </Button>
+                </div>
+                <button
+                  onClick={() => setShowSuccessNotification(false)}
+                  className="flex-shrink-0 text-green-700 dark:text-green-300 hover:text-green-900 dark:hover:text-green-100"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
       <div className="w-full max-w-md">
         <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground mb-6">
           <ArrowLeft className="h-4 w-4" />
@@ -109,9 +173,18 @@ export default function FormularioPage() {
                   <p className="text-muted-foreground mb-4">
                     Hemos recibido tu información. Nos pondremos en contacto contigo pronto.
                   </p>
-                  <Button asChild>
-                    <Link href="/comparador">Comparar Planes</Link>
-                  </Button>
+                  <div className="space-y-2">
+                    <Button
+                      onClick={handleWhatsAppClick}
+                      className="w-full bg-green-600 hover:bg-green-700 text-white font-semibold"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Contactar vía WhatsApp
+                    </Button>
+                    <Button variant="outline" asChild className="w-full">
+                      <Link href="/comparador">Comparar Planes</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
             ) : (
