@@ -1,8 +1,12 @@
 # Dockerfile para Railway - Backend API
 FROM node:18-alpine AS base
 
-# Instalar dependencias necesarias
-RUN apk add --no-cache libc6-compat
+# Instalar dependencias necesarias para Prisma y OpenSSL
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    openssl-dev \
+    openssl1.1-compat
 
 WORKDIR /app
 
@@ -64,6 +68,12 @@ RUN test -f dist/main.js && echo "✅ Final verification: main.js exists in dist
 
 # Producción
 FROM node:18-alpine AS runner
+
+# Instalar OpenSSL en la etapa de producción también
+RUN apk add --no-cache \
+    libc6-compat \
+    openssl \
+    openssl1.1-compat
 
 WORKDIR /app
 
