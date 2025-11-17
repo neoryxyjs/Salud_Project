@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone } from 'lucide-react';
+import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
@@ -351,146 +351,215 @@ export default function HomePage() {
       <section id="quienes-somos" className="container py-12 md:py-24">
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2 space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold text-primary mb-2">QUEPLAN</h2>
-              <h3 className="text-4xl font-bold text-orange-600 mb-4">QUIENES SOMOS</h3>
-            </div>
-            <p className="text-muted-foreground text-lg">
-              QuePlan es una plataforma web 100% en línea y gratuita, para cotizar y comparar planes de salud de todas las Isapres de Chile.
-            </p>
-            <p className="text-muted-foreground">
-              Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
-            </p>
-            <p className="text-muted-foreground">
-              Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
-            </p>
-          </div>
-          <div className="space-y-4">
-            <h4 className="text-xl font-bold">Lo que necesitas saber</h4>
             <div className="space-y-2">
-              <a href="#que-son-isapres" className="flex items-center gap-2 text-primary hover:underline">
-                <span>→</span>
-                <span>Qué son las Isapres</span>
-              </a>
-              <a href="#que-son-planes" className="flex items-center gap-2 text-primary hover:underline">
-                <span>→</span>
-                <span>Qué son los planes de salud</span>
-              </a>
-              <a href="#normativa-minsal" className="flex items-center gap-2 text-primary hover:underline">
-                <span>→</span>
-                <span>Normativa vigente MINSAL</span>
-              </a>
-              <a href="#derechos-usuarios" className="flex items-center gap-2 text-primary hover:underline">
-                <span>→</span>
-                <span>Derecho de los usuarios</span>
-              </a>
-              <a href="#contratos-salud" className="flex items-center gap-2 text-primary hover:underline">
-                <span>→</span>
-                <span>Contratos de Salud</span>
-              </a>
+              <h2 className="text-2xl font-bold text-primary">QUEPLAN</h2>
+              <h3 className="text-4xl md:text-5xl font-bold text-orange-600">QUIENES SOMOS</h3>
             </div>
+            <div className="space-y-4 text-muted-foreground">
+              <p className="text-lg leading-relaxed">
+                QuePlan es una plataforma web <strong className="text-foreground">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
+              </p>
+              <p className="leading-relaxed">
+                Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
+              </p>
+              <p className="leading-relaxed">
+                Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
+              </p>
+            </div>
+          </div>
+          <div>
+            <Card className="sticky top-24">
+              <CardHeader>
+                <CardTitle className="text-xl font-bold">Lo que necesitas saber</CardTitle>
+                <CardDescription>
+                  Información importante sobre Isapres y planes de salud
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-2">
+                <a 
+                  href="https://www.superdesalud.gob.cl/registro/isapres/#:~:text=Las%20Instituciones%20de%20Salud%20Previsional,seis%20abiertas%20y%20tres%20cerradas)" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileText className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Qué son las Isapres</span>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </a>
+                <a 
+                  href="#que-son-planes" 
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <BookOpen className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Qué son los planes de salud</span>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </a>
+                <a 
+                  href="https://www.superdesalud.gob.cl/tax-marco-normativo/leyes-3002/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <Scale className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Normativa vigente MINSAL</span>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </a>
+                <a 
+                  href="https://www.superdesalud.gob.cl/tax-materias-prestadores/ley-de-derechos-y-deberes-4185/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <Users className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Derecho de los usuarios</span>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </a>
+                <a 
+                  href="https://www.superdesalud.gob.cl/tax-materias-isapres/contrato-de-salud-3464/" 
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                >
+                  <div className="flex items-center gap-3">
+                    <FileCheck className="h-5 w-5 text-primary" />
+                    <span className="font-medium">Contratos de Salud</span>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                </a>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* Sección Plataforma */}
-      <section id="plataforma" className="bg-muted/50 py-12 md:py-24">
+      <section id="plataforma" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
         <div className="container">
-          <div className="text-center mb-12">
-            <p className="text-primary text-sm font-semibold mb-2">SOMOS LA MEJOR PLATAFORMA</p>
-            <h2 className="text-4xl md:text-5xl font-bold text-orange-600 mb-4">
+          <div className="text-center mb-16 space-y-4">
+            <p className="text-primary text-sm font-semibold uppercase tracking-wider">SOMOS LA MEJOR PLATAFORMA</p>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-orange-600">
               PARA COTIZAR PLANES DE ISAPRE
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
               Hacemos que sea simple y fácil la búsqueda de planes de Isapre, tanto para cotizantes y ejecutivos.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-primary">Asesores profesionales</CardTitle>
+          <div className="grid gap-8 md:grid-cols-3 mb-12">
+            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-xl text-primary">Asesores profesionales</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   Contamos con ejecutivos altamente calificados y de mucha experiencia en el mercado.
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-primary">Cotizar es fácil</CardTitle>
+            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Search className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-xl text-primary">Cotizar es fácil</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   De forma rápida y simple podrás elegir uno o más planes y contactar a un ejecutivo en menos de 30 minutos.
                 </p>
               </CardContent>
             </Card>
-            <Card>
-              <CardHeader>
-                <CardTitle className="text-primary">Planes a tu medida</CardTitle>
+            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-xl text-primary">Planes a tu medida</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground">
+                <p className="text-muted-foreground leading-relaxed">
                   En QuePlan encontrarás el plan que más se acomode a tu perfil y al de tu familia.
                 </p>
               </CardContent>
             </Card>
           </div>
-          <div className="text-center mt-8">
-            <Button size="lg" className="bg-primary text-primary-foreground">
-              → Cotiza tu plan de isapre ahora!
+          <div className="text-center">
+            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6">
+              <ArrowRight className="mr-2 h-5 w-5" />
+              Cotiza tu plan de isapre ahora!
             </Button>
           </div>
         </div>
       </section>
 
       {/* Sección Superintendencia */}
-      <section id="superintendencia" className="container py-12 md:py-24">
-        <div className="bg-primary text-primary-foreground p-8 rounded-lg mb-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">SUPERINTENDENCIA DE SALUD</h2>
-          <h3 className="text-3xl font-bold mb-4">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
-          <p className="max-w-3xl mx-auto">
+      <section id="superintendencia" className="container py-16 md:py-24">
+        <div className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground p-8 md:p-12 rounded-xl mb-12 text-center shadow-lg">
+          <h2 className="text-2xl md:text-3xl font-bold mb-3">SUPERINTENDENCIA DE SALUD</h2>
+          <h3 className="text-3xl md:text-4xl font-bold mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
+          <p className="max-w-3xl mx-auto text-lg leading-relaxed opacity-95">
             La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
           </p>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle>Caracterización de los profesionales de la salud en Chile</CardTitle>
+          <Card className="hover:shadow-lg transition-shadow border-2">
+            <CardHeader className="space-y-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Users className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle className="text-lg">Caracterización de los profesionales de la salud en Chile</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground leading-relaxed">
                 Esta herramienta permitirá observar periódicamente las magnitudes de un conjunto de características de profesionales, técnicos y auxiliares de salud del país.
               </p>
-              <Button variant="outline" className="text-orange-600 border-orange-600">
+              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
                 Ver Más
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Atención gratuita en la red pública</CardTitle>
+          <Card className="hover:shadow-lg transition-shadow border-2">
+            <CardHeader className="space-y-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Heart className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle className="text-lg">Atención gratuita en la red pública</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground leading-relaxed">
                 Desde septiembre de 2022, las personas beneficiarias de Fonasa de los tramos C y D tendrán gratuidad en todas sus atenciones en el sistema público de salud.
               </p>
-              <Button variant="outline" className="text-orange-600 border-orange-600">
+              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
                 Ver Más
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
-          <Card>
-            <CardHeader>
-              <CardTitle>Revisa toda la información sobre el proceso de vacunación COVID-19</CardTitle>
+          <Card className="hover:shadow-lg transition-shadow border-2">
+            <CardHeader className="space-y-3">
+              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                <Shield className="h-6 w-6 text-primary" />
+              </div>
+              <CardTitle className="text-lg">Revisa toda la información sobre el proceso de vacunación COVID-19</CardTitle>
             </CardHeader>
-            <CardContent>
-              <p className="text-muted-foreground mb-4">
+            <CardContent className="space-y-4">
+              <p className="text-muted-foreground leading-relaxed">
                 El nuevo plan se basa en nueva evidencia y fue elaborado en conjunto con especialistas, en un proceso de diálogo dirigido por la ministra María Begoña Yarza.
               </p>
-              <Button variant="outline" className="text-orange-600 border-orange-600">
+              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
                 Ver Más
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
@@ -498,48 +567,73 @@ export default function HomePage() {
       </section>
 
       {/* Sección Isapres Chile */}
-      <section id="isapres-chile" className="bg-muted/50 py-12 md:py-24">
+      <section id="isapres-chile" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-8">Isapres Chile</h2>
-          <p className="text-center text-muted-foreground max-w-2xl mx-auto">
-            Información sobre las principales Isapres de Chile y sus planes de salud disponibles.
-          </p>
+          <div className="text-center mb-12 space-y-4">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+              <Briefcase className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold">Isapres Chile</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+              Información sobre las principales Isapres de Chile y sus planes de salud disponibles.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* Sección Noticias */}
-      <section id="noticias" className="container py-12 md:py-24">
-        <h2 className="text-3xl font-bold text-center mb-8">Noticias</h2>
-        <p className="text-center text-muted-foreground">
-          Mantente informado sobre las últimas noticias del sector de salud en Chile.
-        </p>
-      </section>
-
-      {/* Sección Descargas */}
-      <section id="descargas" className="bg-muted/50 py-12 md:py-24">
-        <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-8">Descargas</h2>
-          <p className="text-center text-muted-foreground">
-            Descarga documentos, guías y recursos útiles sobre planes de salud.
+      <section id="noticias" className="container py-16 md:py-24">
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+            <Newspaper className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold">Noticias</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+            Mantente informado sobre las últimas noticias del sector de salud en Chile.
           </p>
         </div>
       </section>
 
+      {/* Sección Descargas */}
+      <section id="descargas" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
+        <div className="container">
+          <div className="text-center mb-12 space-y-4">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+              <Download className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold">Descargas</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+              Descarga documentos, guías y recursos útiles sobre planes de salud.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Sección Mujeres */}
-      <section id="mujeres" className="container py-12 md:py-24">
-        <h2 className="text-3xl font-bold text-center mb-8">Mujeres</h2>
-        <p className="text-center text-muted-foreground">
-          Información especializada en planes de salud para mujeres.
-        </p>
+      <section id="mujeres" className="container py-16 md:py-24">
+        <div className="text-center mb-12 space-y-4">
+          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+            <Heart className="h-8 w-8 text-primary" />
+          </div>
+          <h2 className="text-3xl md:text-4xl font-bold">Mujeres</h2>
+          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+            Información especializada en planes de salud para mujeres.
+          </p>
+        </div>
       </section>
 
       {/* Sección Ley Corta */}
-      <section id="ley-corta" className="bg-muted/50 py-12 md:py-24">
+      <section id="ley-corta" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
         <div className="container">
-          <h2 className="text-3xl font-bold text-center mb-8">Ley Corta</h2>
-          <p className="text-center text-muted-foreground">
-            Información sobre la Ley Corta de Isapres y sus implicaciones.
-          </p>
+          <div className="text-center mb-12 space-y-4">
+            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
+              <Scale className="h-8 w-8 text-primary" />
+            </div>
+            <h2 className="text-3xl md:text-4xl font-bold">Ley Corta</h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+              Información sobre la Ley Corta de Isapres y sus implicaciones.
+            </p>
+          </div>
         </div>
       </section>
     </div>
