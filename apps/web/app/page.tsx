@@ -406,9 +406,10 @@ export default function HomePage() {
                   </div>
                 )}
               </form>
-            </CardContent>
-          </Card>
-        </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
         <div className="flex justify-center gap-4 mt-4">
           <Button variant="outline" size="lg" asChild>
