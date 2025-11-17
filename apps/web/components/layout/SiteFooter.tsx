@@ -133,11 +133,11 @@ export function SiteFooter() {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2 text-primary-foreground/90">
                 <Phone className="h-4 w-4" />
-                <a href="tel:+56954789701" className="hover:underline">+569 5478 9701</a>
+                <a href="tel:+56945446433" className="hover:underline">+56 9 4544 6433</a>
               </li>
               <li className="flex items-center gap-2 text-primary-foreground/90">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:info@solucionsalud.cl" className="hover:underline">info@solucionsalud.cl</a>
+                <a href="mailto:soluciondesalud@outlook.com" className="hover:underline">soluciondesalud@outlook.com</a>
               </li>
               <li className="flex items-start gap-2 text-primary-foreground/90">
                 <MapPin className="h-4 w-4 mt-0.5" />

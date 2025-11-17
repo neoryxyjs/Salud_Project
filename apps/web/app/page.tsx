@@ -342,120 +342,6 @@ export default function HomePage() {
               </CardHeader>
               <CardContent className="p-4 sm:p-6 md:p-8 bg-gradient-to-b from-background to-muted/30">
               <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-                {/* Información Personal */}
-                <div className="grid gap-4 sm:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="name" className="flex items-center gap-2">
-                      <User className="h-4 w-4" />
-                      Nombre completo *
-                    </Label>
-                    <Input
-                      id="name"
-                      placeholder="Juan Pérez"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email" className="flex items-center gap-2">
-                      <Mail className="h-4 w-4" />
-                      Email *
-                    </Label>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="juan@email.com"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="flex items-center gap-2">
-                      <Phone className="h-4 w-4" />
-                      Teléfono *
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="+56 9 1234 5678"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="rut">R.U.T.</Label>
-                    <Input
-                      id="rut"
-                      placeholder="12.345.678-9"
-                      value={rut}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        const cleanValue = value.replace(/\./g, '').replace(/-/g, '');
-                        
-                        if (cleanValue.length >= 8) {
-                          const formatted = formatRUT(cleanValue);
-                          if (!validateRUT(formatted)) {
-                            setRutError('RUT inválido');
-                            setRut(formatted);
-                          } else {
-                            setRutError('');
-                            setRut(formatted);
-                          }
-                        } else {
-                          setRut(cleanValue);
-                          setRutError('');
-                        }
-                      }}
-                    />
-                    {rutError && (
-                      <p className="text-sm text-destructive">{rutError}</p>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="region">Región *</Label>
-                    <Select 
-                      value={formData.region} 
-                      onValueChange={(value) => setFormData({ ...formData, region: value })}
-                      required
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar región" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {CHILEAN_REGIONS.map((region) => (
-                          <SelectItem key={region.value} value={region.value}>
-                            {region.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="currentInsurer">Isapre Actual</Label>
-                    <Select 
-                      value={formData.currentInsurer} 
-                      onValueChange={(value) => setFormData({ ...formData, currentInsurer: value })}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar Isapre actual" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="none">No tengo Isapre</SelectItem>
-                        <SelectItem value="banmedica">Banmédica</SelectItem>
-                        <SelectItem value="colmena">Colmena Golden Cross</SelectItem>
-                        <SelectItem value="consalud">Consalud</SelectItem>
-                        <SelectItem value="cruz-blanca">Cruz Blanca</SelectItem>
-                        <SelectItem value="esencial">Esencial Isapre</SelectItem>
-                        <SelectItem value="nueva-masvida">Nueva Masvida</SelectItem>
-                        <SelectItem value="vida-tres">Vida Tres</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
                 {/* Motivos */}
                 <div className="space-y-2 sm:space-y-3">
                   <Label className="text-sm sm:text-base font-semibold">
@@ -504,6 +390,123 @@ export default function HomePage() {
                     rows={4}
                     className="resize-none"
                   />
+                </div>
+
+                {/* Información Personal */}
+                <div className="space-y-4 pt-4 border-t">
+                  <h3 className="text-base sm:text-lg font-semibold">Datos Personales</h3>
+                  <div className="grid gap-4 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name" className="flex items-center gap-2">
+                        <User className="h-4 w-4" />
+                        Nombre completo *
+                      </Label>
+                      <Input
+                        id="name"
+                        placeholder="Juan Pérez"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email" className="flex items-center gap-2">
+                        <Mail className="h-4 w-4" />
+                        Email *
+                      </Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        placeholder="juan@email.com"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="flex items-center gap-2">
+                        <Phone className="h-4 w-4" />
+                        Teléfono *
+                      </Label>
+                      <Input
+                        id="phone"
+                        type="tel"
+                        placeholder="+56 9 1234 5678"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="rut">R.U.T.</Label>
+                      <Input
+                        id="rut"
+                        placeholder="12.345.678-9"
+                        value={rut}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          const cleanValue = value.replace(/\./g, '').replace(/-/g, '');
+                          
+                          if (cleanValue.length >= 8) {
+                            const formatted = formatRUT(cleanValue);
+                            if (!validateRUT(formatted)) {
+                              setRutError('RUT inválido');
+                              setRut(formatted);
+                            } else {
+                              setRutError('');
+                              setRut(formatted);
+                            }
+                          } else {
+                            setRut(cleanValue);
+                            setRutError('');
+                          }
+                        }}
+                      />
+                      {rutError && (
+                        <p className="text-sm text-destructive">{rutError}</p>
+                      )}
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="region">Región *</Label>
+                      <Select 
+                        value={formData.region} 
+                        onValueChange={(value) => setFormData({ ...formData, region: value })}
+                        required
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar región" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CHILEAN_REGIONS.map((region) => (
+                            <SelectItem key={region.value} value={region.value}>
+                              {region.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="currentInsurer">Isapre Actual</Label>
+                      <Select 
+                        value={formData.currentInsurer} 
+                        onValueChange={(value) => setFormData({ ...formData, currentInsurer: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Seleccionar Isapre actual" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="none">No tengo Isapre</SelectItem>
+                          <SelectItem value="banmedica">Banmédica</SelectItem>
+                          <SelectItem value="colmena">Colmena Golden Cross</SelectItem>
+                          <SelectItem value="consalud">Consalud</SelectItem>
+                          <SelectItem value="cruz-blanca">Cruz Blanca</SelectItem>
+                          <SelectItem value="esencial">Esencial Isapre</SelectItem>
+                          <SelectItem value="nueva-masvida">Nueva Masvida</SelectItem>
+                          <SelectItem value="vida-tres">Vida Tres</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
                 </div>
 
                 {/* Botón Enviar */}
