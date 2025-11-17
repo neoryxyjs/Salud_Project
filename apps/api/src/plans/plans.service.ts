@@ -93,5 +93,97 @@ export class PlansService {
       },
     });
   }
+
+  async syncPlans(plansData: any[]) {
+    const results = [];
+
+    for (const planData of plansData) {
+      // Buscar o crear el insurer
+      const insurer = await this.prisma.insurer.findUnique({
+        where: { slug: planData.insurerSlug },
+      });
+
+      if (!insurer) {
+        results.push({
+          success: false,
+          plan: planData.name,
+          error: `Insurer with slug ${planData.insurerSlug} not found`,
+        });
+        continue;
+      }
+
+      // Buscar plan existente por código o nombre
+      const existingPlan = planData.code
+        ? await this.prisma.plan.findFirst({
+            where: {
+              insurerId: insurer.id,
+              code: planData.code,
+            },
+          })
+        : await this.prisma.plan.findFirst({
+            where: {
+              insurerId: insurer.id,
+              name: planData.name,
+            },
+          });
+
+      const planDataToSave = {
+        insurerId: insurer.id,
+        name: planData.name,
+        code: planData.code,
+        regionCodes: planData.regionCodes,
+        basePriceCLP: planData.basePriceCLP,
+        coverageHosp: planData.coverageHosp,
+        coverageAmb: planData.coverageAmb,
+        coverageEr: planData.coverageEr,
+        annualCapUF: planData.annualCapUF,
+        networkTags: planData.networkTags || [],
+        features: planData.features || {},
+        score: planData.score,
+        isActive: planData.isActive !== undefined ? planData.isActive : true,
+      };
+
+      let plan;
+      if (existingPlan) {
+        // Actualizar plan existente
+        plan = await this.prisma.plan.update({
+          where: { id: existingPlan.id },
+          data: planDataToSave,
+        });
+
+        // Eliminar tiers existentes y crear nuevos
+        await this.prisma.priceTier.deleteMany({
+          where: { planId: plan.id },
+        });
+      } else {
+        // Crear nuevo plan
+        plan = await this.prisma.plan.create({
+          data: planDataToSave,
+        });
+      }
+
+      // Crear tiers si existen
+      if (planData.tiers && planData.tiers.length > 0) {
+        await this.prisma.priceTier.createMany({
+          data: planData.tiers.map((tier: any) => ({
+            planId: plan.id,
+            ageFrom: tier.ageFrom,
+            ageTo: tier.ageTo,
+            cargas: tier.cargas,
+            region: tier.region,
+            priceCLP: tier.priceCLP,
+          })),
+        });
+      }
+
+      results.push({
+        success: true,
+        plan: plan.name,
+        action: existingPlan ? 'updated' : 'created',
+      });
+    }
+
+    return results;
+  }
 }
 

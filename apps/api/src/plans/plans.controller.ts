@@ -1,6 +1,10 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, UseGuards } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { GetPlansDto } from './dto/get-plans.dto';
+import { SyncPlansDto } from './dto/sync-plans.dto';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { RolesGuard } from '../auth/role.guard';
+import { Roles } from '../auth/roles.decorator';
 
 @Controller('plans')
 export class PlansController {
@@ -19,6 +23,13 @@ export class PlansController {
   @Get('slug/:slug')
   findBySlug(@Param('slug') slug: string) {
     return this.plansService.findBySlug(slug);
+  }
+
+  @Post('sync')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
+  async syncPlans(@Body() syncPlansDto: SyncPlansDto) {
+    return this.plansService.syncPlans(syncPlansDto.plans);
   }
 }
 

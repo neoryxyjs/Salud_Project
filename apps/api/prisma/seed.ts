@@ -68,6 +68,11 @@ async function main() {
       slug: 'vida-tres',
       logoUrl: 'https://via.placeholder.com/150?text=VidaTres',
     },
+    {
+      name: 'Esencial Isapre',
+      slug: 'esencial',
+      logoUrl: 'https://via.placeholder.com/150?text=Esencial',
+    },
   ];
 
   const createdInsurers = [];
