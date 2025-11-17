@@ -219,41 +219,51 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       {/* Sección Inicio */}
-      <section id="inicio" className="container space-y-6 py-8 md:py-12 lg:py-24">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-6 text-center">
-          <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
-            Compara Planes de Salud
-            <br />
-            <span className="text-primary">Encuentra el Mejor Plan</span>
-          </h1>
-          <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
-            Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
-          </p>
+      <section id="inicio" className="relative container space-y-6 py-12 md:py-16 lg:py-24 overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 -z-10 opacity-5">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-8 text-center relative z-10">
+          <div className="space-y-4">
+            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight">
+              Compara Planes de Salud
+              <br />
+              <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
+                Encuentra el Mejor Plan
+              </span>
+            </h1>
+            <p className="max-w-[42rem] leading-relaxed text-muted-foreground sm:text-xl sm:leading-8 text-balance">
+              Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
+            </p>
+          </div>
           
           {/* Botón Asesoría Gratuita */}
           <Button 
             size="lg" 
-            className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6"
+            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-10 py-7 rounded-full font-semibold group"
             onClick={() => setShowForm(!showForm)}
           >
             {showForm ? 'Ocultar Formulario' : 'Asesoría Gratuita'}
-            <ArrowRight className="ml-2 h-5 w-5" />
+            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
 
         {/* Formulario Asesoría Gratuita - Oculto por defecto */}
         {showForm && (
-          <div className="mx-auto max-w-3xl mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
-            <Card className="border-2">
-              <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-                <CardTitle className="text-2xl text-center text-primary-foreground">
+          <div className="mx-auto max-w-3xl mt-12 animate-in fade-in slide-in-from-top-4 duration-500">
+            <Card className="border-2 shadow-2xl hover:shadow-3xl transition-shadow duration-300 overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-t-lg p-8">
+                <CardTitle className="text-3xl text-center text-primary-foreground font-bold">
                   ¿Quieres revisar tu Isapre?
                 </CardTitle>
-                <CardDescription className="text-center text-primary-foreground/90">
+                <CardDescription className="text-center text-primary-foreground/95 text-base mt-2">
                   Cuéntanos qué te gustaría mejorar y te ayudaremos a encontrar la mejor opción
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-6">
+              <CardContent className="p-8 bg-gradient-to-b from-background to-muted/30">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Información Personal */}
                 <div className="grid gap-4 md:grid-cols-2">
@@ -393,7 +403,7 @@ export default function HomePage() {
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full"
+                  className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-lg py-6 font-semibold"
                   disabled={leadMutation.isPending || (rut ? rutError !== '' : false) || formData.reasons.length === 0 || !formData.region}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
@@ -419,40 +429,49 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="container space-y-6 py-8 md:py-12 lg:py-24">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
-          <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            ¿Por qué elegir SolucionSalud?
-          </h2>
-        </div>
-        <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <Search className="h-8 w-8 mb-2" />
-              <CardTitle>Comparación Fácil</CardTitle>
-              <CardDescription>
-                Compara múltiples planes de salud en un solo lugar
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <Shield className="h-8 w-8 mb-2" />
-              <CardTitle>Información Confiable</CardTitle>
-              <CardDescription>
-                Datos actualizados de las principales Isapres
-              </CardDescription>
-            </CardHeader>
-          </Card>
-          <Card>
-            <CardHeader>
-              <TrendingUp className="h-8 w-8 mb-2" />
-              <CardTitle>Mejores Precios</CardTitle>
-              <CardDescription>
-                Encuentra el plan que mejor se adapte a tu presupuesto
-              </CardDescription>
-            </CardHeader>
-          </Card>
+      <section className="bg-gradient-to-b from-background via-muted/20 to-background py-16 md:py-20 lg:py-24">
+        <div className="container space-y-12">
+          <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
+            <p className="text-primary text-sm font-semibold uppercase tracking-wider">BENEFICIOS</p>
+            <h2 className="font-heading text-3xl leading-[1.1] sm:text-4xl md:text-5xl lg:text-6xl font-bold">
+              ¿Por qué elegir <span className="text-primary">SolucionSalud</span>?
+            </h2>
+          </div>
+          <div className="mx-auto grid justify-center gap-6 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
+            <Card className="border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+              <CardHeader className="space-y-4">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Search className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">Comparación Fácil</CardTitle>
+                <CardDescription className="text-base">
+                  Compara múltiples planes de salud en un solo lugar
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+              <CardHeader className="space-y-4">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <Shield className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">Información Confiable</CardTitle>
+                <CardDescription className="text-base">
+                  Datos actualizados de las principales Isapres
+                </CardDescription>
+              </CardHeader>
+            </Card>
+            <Card className="border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 group cursor-pointer">
+              <CardHeader className="space-y-4">
+                <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                  <TrendingUp className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
+                </div>
+                <CardTitle className="text-xl group-hover:text-primary transition-colors">Mejores Precios</CardTitle>
+                <CardDescription className="text-base">
+                  Encuentra el plan que mejor se adapte a tu presupuesto
+                </CardDescription>
+              </CardHeader>
+            </Card>
+          </div>
         </div>
       </section>
 
