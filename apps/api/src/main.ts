@@ -91,26 +91,31 @@ async function bootstrap() {
           console.log('Seed file exists:', fs.existsSync(seedFile));
           
           if (fs.existsSync(seedFile)) {
-            // Intentar con ts-node primero, luego con node si ts-node no está disponible
+            // Intentar con ts-node primero con opciones ESM
             try {
-              execSync(`npx ts-node ${seedFile}`, {
+              execSync(`npx ts-node --compiler-options '{"module":"commonjs"}' ${seedFile}`, {
                 stdio: 'inherit',
                 cwd: process.cwd(),
-                env: { ...process.env },
+                env: { ...process.env, TS_NODE_COMPILER_OPTIONS: '{"module":"commonjs"}' },
               });
               console.log('✅ Database seeded successfully');
               // Marcar que el seed se ejecutó
               process.env.SEED_EXECUTED = 'true';
             } catch (tsNodeError: any) {
-              console.warn('⚠️ ts-node failed, trying with node directly...');
-              // Si ts-node falla, intentar compilar y ejecutar
-              execSync(`npx tsx ${seedFile}`, {
-                stdio: 'inherit',
-                cwd: process.cwd(),
-                env: { ...process.env },
-              });
-              console.log('✅ Database seeded successfully');
-              process.env.SEED_EXECUTED = 'true';
+              console.warn('⚠️ ts-node failed, trying with tsx...');
+              try {
+                // Intentar con tsx (soporta ES modules mejor)
+                execSync(`npx tsx ${seedFile}`, {
+                  stdio: 'inherit',
+                  cwd: process.cwd(),
+                  env: { ...process.env },
+                });
+                console.log('✅ Database seeded successfully');
+                process.env.SEED_EXECUTED = 'true';
+              } catch (tsxError: any) {
+                console.warn('⚠️ tsx also failed, seed may need to be run manually');
+                // No fallar completamente, solo advertir
+              }
             }
           } else {
             console.warn('⚠️ Seed file not found, skipping seed');

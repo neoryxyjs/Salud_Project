@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import RSSParser from 'rss-parser';
+
+// Importación compatible con CommonJS y ESM
+const RSSParser = require('rss-parser');
 
 export interface NewsItem {
   title: string;
@@ -14,7 +16,7 @@ export interface NewsItem {
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
-  private readonly parser: RSSParser = new RSSParser();
+  private readonly parser = new RSSParser();
 
   async getLatestNews(limit: number = 3): Promise<NewsItem[]> {
     try {
