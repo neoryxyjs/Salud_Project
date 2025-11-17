@@ -44,20 +44,35 @@ export class NewsService {
 
   private async getNewsFromNewsAPI(apiKey: string, limit: number): Promise<NewsItem[]> {
     try {
-      // Buscar noticias sobre Isapres en Chile con timeout
+      // Buscar noticias sobre Isapres y salud en Chile, excluyendo política
       const response = await axios.get('https://newsapi.org/v2/everything', {
         params: {
-          q: 'isapres OR isapre Chile',
+          q: '(isapres OR isapre OR "plan de salud" OR "seguro de salud" OR fonasa OR "superintendencia de salud") AND (salud OR medicina OR hospital OR clínica OR cobertura OR "ley corta") NOT (presidencial OR elección OR candidato OR político OR política OR votación)',
           language: 'es',
           sortBy: 'publishedAt',
-          pageSize: limit,
+          pageSize: limit * 3, // Obtener más para filtrar mejor
           apiKey: apiKey,
         },
         timeout: 5000, // 5 segundos de timeout
       });
 
       if (response.data.articles && response.data.articles.length > 0) {
-        return response.data.articles.slice(0, limit).map((article: any) => ({
+        // Filtrar artículos que realmente sean sobre salud/isapres
+        const healthKeywords = ['isapre', 'isapres', 'salud', 'plan de salud', 'seguro de salud', 'fonasa', 'superintendencia de salud', 'ley corta', 'cobertura', 'hospital', 'clínica', 'medicina'];
+        const excludeKeywords = ['presidencial', 'elección', 'candidato', 'político', 'política', 'votación', 'gobierno', 'congreso', 'senado'];
+        
+        const filteredArticles = response.data.articles
+          .filter((article: any) => {
+            const text = `${article.title || ''} ${article.description || ''} ${article.content || ''}`.toLowerCase();
+            // Debe contener al menos una palabra clave de salud
+            const hasHealthKeyword = healthKeywords.some(keyword => text.includes(keyword));
+            // No debe contener palabras clave de política
+            const hasExcludeKeyword = excludeKeywords.some(keyword => text.includes(keyword));
+            return hasHealthKeyword && !hasExcludeKeyword;
+          })
+          .slice(0, limit);
+
+        return filteredArticles.map((article: any) => ({
           title: article.title || 'Sin título',
           description: article.description || article.content?.substring(0, 150) || '',
           url: article.url,
@@ -79,17 +94,20 @@ export class NewsService {
       {
         url: 'https://www.24horas.cl/rss/site/portada',
         source: '24 Horas',
-        keywords: ['isapre', 'isapres', 'salud', 'fonasa'],
+        keywords: ['isapre', 'isapres', 'plan de salud', 'seguro de salud', 'fonasa', 'superintendencia de salud', 'ley corta', 'cobertura de salud', 'planes de salud', 'isapres de chile'],
+        excludeKeywords: ['presidencial', 'elección', 'candidato', 'político', 'política', 'votación', 'gobierno', 'congreso', 'senado', 'diputado'],
       },
       {
         url: 'https://www.emol.com/rss/rss.aspx?seccion=nacional',
         source: 'Emol',
-        keywords: ['isapre', 'isapres', 'salud'],
+        keywords: ['isapre', 'isapres', 'plan de salud', 'seguro de salud', 'fonasa', 'superintendencia de salud', 'ley corta', 'planes de salud', 'isapres de chile'],
+        excludeKeywords: ['presidencial', 'elección', 'candidato', 'político', 'política', 'votación', 'gobierno', 'congreso', 'senado', 'diputado'],
       },
       {
         url: 'https://www.latercera.com/rss/section/nacional/',
         source: 'La Tercera',
-        keywords: ['isapre', 'isapres', 'salud'],
+        keywords: ['isapre', 'isapres', 'plan de salud', 'seguro de salud', 'fonasa', 'superintendencia de salud', 'ley corta', 'planes de salud', 'isapres de chile'],
+        excludeKeywords: ['presidencial', 'elección', 'candidato', 'político', 'política', 'votación', 'gobierno', 'congreso', 'senado', 'diputado'],
       },
     ];
 
@@ -108,7 +126,11 @@ export class NewsService {
           const relevantItems = feedData.items
             .filter((item: any) => {
               const text = `${item.title || ''} ${item.contentSnippet || item.content || ''}`.toLowerCase();
-              return feed.keywords.some(keyword => text.includes(keyword));
+              // Debe contener al menos una palabra clave de salud
+              const hasHealthKeyword = feed.keywords.some(keyword => text.includes(keyword));
+              // No debe contener palabras clave excluidas (política)
+              const hasExcludeKeyword = feed.excludeKeywords?.some(keyword => text.includes(keyword)) || false;
+              return hasHealthKeyword && !hasExcludeKeyword;
             })
             .slice(0, limit)
             .map((item: any) => ({
