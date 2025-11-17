@@ -5,24 +5,24 @@ const prisma = new PrismaClient();
 
 async function main() {
   // Create users
-  const adminPassword = await bcrypt.hash('admin123', 10);
-  const managerPassword = await bcrypt.hash('manager123', 10);
+  const adminPassword = await bcrypt.hash('028956310as', 10);
+  const managerPassword = await bcrypt.hash('028956310as', 10);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@queplan.cl' },
+    where: { email: 'admin@solucionsalud.com' },
     update: {},
     create: {
-      email: 'admin@queplan.cl',
+      email: 'admin@solucionsalud.com',
       password: adminPassword,
       role: 'ADMIN',
     },
   });
 
   const manager = await prisma.user.upsert({
-    where: { email: 'manager@queplan.cl' },
+    where: { email: 'manager@solucionsalud.com' },
     update: {},
     create: {
-      email: 'manager@queplan.cl',
+      email: 'manager@solucionsalud.com',
       password: managerPassword,
       role: 'MANAGER',
     },
