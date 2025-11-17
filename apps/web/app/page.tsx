@@ -59,13 +59,25 @@ export default function HomePage() {
     }
   };
 
-  const handleReasonToggle = (reasonId: string) => {
-    setFormData(prev => ({
-      ...prev,
-      reasons: prev.reasons.includes(reasonId)
-        ? prev.reasons.filter(r => r !== reasonId)
-        : [...prev.reasons, reasonId]
-    }));
+  const handleReasonToggle = (reasonId: string, checked: boolean) => {
+    setFormData(prev => {
+      if (checked) {
+        // Agregar si no está ya incluido
+        if (prev.reasons.includes(reasonId)) {
+          return prev;
+        }
+        return {
+          ...prev,
+          reasons: [...prev.reasons, reasonId]
+        };
+      } else {
+        // Remover si está incluido
+        return {
+          ...prev,
+          reasons: prev.reasons.filter(r => r !== reasonId)
+        };
+      }
+    });
   };
 
   const leadMutation = useMutation({
@@ -189,27 +201,22 @@ export default function HomePage() {
                       return (
                         <div
                           key={reason.id}
-                          className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                          className={`flex items-center space-x-3 p-3 rounded-lg border transition-colors ${
                             isChecked
                               ? 'bg-primary/10 border-primary'
                               : 'bg-muted/50 hover:bg-muted'
                           }`}
-                          onClick={(e) => {
-                            e.preventDefault();
-                            handleReasonToggle(reason.id);
-                          }}
                         >
                           <Checkbox
                             id={reason.id}
                             checked={isChecked}
-                            onCheckedChange={() => {
-                              handleReasonToggle(reason.id);
+                            onCheckedChange={(checked) => {
+                              handleReasonToggle(reason.id, checked === true);
                             }}
                           />
                           <Label
                             htmlFor={reason.id}
                             className="flex-1 cursor-pointer font-normal"
-                            onClick={(e) => e.preventDefault()}
                           >
                             {reason.label}
                           </Label>
