@@ -25,9 +25,13 @@ RUN echo "Installing workspace dependencies..." && npm install
 # Build del API
 WORKDIR /app/apps/api
 
-# Verificar que las dependencias estén instaladas y si no, instalarlas directamente
-RUN echo "Checking dependencies..." && \
-    (npm list axios rss-parser 2>/dev/null || (echo "Installing missing dependencies..." && npm install axios@^1.13.2 rss-parser@^3.13.0))
+# Verificar que las dependencias estén instaladas
+# En workspaces, las dependencias están en /app/node_modules, pero TypeScript necesita encontrarlas
+# Crear symlink o verificar que estén disponibles
+RUN echo "Checking node_modules structure..." && \
+    ls -la /app/node_modules | grep -E "(axios|rss-parser)" || echo "Dependencies not in root node_modules" && \
+    echo "Installing dependencies directly in API workspace..." && \
+    npm install axios@^1.13.2 rss-parser@^3.13.0 --save
 
 # Generar Prisma Client
 RUN echo "Generating Prisma Client..." && npx prisma generate --schema=./prisma/schema.prisma
