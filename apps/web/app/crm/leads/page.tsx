@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User } from 'lucide-react';
+import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User, Trash2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -184,6 +184,26 @@ export default function LeadsPage() {
     },
   });
 
+  const cleanupSampleLeadsMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.delete('/leads/cleanup/sample');
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      alert(`Se eliminaron ${data.deleted} leads de ejemplo exitosamente.`);
+    },
+    onError: (error: any) => {
+      alert(error.response?.data?.message || 'Error al eliminar leads de ejemplo');
+    },
+  });
+
+  const handleCleanupSampleLeads = () => {
+    if (confirm('¿Estás seguro de que quieres eliminar todos los leads de ejemplo? Esta acción no se puede deshacer.')) {
+      cleanupSampleLeadsMutation.mutate();
+    }
+  };
+
   const handleStatusChange = (leadId: string, newStatus: string) => {
     updateMutation.mutate({ id: leadId, status: newStatus });
   };
@@ -226,13 +246,24 @@ export default function LeadsPage() {
             Administra y gestiona tus leads
           </p>
         </div>
-        <Button 
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Crear Lead
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            onClick={handleCleanupSampleLeads}
+            variant="destructive"
+            disabled={cleanupSampleLeadsMutation.isPending}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            {cleanupSampleLeadsMutation.isPending ? 'Eliminando...' : 'Limpiar Leads de Ejemplo'}
+          </Button>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Crear Lead
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
