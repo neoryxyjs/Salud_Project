@@ -579,16 +579,52 @@ export default function HomePage() {
       </section>
 
       {/* Sección Isapres Chile */}
-      <section id="isapres-chile" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
-        <div className="container">
-          <div className="text-center mb-12 space-y-4">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-              <Briefcase className="h-8 w-8 text-primary" />
+      <section id="isapres-chile" className="bg-primary text-primary-foreground py-16 md:py-24 relative overflow-hidden">
+        {/* Background decorative icons */}
+        <div className="absolute inset-0 opacity-10 pointer-events-none">
+          <div className="absolute top-10 left-10 w-20 h-20 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute top-32 left-1/4 w-16 h-16 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute bottom-20 left-10 w-12 h-12 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute top-20 right-1/4 w-16 h-16 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute bottom-32 right-20 w-20 h-20 border-2 border-primary-foreground rounded-full"></div>
+        </div>
+
+        <div className="container relative z-10">
+          <div className="grid gap-8 md:grid-cols-2">
+            {/* Columna Izquierda */}
+            <div className="space-y-6">
+              <div>
+                <h2 className="text-2xl md:text-3xl font-bold mb-2">ASOCIACIÓN DE ISAPRES DE CHILE (AICH)</h2>
+                <h3 className="text-3xl md:text-4xl font-bold text-orange-500 mb-6">ISAPRES DE CHILE</h3>
+              </div>
+              <div className="space-y-4 text-primary-foreground/90 leading-relaxed">
+                <p>
+                  La Asociación de Isapres de Chile (AICH) es una asociación gremial, fundada en 1984, teniendo como asociadas al 100% de las Instituciones de Salud Previsional (Isapres) abiertas del país.
+                </p>
+                <p>
+                  Como organización gremial se rige por las disposiciones del D.L 2.757 de 1979 y D.L 3.173 de 1980, y por las estipulaciones contenidas en los Estatutos.
+                </p>
+                <p>
+                  Su función es representar los principios, valores y opiniones de sus asociados frente a los organismos públicos y no gubernamentales, buscando siempre mejorar el bienestar de sus beneficiarios a través de la promoción del desarrollo y perfeccionamiento del sistema.
+                </p>
+                <p>
+                  En este contexto, desde su creación, la Asociación de Isapres se ha constituido como un organismo de consulta, opinión y difusión, facultada y capacitada para otorgar respuestas a la opinión pública y la autoridad respecto a materias que le competen, participar del debate de las políticas públicas y transmitir las acciones atingentes al sector que representa.
+                </p>
+              </div>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold">Isapres Chile</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-              Información sobre las principales Isapres de Chile y sus planes de salud disponibles.
-            </p>
+
+            {/* Columna Derecha - Caja azul más clara */}
+            <div className="bg-primary/80 rounded-xl p-6 md:p-8 space-y-6">
+              <h4 className="text-2xl font-bold">LAS Isapres</h4>
+              <div className="space-y-4 text-primary-foreground/90 leading-relaxed">
+                <p>
+                  Las Instituciones de Salud Previsional (Isapres) son entidades privadas que funcionan en base a un esquema de seguros, las cuales están facultados para recibir y administrar la cotización obligatoria de salud (7% de su remuneración imponible) de los trabajadores y personas, que libre e individualmente optaron por ellas en lugar del sistema de salud estatal (FONASA). A cargo de estas cotizaciones las Isapres financian prestaciones de salud y el pago de licencias médicas. Estas prestaciones de salud se otorgan mediante la contratación de servicios médicos financiados por las Isapres.
+                </p>
+                <p>
+                  Las Isapres fueron creadas en 1981 en virtud de la dictación del DFL N°3 del Ministerio de Salud y desde el año 2005 son supervisadas por la Superintendencia de Salud. Hoy otorgan servicios de financiamiento de la salud a un 19% de la población de Chile y permitieron en nuestro país la expansión de la actividad médica privada y el auge de la inversión en clínicas, centros médicos, laboratorios, entre otros.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
