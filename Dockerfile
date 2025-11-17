@@ -5,8 +5,7 @@ FROM node:18-alpine AS base
 RUN apk add --no-cache \
     libc6-compat \
     openssl \
-    openssl-dev \
-    openssl1.1-compat
+    openssl-dev
 
 WORKDIR /app
 
@@ -72,8 +71,7 @@ FROM node:18-alpine AS runner
 # Instalar OpenSSL en la etapa de producción también
 RUN apk add --no-cache \
     libc6-compat \
-    openssl \
-    openssl1.1-compat
+    openssl
 
 WORKDIR /app
 
@@ -84,6 +82,10 @@ COPY --from=base /app/prisma ./prisma
 
 # Copiar node_modules desde la raíz del monorepo (workspaces)
 COPY --from=base /app/node_modules ./node_modules
+
+# Configurar variable de entorno para Prisma (OpenSSL 3.x)
+ENV PRISMA_QUERY_ENGINE_LIBRARY=/app/node_modules/.prisma/client/libquery_engine-linux-musl-openssl-3.0.x.so.node
+ENV PRISMA_QUERY_ENGINE_BINARY=/app/node_modules/.prisma/client/query-engine-linux-musl-openssl-3.0.x
 
 # Exponer puerto
 EXPOSE 3001
