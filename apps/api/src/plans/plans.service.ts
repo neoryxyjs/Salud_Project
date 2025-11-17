@@ -185,5 +185,26 @@ export class PlansService {
 
     return results;
   }
+
+  async remove(id: string) {
+    // Eliminar tiers primero (cascade debería hacerlo, pero por si acaso)
+    await this.prisma.priceTier.deleteMany({
+      where: { planId: id },
+    });
+    
+    return this.prisma.plan.delete({
+      where: { id },
+    });
+  }
+
+  async removeAll() {
+    // Eliminar todos los tiers primero
+    await this.prisma.priceTier.deleteMany({});
+    
+    // Eliminar todos los planes
+    const result = await this.prisma.plan.deleteMany({});
+    
+    return { deleted: result.count };
+  }
 }
 

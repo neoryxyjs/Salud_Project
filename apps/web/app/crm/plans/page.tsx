@@ -76,6 +76,9 @@ export default function PlansPage() {
   const [selectedPlan, setSelectedPlan] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleteAllDialogOpen, setIsDeleteAllDialogOpen] = useState(false);
+  const [planToDelete, setPlanToDelete] = useState<any>(null);
   const [newPlan, setNewPlan] = useState({
     insurerSlug: '',
     name: '',
@@ -145,6 +148,44 @@ export default function PlansPage() {
       });
     },
   });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { data } = await api.delete(`/plans/${id}`);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      setIsDeleteDialogOpen(false);
+      setPlanToDelete(null);
+    },
+  });
+
+  const deleteAllMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.delete('/plans/cleanup/all');
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['plans'] });
+      setIsDeleteAllDialogOpen(false);
+    },
+  });
+
+  const handleDelete = (plan: any) => {
+    setPlanToDelete(plan);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const confirmDelete = () => {
+    if (planToDelete) {
+      deleteMutation.mutate(planToDelete.id);
+    }
+  };
+
+  const confirmDeleteAll = () => {
+    deleteAllMutation.mutate();
+  };
 
   const handleCreate = () => {
     const planData = {
@@ -228,10 +269,21 @@ export default function PlansPage() {
             Gestiona los planes de salud de las Isapres
           </p>
         </div>
-        <Button onClick={() => setIsCreateDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Crear Plan
-        </Button>
+        <div className="flex gap-2">
+          {plans && plans.length > 0 && (
+            <Button
+              variant="destructive"
+              onClick={() => setIsDeleteAllDialogOpen(true)}
+            >
+              <Trash2 className="mr-2 h-4 w-4" />
+              Eliminar Todos
+            </Button>
+          )}
+          <Button onClick={() => setIsCreateDialogOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Crear Plan
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4">
@@ -314,6 +366,13 @@ export default function PlansPage() {
                         <DropdownMenuItem onClick={() => handleEdit(plan)}>
                           <Edit className="mr-2 h-4 w-4" />
                           Editar
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={() => handleDelete(plan)}
+                          className="text-destructive"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Eliminar
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -814,6 +873,60 @@ export default function PlansPage() {
               }
             >
               {syncMutation.isPending ? 'Actualizando...' : 'Actualizar Plan'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Eliminar Plan */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar Plan</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas eliminar el plan "{planToDelete?.name}"? Esta acción no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteDialogOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDelete}
+              disabled={deleteMutation.isPending}
+            >
+              {deleteMutation.isPending ? 'Eliminando...' : 'Eliminar'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Eliminar Todos los Planes */}
+      <Dialog open={isDeleteAllDialogOpen} onOpenChange={setIsDeleteAllDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Eliminar Todos los Planes</DialogTitle>
+            <DialogDescription>
+              ¿Estás seguro de que deseas eliminar todos los planes? Esta acción eliminará {plans?.length || 0} planes y no se puede deshacer.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDeleteAllDialogOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteAll}
+              disabled={deleteAllMutation.isPending}
+            >
+              {deleteAllMutation.isPending ? 'Eliminando...' : 'Eliminar Todos'}
             </Button>
           </DialogFooter>
         </DialogContent>

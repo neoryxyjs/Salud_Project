@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Post, Body, UseGuards, Delete } from '@nestjs/common';
 import { PlansService } from './plans.service';
 import { GetPlansDto } from './dto/get-plans.dto';
 import { SyncPlansDto } from './dto/sync-plans.dto';
@@ -30,6 +30,20 @@ export class PlansController {
   @Roles('ADMIN', 'MANAGER')
   async syncPlans(@Body() syncPlansDto: SyncPlansDto) {
     return this.plansService.syncPlans(syncPlansDto.plans);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'MANAGER')
+  async remove(@Param('id') id: string) {
+    return this.plansService.remove(id);
+  }
+
+  @Delete('cleanup/all')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  async removeAll() {
+    return this.plansService.removeAll();
   }
 }
 
