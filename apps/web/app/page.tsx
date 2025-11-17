@@ -286,7 +286,7 @@ export default function HomePage() {
                   type="submit" 
                   size="lg" 
                   className="w-full"
-                  disabled={leadMutation.isPending || (rut && !!rutError) || formData.reasons.length === 0 || !formData.region}
+                  disabled={leadMutation.isPending || (rut ? rutError !== '' : false) || formData.reasons.length === 0 || !formData.region}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
                 </Button>

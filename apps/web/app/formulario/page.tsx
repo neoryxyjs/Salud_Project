@@ -173,7 +173,7 @@ export default function FormularioPage() {
                 <Button 
                   type="submit" 
                   className="w-full"
-                  disabled={leadMutation.isPending || (rut && !!rutError)}
+                  disabled={leadMutation.isPending || (rut ? rutError !== '' : false)}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
                 </Button>
