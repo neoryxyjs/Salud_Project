@@ -981,15 +981,105 @@ export default function HomePage() {
       {/* Sección Ley Corta */}
       <section id="ley-corta" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
         <div className="container">
+          {/* Título Principal */}
           <div className="text-center mb-12 space-y-4">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-              <Scale className="h-8 w-8 text-primary" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold">Ley Corta</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-              Información sobre la Ley Corta de Isapres y sus implicaciones.
+            <p className="text-primary text-sm font-semibold uppercase tracking-wider">
+              TE EXPLICAMOS LOS ASPECTOS CLAVE DE LA LEY N° 21.674
+            </p>
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
+              ¿QUÉ ES LA LEY CORTA?
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+              Te explicamos en simple todo lo que necesitas saber sobre la Ley Corta, sus implicancias, fechas importantes y más.
             </p>
           </div>
+
+          {/* Fechas Importantes */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {/* Fecha 1 */}
+            <Card className="border-2 hover:shadow-lg transition-shadow">
+              <CardHeader className="space-y-3">
+                <div className="h-16 w-16 rounded-lg border-2 border-red-500 bg-white flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-foreground">24 de mayo 2024</p>
+                  <CardDescription className="text-sm mt-2">
+                    Publicación Ley 21.674 &quot;Ley Corta&quot;
+                  </CardDescription>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Fecha 2 */}
+            <Card className="border-2 hover:shadow-lg transition-shadow">
+              <CardHeader className="space-y-3">
+                <div className="h-16 w-16 rounded-lg border-2 border-red-500 bg-white flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-foreground">31 de agosto 2024</p>
+                  <CardDescription className="text-sm mt-2">
+                    Fecha máxima que tenemos para informar los costos de tu plan de salud
+                  </CardDescription>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Fecha 3 */}
+            <Card className="border-2 hover:shadow-lg transition-shadow">
+              <CardHeader className="space-y-3">
+                <div className="h-16 w-16 rounded-lg border-2 border-red-500 bg-white flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-foreground">30 septiembre 2024</p>
+                  <CardDescription className="text-sm mt-2">
+                    Plazo máximo para que nos comuniques tu decisión de ajuste de plan (en caso que aplique)
+                  </CardDescription>
+                </div>
+              </CardHeader>
+            </Card>
+
+            {/* Fecha 4 */}
+            <Card className="border-2 hover:shadow-lg transition-shadow">
+              <CardHeader className="space-y-3">
+                <div className="h-16 w-16 rounded-lg border-2 border-red-500 bg-white flex items-center justify-center">
+                  <Calendar className="h-8 w-8 text-red-500" />
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-foreground">30 de noviembre 2024</p>
+                  <CardDescription className="text-sm mt-2">
+                    Plazo máximo para comunicación oficial sobre devoluciones
+                  </CardDescription>
+                </div>
+              </CardHeader>
+            </Card>
+          </div>
+
+          {/* Caja Informativa */}
+          <Card className="border-2 border-blue-200 bg-blue-50/50">
+            <CardHeader>
+              <CardTitle className="text-2xl text-primary">Información Actualizada</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4 text-muted-foreground leading-relaxed">
+              <p>
+                Concluido el plazo estipulado por la Ley N° 21.674 (Ley Corta) para que las Isapre presentaran sus Planes de Pago y Ajuste (PPA), con el objetivo de cumplir con el fallo de la Corte Suprema sobre la tabla de factores de riesgo, la Superintendencia de Salud informa lo siguiente:
+              </p>
+              <p>
+                La Intendencia de Fondos y Seguros Previsionales de la Superintendencia de Salud recibió cuatro propuestas de plan de pago y ajuste de las Isapre Consalud, Cruz Blanca, Fundación y Nueva Masvida. Además, se aceptaron cinco solicitudes de prórroga de las Isapre Isalud, Esencial, Colmena, Banmédica y Vida Tres, quienes tendrán hasta un mes adicional (hasta el 7 de agosto) para presentar sus propuestas.
+              </p>
+              <p>
+                Con la recepción de estas cuatro propuestas, ha comenzado la revisión para verificar el cumplimiento de los contenidos mínimos requeridos en el plan, según lo establecido en la Circular IF N°470. Si se cumplen estos requisitos, las propuestas serán enviadas en los próximos cinco días al Consejo Consultivo sobre Seguros Previsionales, que tendrá un plazo de 30 días para elaborar y emitir recomendaciones fundamentadas para cada plan presentado.
+              </p>
+              <p>
+                Simultáneamente, el equipo técnico de la Superintendencia de Salud iniciará el análisis y verificación de la información contenida en cada propuesta entregada por las aseguradoras.
+              </p>
+              <p>
+                Finalmente, se informa que, mediante la Resolución Exenta N°870, el Superintendente de Salud, Dr. Victor Torres Jeldes, ha convocado a la primera sesión del Consejo Consultivo sobre Seguros Previsionales para el jueves 11 de julio de 2024.
+              </p>
+            </CardContent>
+          </Card>
         </div>
       </section>
     </div>
