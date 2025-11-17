@@ -28,7 +28,7 @@ export default function HomePage() {
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
 
   useEffect(() => {
-    // Capturar UTM parameters de la URL
+    // Capturar UTM parameters de la URL solo en el cliente
     if (typeof window !== 'undefined') {
       const params = new URLSearchParams(window.location.search);
       const utm: Record<string, string> = {};
@@ -92,6 +92,10 @@ export default function HomePage() {
       return;
     }
     
+    if (formData.reasons.length === 0) {
+      return;
+    }
+    
     leadMutation.mutate({
       ...formData,
       rut: rut || undefined,
@@ -117,7 +121,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-3xl mt-8">
           <Card className="border-2">
             <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-              <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 mb-4">
+              <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 mb-4" type="button">
                 Asesoría Gratuita
               </Button>
               <CardTitle className="text-2xl text-center text-primary-foreground">
@@ -180,29 +184,38 @@ export default function HomePage() {
                     ¿Cuáles son los motivos para revisar tu Isapre? * (Selecciona todas las que apliquen)
                   </Label>
                   <div className="space-y-2">
-                    {REASONS.map((reason) => (
-                      <div
-                        key={reason.id}
-                        className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                          formData.reasons.includes(reason.id)
-                            ? 'bg-primary/10 border-primary'
-                            : 'bg-muted/50 hover:bg-muted'
-                        }`}
-                        onClick={() => handleReasonToggle(reason.id)}
-                      >
-                        <Checkbox
-                          id={reason.id}
-                          checked={formData.reasons.includes(reason.id)}
-                          onCheckedChange={() => handleReasonToggle(reason.id)}
-                        />
-                        <Label
-                          htmlFor={reason.id}
-                          className="flex-1 cursor-pointer font-normal"
+                    {REASONS.map((reason) => {
+                      const isChecked = formData.reasons.includes(reason.id);
+                      return (
+                        <div
+                          key={reason.id}
+                          className={`flex items-center space-x-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                            isChecked
+                              ? 'bg-primary/10 border-primary'
+                              : 'bg-muted/50 hover:bg-muted'
+                          }`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            handleReasonToggle(reason.id);
+                          }}
                         >
-                          {reason.label}
-                        </Label>
-                      </div>
-                    ))}
+                          <Checkbox
+                            id={reason.id}
+                            checked={isChecked}
+                            onCheckedChange={() => {
+                              handleReasonToggle(reason.id);
+                            }}
+                          />
+                          <Label
+                            htmlFor={reason.id}
+                            className="flex-1 cursor-pointer font-normal"
+                            onClick={(e) => e.preventDefault()}
+                          >
+                            {reason.label}
+                          </Label>
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
 
