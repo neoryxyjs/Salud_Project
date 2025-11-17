@@ -24,7 +24,7 @@ export function SiteHeader() {
       <div className="container flex h-14 items-center justify-between px-4 sm:px-6">
         <div className="flex items-center">
           <Link href="/" className="flex items-center space-x-2">
-            <span className="font-bold text-lg sm:text-xl">SolucionSalud</span>
+            <span className="font-bold text-lg sm:text-xl">Solucion De Salud</span>
           </Link>
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex items-center ml-6 space-x-4 xl:space-x-6 text-sm font-medium">

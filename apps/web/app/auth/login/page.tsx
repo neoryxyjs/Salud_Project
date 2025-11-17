@@ -51,7 +51,7 @@ export default function LoginPage() {
             </div>
             <div className="text-center space-y-1 sm:space-y-2">
               <CardTitle className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
-                SolucionSalud CRM
+                Solucion De Salud CRM
               </CardTitle>
               <CardDescription className="text-sm sm:text-base">
                 Accede al panel de control

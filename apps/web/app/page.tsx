@@ -535,7 +535,7 @@ export default function HomePage() {
           <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-3 sm:gap-4 text-center px-2">
             <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">BENEFICIOS</p>
             <h2 className="font-heading text-2xl sm:text-3xl leading-[1.1] md:text-4xl lg:text-5xl xl:text-6xl font-bold">
-              ¿Por qué elegir <span className="text-primary">SolucionSalud</span>?
+              ¿Por qué elegir <span className="text-primary">Solucion De Salud</span>?
             </h2>
           </div>
           <div className="mx-auto grid justify-center gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 px-2">
@@ -583,14 +583,14 @@ export default function HomePage() {
             <div className="md:col-span-2 space-y-6 sm:space-y-8">
               <div className="space-y-2 sm:space-y-3">
                 <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NUESTRA EMPRESA</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">SOLUCIONSALUD</h2>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">SOLUCION DE SALUD</h2>
                 <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
                   QUIENES SOMOS
                 </h3>
               </div>
               <div className="space-y-4 sm:space-y-6 text-muted-foreground">
                 <p className="text-base sm:text-lg leading-relaxed">
-                  SolucionSalud es una plataforma web <strong className="text-foreground font-semibold">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
+                  Solucion De Salud es una plataforma web <strong className="text-foreground font-semibold">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
                 </p>
                 <p className="leading-relaxed text-sm sm:text-base">
                   Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
@@ -738,7 +738,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed text-sm">
-                  En SolucionSalud encontrarás el plan que más se acomode a tu perfil y al de tu familia.
+                  En Solucion De Salud encontrarás el plan que más se acomode a tu perfil y al de tu familia.
                 </p>
               </CardContent>
             </Card>

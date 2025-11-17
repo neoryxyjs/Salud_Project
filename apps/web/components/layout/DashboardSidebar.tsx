@@ -46,7 +46,7 @@ export function DashboardSidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-background">
       <div className="flex h-14 items-center border-b px-6">
-        <span className="font-bold text-lg">SolucionSalud CRM</span>
+        <span className="font-bold text-lg">Solucion De Salud CRM</span>
       </div>
       <nav className="flex-1 space-y-1 p-4">
         {menuItems.map((item) => {
