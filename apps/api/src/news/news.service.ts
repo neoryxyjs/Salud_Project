@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
-import Parser from 'rss-parser';
+import RSSParser from 'rss-parser';
 
 export interface NewsItem {
   title: string;
@@ -14,7 +14,7 @@ export interface NewsItem {
 @Injectable()
 export class NewsService {
   private readonly logger = new Logger(NewsService.name);
-  private readonly parser = new Parser();
+  private readonly parser: RSSParser = new RSSParser();
 
   async getLatestNews(limit: number = 3): Promise<NewsItem[]> {
     try {
@@ -149,26 +149,27 @@ export class NewsService {
   }
 
   getDefaultNews(): NewsItem[] {
+    const now = new Date();
     return [
       {
         title: 'Sistema de Isapres: Últimas actualizaciones y cambios normativos',
-        description: 'Conoce las últimas modificaciones en el sistema de Isapres y cómo afectan a los beneficiarios.',
+        description: 'Conoce las últimas modificaciones en el sistema de Isapres y cómo afectan a los beneficiarios. La Superintendencia de Salud continúa trabajando en mejorar la transparencia y protección de los usuarios.',
         url: 'https://www.superdesalud.gob.cl',
-        publishedAt: new Date().toISOString(),
+        publishedAt: new Date(now.getTime() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 días atrás
         source: 'Superintendencia de Salud',
       },
       {
-        title: 'Nuevas regulaciones para planes de salud en Chile',
-        description: 'El gobierno anuncia nuevas medidas para mejorar la transparencia y cobertura de los planes de salud.',
-        url: 'https://www.minsal.cl',
-        publishedAt: new Date().toISOString(),
-        source: 'Ministerio de Salud',
+        title: 'Impacto de la Ley Corta en los planes de salud de Isapres',
+        description: 'Análisis de cómo la reciente Ley Corta afectará los precios y beneficios de los planes de salud para los afiliados. Los cambios buscan mayor equidad en el sistema.',
+        url: 'https://www.superdesalud.gob.cl',
+        publishedAt: new Date(now.getTime() - 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 días atrás
+        source: 'Superintendencia de Salud',
       },
       {
-        title: 'Guía para elegir el mejor plan de Isapre',
-        description: 'Consejos y recomendaciones para seleccionar el plan de salud que mejor se adapte a tus necesidades.',
-        url: '#',
-        publishedAt: new Date().toISOString(),
+        title: 'Consejos para elegir el mejor plan de Isapre en 2024',
+        description: 'Expertos comparten recomendaciones clave para que los usuarios tomen decisiones informadas al contratar o cambiar su plan de salud. Compara coberturas, precios y beneficios.',
+        url: 'https://www.superdesalud.gob.cl',
+        publishedAt: new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 días atrás
         source: 'QuePlan',
       },
     ];

@@ -97,7 +97,7 @@ async function main() {
           coverageAmb: 70 + i * 5,
           coverageEr: 90 + i * 3,
           annualCapUF: 100 + i * 50,
-          networkTags: ['Nacional', i > 1 ? 'Internacional' : null].filter(Boolean),
+          networkTags: ['Nacional', i > 1 ? 'Internacional' : null].filter((tag): tag is string => tag !== null),
           features: {
             dental: i > 0,
             oftalmologia: i > 1,
