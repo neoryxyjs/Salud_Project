@@ -253,12 +253,12 @@ export default function LeadsPage() {
             className="pl-8"
           />
         </div>
-        <Select value={statusFilter} onValueChange={(value) => { setStatusFilter(value); setPage(1); }}>
+        <Select value={statusFilter || 'all'} onValueChange={(value) => { setStatusFilter(value === 'all' ? '' : value); setPage(1); }}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Filtrar por estado" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todos los estados</SelectItem>
+            <SelectItem value="all">Todos los estados</SelectItem>
             {statusOptions.map((status) => (
               <SelectItem key={status.value} value={status.value}>
                 {status.label}
@@ -266,12 +266,12 @@ export default function LeadsPage() {
             ))}
           </SelectContent>
         </Select>
-        <Select value={regionFilter} onValueChange={(value) => { setRegionFilter(value); setPage(1); }}>
+        <Select value={regionFilter || 'all'} onValueChange={(value) => { setRegionFilter(value === 'all' ? '' : value); setPage(1); }}>
           <SelectTrigger className="w-[200px]">
             <SelectValue placeholder="Filtrar por región" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas las regiones</SelectItem>
+            <SelectItem value="all">Todas las regiones</SelectItem>
             {CHILEAN_REGIONS.map((region) => (
               <SelectItem key={region.value} value={region.value}>
                 {region.label}
