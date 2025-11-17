@@ -19,24 +19,36 @@ export function SiteHeader() {
             <span className="font-bold text-xl">QuePlan</span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            <Link
-              href="/"
+            <a
+              href="#inicio"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Inicio
-            </Link>
-            <Link
-              href="/quienes-somos"
+            </a>
+            <a
+              href="#quienes-somos"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('quienes-somos')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Quienes Somos
-            </Link>
-            <Link
-              href="/plataforma"
+            </a>
+            <a
+              href="#plataforma"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('plataforma')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Plataforma
-            </Link>
+            </a>
             <DropdownMenu>
               <DropdownMenuTrigger className="flex items-center gap-1 transition-colors hover:text-foreground/80 text-foreground/60 outline-none">
                 Instituciones
@@ -44,37 +56,69 @@ export function SiteHeader() {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start">
                 <DropdownMenuItem asChild>
-                  <Link href="/instituciones/superintendencia">Superintendencia</Link>
+                  <a
+                    href="#superintendencia"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('superintendencia')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Superintendencia
+                  </a>
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/instituciones/isapres-chile">Isapres Chile</Link>
+                  <a
+                    href="#isapres-chile"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document.getElementById('isapres-chile')?.scrollIntoView({ behavior: 'smooth' });
+                    }}
+                  >
+                    Isapres Chile
+                  </a>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-            <Link
-              href="/noticias"
+            <a
+              href="#noticias"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('noticias')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Noticias
-            </Link>
-            <Link
-              href="/descargas"
+            </a>
+            <a
+              href="#descargas"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('descargas')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Descargas
-            </Link>
-            <Link
-              href="/mujeres"
+            </a>
+            <a
+              href="#mujeres"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('mujeres')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Mujeres
-            </Link>
-            <Link
-              href="/ley-corta"
+            </a>
+            <a
+              href="#ley-corta"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('ley-corta')?.scrollIntoView({ behavior: 'smooth' });
+              }}
             >
               Ley Corta
-            </Link>
+            </a>
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end space-x-2">

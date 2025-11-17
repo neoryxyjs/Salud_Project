@@ -118,8 +118,8 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Hero Section con Formulario */}
-      <section className="container space-y-6 py-8 md:py-12 lg:py-24">
+      {/* Sección Inicio */}
+      <section id="inicio" className="container space-y-6 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
           <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
             Compara Planes de Salud
@@ -344,6 +344,202 @@ export default function HomePage() {
               </CardDescription>
             </CardHeader>
           </Card>
+        </div>
+      </section>
+
+      {/* Sección Quienes Somos */}
+      <section id="quienes-somos" className="container py-12 md:py-24">
+        <div className="grid gap-8 md:grid-cols-3">
+          <div className="md:col-span-2 space-y-6">
+            <div>
+              <h2 className="text-2xl font-bold text-primary mb-2">QUEPLAN</h2>
+              <h3 className="text-4xl font-bold text-orange-600 mb-4">QUIENES SOMOS</h3>
+            </div>
+            <p className="text-muted-foreground text-lg">
+              QuePlan es una plataforma web 100% en línea y gratuita, para cotizar y comparar planes de salud de todas las Isapres de Chile.
+            </p>
+            <p className="text-muted-foreground">
+              Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
+            </p>
+            <p className="text-muted-foreground">
+              Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
+            </p>
+          </div>
+          <div className="space-y-4">
+            <h4 className="text-xl font-bold">Lo que necesitas saber</h4>
+            <div className="space-y-2">
+              <a href="#que-son-isapres" className="flex items-center gap-2 text-primary hover:underline">
+                <span>→</span>
+                <span>Qué son las Isapres</span>
+              </a>
+              <a href="#que-son-planes" className="flex items-center gap-2 text-primary hover:underline">
+                <span>→</span>
+                <span>Qué son los planes de salud</span>
+              </a>
+              <a href="#normativa-minsal" className="flex items-center gap-2 text-primary hover:underline">
+                <span>→</span>
+                <span>Normativa vigente MINSAL</span>
+              </a>
+              <a href="#derechos-usuarios" className="flex items-center gap-2 text-primary hover:underline">
+                <span>→</span>
+                <span>Derecho de los usuarios</span>
+              </a>
+              <a href="#contratos-salud" className="flex items-center gap-2 text-primary hover:underline">
+                <span>→</span>
+                <span>Contratos de Salud</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección Plataforma */}
+      <section id="plataforma" className="bg-muted/50 py-12 md:py-24">
+        <div className="container">
+          <div className="text-center mb-12">
+            <p className="text-primary text-sm font-semibold mb-2">SOMOS LA MEJOR PLATAFORMA</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-orange-600 mb-4">
+              PARA COTIZAR PLANES DE ISAPRE
+            </h2>
+            <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
+              Hacemos que sea simple y fácil la búsqueda de planes de Isapre, tanto para cotizantes y ejecutivos.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Asesores profesionales</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  Contamos con ejecutivos altamente calificados y de mucha experiencia en el mercado.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Cotizar es fácil</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  De forma rápida y simple podrás elegir uno o más planes y contactar a un ejecutivo en menos de 30 minutos.
+                </p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-primary">Planes a tu medida</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground">
+                  En QuePlan encontrarás el plan que más se acomode a tu perfil y al de tu familia.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+          <div className="text-center mt-8">
+            <Button size="lg" className="bg-primary text-primary-foreground">
+              → Cotiza tu plan de isapre ahora!
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Sección Superintendencia */}
+      <section id="superintendencia" className="container py-12 md:py-24">
+        <div className="bg-primary text-primary-foreground p-8 rounded-lg mb-8 text-center">
+          <h2 className="text-2xl font-bold mb-4">SUPERINTENDENCIA DE SALUD</h2>
+          <h3 className="text-3xl font-bold mb-4">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
+          <p className="max-w-3xl mx-auto">
+            La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
+          </p>
+        </div>
+        <div className="grid gap-6 md:grid-cols-3">
+          <Card>
+            <CardHeader>
+              <CardTitle>Caracterización de los profesionales de la salud en Chile</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Esta herramienta permitirá observar periódicamente las magnitudes de un conjunto de características de profesionales, técnicos y auxiliares de salud del país.
+              </p>
+              <Button variant="outline" className="text-orange-600 border-orange-600">
+                Ver Más
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Atención gratuita en la red pública</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                Desde septiembre de 2022, las personas beneficiarias de Fonasa de los tramos C y D tendrán gratuidad en todas sus atenciones en el sistema público de salud.
+              </p>
+              <Button variant="outline" className="text-orange-600 border-orange-600">
+                Ver Más
+              </Button>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle>Revisa toda la información sobre el proceso de vacunación COVID-19</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground mb-4">
+                El nuevo plan se basa en nueva evidencia y fue elaborado en conjunto con especialistas, en un proceso de diálogo dirigido por la ministra María Begoña Yarza.
+              </p>
+              <Button variant="outline" className="text-orange-600 border-orange-600">
+                Ver Más
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </section>
+
+      {/* Sección Isapres Chile */}
+      <section id="isapres-chile" className="bg-muted/50 py-12 md:py-24">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-8">Isapres Chile</h2>
+          <p className="text-center text-muted-foreground max-w-2xl mx-auto">
+            Información sobre las principales Isapres de Chile y sus planes de salud disponibles.
+          </p>
+        </div>
+      </section>
+
+      {/* Sección Noticias */}
+      <section id="noticias" className="container py-12 md:py-24">
+        <h2 className="text-3xl font-bold text-center mb-8">Noticias</h2>
+        <p className="text-center text-muted-foreground">
+          Mantente informado sobre las últimas noticias del sector de salud en Chile.
+        </p>
+      </section>
+
+      {/* Sección Descargas */}
+      <section id="descargas" className="bg-muted/50 py-12 md:py-24">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-8">Descargas</h2>
+          <p className="text-center text-muted-foreground">
+            Descarga documentos, guías y recursos útiles sobre planes de salud.
+          </p>
+        </div>
+      </section>
+
+      {/* Sección Mujeres */}
+      <section id="mujeres" className="container py-12 md:py-24">
+        <h2 className="text-3xl font-bold text-center mb-8">Mujeres</h2>
+        <p className="text-center text-muted-foreground">
+          Información especializada en planes de salud para mujeres.
+        </p>
+      </section>
+
+      {/* Sección Ley Corta */}
+      <section id="ley-corta" className="bg-muted/50 py-12 md:py-24">
+        <div className="container">
+          <h2 className="text-3xl font-bold text-center mb-8">Ley Corta</h2>
+          <p className="text-center text-muted-foreground">
+            Información sobre la Ley Corta de Isapres y sus implicaciones.
+          </p>
         </div>
       </section>
     </div>
