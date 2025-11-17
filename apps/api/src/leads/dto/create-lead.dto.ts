@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsObject } from 'class-validator';
+import { IsString, IsOptional, IsObject, IsArray, ValidateIf } from 'class-validator';
 
 export class CreateLeadDto {
   @IsString()
@@ -14,7 +14,24 @@ export class CreateLeadDto {
 
   @IsOptional()
   @IsString()
+  rut?: string;
+
+  @IsOptional()
+  @IsString()
   region?: string;
+
+  @IsOptional()
+  @IsString()
+  currentInsurer?: string;
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  reasons?: string[];
+
+  @IsOptional()
+  @IsString()
+  comments?: string;
 
   @IsOptional()
   @IsString()

@@ -116,8 +116,23 @@ export default function LeadsPage() {
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await api.delete(`/leads/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+    },
+  });
+
   const handleStatusChange = (leadId: string, newStatus: string) => {
     updateMutation.mutate({ id: leadId, status: newStatus });
+  };
+
+  const handleDelete = (leadId: string) => {
+    if (confirm('¿Estás seguro de que quieres eliminar este lead? Esta acción no se puede deshacer.')) {
+      deleteMutation.mutate(leadId);
+    }
   };
 
   const handleEdit = async (lead: any) => {
@@ -247,6 +262,12 @@ export default function LeadsPage() {
                               Marcar como {status.label}
                             </DropdownMenuItem>
                           ))}
+                          <DropdownMenuItem
+                            className="text-destructive focus:text-destructive"
+                            onClick={() => handleDelete(lead.id)}
+                          >
+                            Eliminar
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

@@ -212,5 +212,16 @@ export class LeadsService {
       qualifiedThisMonth,
     };
   }
+
+  async remove(id: string) {
+    // Eliminar actividades primero (cascade debería hacerlo, pero por si acaso)
+    await this.prisma.leadActivity.deleteMany({
+      where: { leadId: id },
+    });
+    
+    return this.prisma.lead.delete({
+      where: { id },
+    });
+  }
 }
 

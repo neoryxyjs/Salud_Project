@@ -8,6 +8,7 @@ import {
   Query,
   UseGuards,
   Request,
+  Delete,
 } from '@nestjs/common';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -17,14 +18,32 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { RolesGuard } from '../auth/role.guard';
 import { Roles } from '../auth/roles.decorator';
 import { Role } from '@prisma/client';
+import { BadRequestException } from '@nestjs/common';
+import { validateRUT } from '../utils/rut-validator';
 
 @Controller('leads')
 export class LeadsController {
   constructor(private leadsService: LeadsService) {}
 
   @Post()
-  create(@Body() createLeadDto: CreateLeadDto) {
-    return this.leadsService.create(createLeadDto);
+  create(@Body() createLeadDto: CreateLeadDto, @Request() req) {
+    // Validar RUT si se proporciona
+    if (createLeadDto.rut && !validateRUT(createLeadDto.rut)) {
+      throw new BadRequestException('El RUT proporcionado no es válido');
+    }
+    
+    // Capturar UTM parameters si vienen en el query
+    const utmParams: any = {};
+    if (req.query?.utm_source) utmParams.source = req.query.utm_source;
+    if (req.query?.utm_medium) utmParams.medium = req.query.utm_medium;
+    if (req.query?.utm_campaign) utmParams.campaign = req.query.utm_campaign;
+    if (req.headers?.referer) utmParams.referrer = req.headers.referer;
+    if (req.headers?.['user-agent']) utmParams.userAgent = req.headers['user-agent'];
+    
+    return this.leadsService.create({
+      ...createLeadDto,
+      utm: Object.keys(utmParams).length > 0 ? utmParams : createLeadDto.utm,
+    });
   }
 
   @Get()
@@ -76,6 +95,14 @@ export class LeadsController {
   @Roles(Role.ADMIN, Role.MANAGER)
   getStats() {
     return this.leadsService.getStats();
+  }
+
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  remove(@Param('id') id: string) {
+    return this.leadsService.remove(id);
   }
 }
 

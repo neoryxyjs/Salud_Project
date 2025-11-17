@@ -66,21 +66,25 @@ model PriceTier {
 }
 
 model Lead {
-  id        String         @id @default(cuid())
-  planId    String?
-  plan      Plan?          @relation(fields: [planId], references: [id])
-  name      String
-  email     String?
-  phone     String?
-  region    String?
-  utm       Json?
-  status    String         @default("new")
-  notes     String?
-  userId    String?
-  user      User?          @relation(fields: [userId], references: [id])
-  activities LeadActivity[]
-  createdAt DateTime       @default(now())
-  updatedAt DateTime       @default(now()) @updatedAt
+  id            String         @id @default(cuid())
+  planId        String?
+  plan          Plan?          @relation(fields: [planId], references: [id])
+  name          String
+  email         String?
+  phone         String?
+  rut           String?
+  region        String?
+  currentInsurer String?
+  reasons       String[]       @default([])
+  comments      String?
+  utm           Json?
+  status        String         @default("new")
+  notes         String?
+  userId        String?
+  user          User?          @relation(fields: [userId], references: [id])
+  activities    LeadActivity[]
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @default(now()) @updatedAt
 }
 
 model LeadActivity {
