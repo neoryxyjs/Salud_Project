@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import axios from 'axios';
 import Parser from 'rss-parser';
 
-interface NewsItem {
+export interface NewsItem {
   title: string;
   description: string;
   url: string;
