@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
@@ -8,23 +9,31 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Menu, X } from 'lucide-react';
 
 export function SiteHeader() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  const scrollToSection = (id: string) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    setMobileMenuOpen(false);
+  };
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-14 items-center">
-        <div className="mr-4 flex">
-          <Link href="/" className="mr-6 flex items-center space-x-2">
-            <span className="font-bold text-xl">SolucionSalud</span>
+      <div className="container flex h-14 items-center justify-between px-4 sm:px-6">
+        <div className="flex items-center">
+          <Link href="/" className="flex items-center space-x-2">
+            <span className="font-bold text-lg sm:text-xl">SolucionSalud</span>
           </Link>
-          <nav className="flex items-center space-x-6 text-sm font-medium">
+          {/* Desktop Navigation */}
+          <nav className="hidden lg:flex items-center ml-6 space-x-4 xl:space-x-6 text-sm font-medium">
             <a
               href="#inicio"
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('inicio');
               }}
             >
               Inicio
@@ -34,7 +43,7 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('quienes-somos')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('quienes-somos');
               }}
             >
               Quienes Somos
@@ -44,7 +53,7 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('plataforma')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('plataforma');
               }}
             >
               Plataforma
@@ -60,7 +69,7 @@ export function SiteHeader() {
                     href="#superintendencia"
                     onClick={(e) => {
                       e.preventDefault();
-                      document.getElementById('superintendencia')?.scrollIntoView({ behavior: 'smooth' });
+                      scrollToSection('superintendencia');
                     }}
                   >
                     Superintendencia
@@ -71,7 +80,7 @@ export function SiteHeader() {
                     href="#isapres-chile"
                     onClick={(e) => {
                       e.preventDefault();
-                      document.getElementById('isapres-chile')?.scrollIntoView({ behavior: 'smooth' });
+                      scrollToSection('isapres-chile');
                     }}
                   >
                     Isapres Chile
@@ -84,7 +93,7 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('noticias')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('noticias');
               }}
             >
               Noticias
@@ -94,7 +103,7 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('descargas')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('descargas');
               }}
             >
               Descargas
@@ -104,7 +113,7 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('mujeres')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('mujeres');
               }}
             >
               Mujeres
@@ -114,19 +123,136 @@ export function SiteHeader() {
               className="transition-colors hover:text-foreground/80 text-foreground/60"
               onClick={(e) => {
                 e.preventDefault();
-                document.getElementById('ley-corta')?.scrollIntoView({ behavior: 'smooth' });
+                scrollToSection('ley-corta');
               }}
             >
               Ley Corta
             </a>
           </nav>
         </div>
-        <div className="flex flex-1 items-center justify-end space-x-2">
-          <Button variant="ghost" size="sm" asChild>
+        <div className="flex items-center gap-2">
+          <Button variant="ghost" size="sm" className="hidden sm:flex" asChild>
             <Link href="/auth/login">CRM Login</Link>
+          </Button>
+          {/* Mobile Menu Button */}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="lg:hidden"
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          >
+            {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
         </div>
       </div>
+      
+      {/* Mobile Navigation Menu */}
+      {mobileMenuOpen && (
+        <div className="lg:hidden border-t bg-background/95 backdrop-blur">
+          <nav className="container px-4 py-4 space-y-2">
+            <a
+              href="#inicio"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('inicio');
+              }}
+            >
+              Inicio
+            </a>
+            <a
+              href="#quienes-somos"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('quienes-somos');
+              }}
+            >
+              Quienes Somos
+            </a>
+            <a
+              href="#plataforma"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('plataforma');
+              }}
+            >
+              Plataforma
+            </a>
+            <div className="py-2">
+              <span className="block py-2 text-sm font-semibold text-foreground/80">Instituciones</span>
+              <div className="pl-4 space-y-1">
+                <a
+                  href="#superintendencia"
+                  className="block py-1 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('superintendencia');
+                  }}
+                >
+                  Superintendencia
+                </a>
+                <a
+                  href="#isapres-chile"
+                  className="block py-1 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToSection('isapres-chile');
+                  }}
+                >
+                  Isapres Chile
+                </a>
+              </div>
+            </div>
+            <a
+              href="#noticias"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('noticias');
+              }}
+            >
+              Noticias
+            </a>
+            <a
+              href="#descargas"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('descargas');
+              }}
+            >
+              Descargas
+            </a>
+            <a
+              href="#mujeres"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('mujeres');
+              }}
+            >
+              Mujeres
+            </a>
+            <a
+              href="#ley-corta"
+              className="block py-2 text-sm transition-colors hover:text-foreground/80 text-foreground/60"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToSection('ley-corta');
+              }}
+            >
+              Ley Corta
+            </a>
+            <div className="pt-2 border-t">
+              <Button variant="ghost" size="sm" className="w-full justify-start" asChild>
+                <Link href="/auth/login">CRM Login</Link>
+              </Button>
+            </div>
+          </nav>
+        </div>
+      )}
     </header>
   );
 }

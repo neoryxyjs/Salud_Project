@@ -8,21 +8,21 @@ export function SiteFooter() {
     <footer className="bg-primary text-primary-foreground relative overflow-hidden">
       {/* Background decorative icons */}
       <div className="absolute inset-0 opacity-10 pointer-events-none">
-        <div className="absolute top-10 left-10 w-20 h-20 border-2 border-primary-foreground rounded-full"></div>
-        <div className="absolute top-32 right-20 w-16 h-16 border-2 border-primary-foreground rounded-full"></div>
-        <div className="absolute bottom-20 left-1/4 w-12 h-12 border-2 border-primary-foreground rounded-full"></div>
+        <div className="absolute top-10 left-4 sm:left-10 w-10 h-10 sm:w-20 sm:h-20 border-2 border-primary-foreground rounded-full"></div>
+        <div className="absolute top-32 right-10 sm:right-20 w-8 h-8 sm:w-16 sm:h-16 border-2 border-primary-foreground rounded-full"></div>
+        <div className="absolute bottom-20 left-1/4 w-6 h-6 sm:w-12 sm:h-12 border-2 border-primary-foreground rounded-full"></div>
       </div>
 
-      <div className="container relative z-10 py-12 md:py-16">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
+      <div className="container relative z-10 py-8 sm:py-12 md:py-16 px-4 sm:px-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-6 sm:mb-8">
           {/* Logo y Descripción */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-2xl font-bold mb-2">
+              <h3 className="text-xl sm:text-2xl font-bold mb-2">
                 <span className="text-primary-foreground">Solucion</span>
                 <span className="text-orange-500">Salud</span>
               </h3>
-              <p className="text-sm text-primary-foreground/90 leading-relaxed">
+              <p className="text-xs sm:text-sm text-primary-foreground/90 leading-relaxed">
                 SolucionSalud es la única plataforma web 100% gratuita que te permite comparar, cotizar y solicitar planes y seguros de salud de todas las Isapres y aseguradoras de Chile.
               </p>
             </div>

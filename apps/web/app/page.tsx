@@ -45,7 +45,7 @@ function NewsSection() {
 
   if (isLoading) {
     return (
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
         {[1, 2, 3].map((i) => (
           <Card key={i} className="animate-pulse">
             <CardHeader>
@@ -70,7 +70,7 @@ function NewsSection() {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-3">
+    <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
       {news.map((item: any, index: number) => (
         <Card key={index} className="hover:shadow-lg transition-shadow border-2 h-full flex flex-col">
           {item.image && (
@@ -296,23 +296,23 @@ export default function HomePage() {
       )}
 
       {/* Sección Inicio */}
-      <section id="inicio" className="relative container space-y-6 py-12 md:py-16 lg:py-24 overflow-hidden">
+      <section id="inicio" className="relative container space-y-4 sm:space-y-6 py-8 sm:py-12 md:py-16 lg:py-24 overflow-hidden px-4 sm:px-6">
         {/* Background decorative elements */}
         <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-10 left-4 sm:top-20 sm:left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-10 right-4 sm:bottom-20 sm:right-10 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500 rounded-full blur-3xl"></div>
         </div>
         
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-6 text-center relative z-10">
-          <div className="space-y-6 w-full">
-            <h1 className="font-heading text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight leading-tight">
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 sm:gap-6 text-center relative z-10">
+          <div className="space-y-4 sm:space-y-6 w-full px-2">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight">
               Compara Planes de Salud
               <br />
               <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
                 Encuentra el Mejor Plan
               </span>
             </h1>
-            <p className="max-w-[42rem] mx-auto leading-relaxed text-muted-foreground sm:text-xl sm:leading-8 text-balance">
+            <p className="max-w-[42rem] mx-auto leading-relaxed text-muted-foreground text-base sm:text-lg md:text-xl sm:leading-8 text-balance px-2">
               Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
             </p>
           </div>
@@ -320,30 +320,30 @@ export default function HomePage() {
           {/* Botón Asesoría Gratuita */}
           <Button 
             size="lg" 
-            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-10 py-7 rounded-full font-semibold group"
+            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-7 rounded-full font-semibold group"
             onClick={() => setShowForm(!showForm)}
           >
             {showForm ? 'Ocultar Formulario' : 'Asesoría Gratuita'}
-            <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
           </Button>
         </div>
 
         {/* Formulario Asesoría Gratuita - Oculto por defecto */}
         {showForm && (
-          <div className="mx-auto max-w-3xl mt-12 animate-in fade-in slide-in-from-top-4 duration-500">
+          <div className="mx-auto max-w-3xl mt-6 sm:mt-12 px-4 sm:px-0 animate-in fade-in slide-in-from-top-4 duration-500">
             <Card className="border-2 shadow-2xl hover:shadow-3xl transition-shadow duration-300 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-t-lg p-8">
-                <CardTitle className="text-3xl text-center text-primary-foreground font-bold">
+              <CardHeader className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-t-lg p-4 sm:p-6 md:p-8">
+                <CardTitle className="text-xl sm:text-2xl md:text-3xl text-center text-primary-foreground font-bold">
                   ¿Quieres revisar tu Isapre?
                 </CardTitle>
-                <CardDescription className="text-center text-primary-foreground/95 text-base mt-2">
+                <CardDescription className="text-center text-primary-foreground/95 text-sm sm:text-base mt-2">
                   Cuéntanos qué te gustaría mejorar y te ayudaremos a encontrar la mejor opción
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8 bg-gradient-to-b from-background to-muted/30">
-              <form onSubmit={handleSubmit} className="space-y-6">
+              <CardContent className="p-4 sm:p-6 md:p-8 bg-gradient-to-b from-background to-muted/30">
+              <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
                 {/* Información Personal */}
-                <div className="grid gap-4 md:grid-cols-2">
+                <div className="grid gap-4 sm:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="flex items-center gap-2">
                       <User className="h-4 w-4" />
@@ -457,8 +457,8 @@ export default function HomePage() {
                 </div>
 
                 {/* Motivos */}
-                <div className="space-y-3">
-                  <Label className="text-base font-semibold">
+                <div className="space-y-2 sm:space-y-3">
+                  <Label className="text-sm sm:text-base font-semibold">
                     ¿Cuáles son los motivos para revisar tu Isapre? * (Selecciona todas las que apliquen)
                   </Label>
                   <div className="space-y-2">
@@ -494,7 +494,7 @@ export default function HomePage() {
 
                 {/* Comentarios */}
                 <div className="space-y-2">
-                  <Label className="text-base font-semibold">
+                  <Label className="text-sm sm:text-base font-semibold">
                     Cuéntanos más sobre tu situación
                   </Label>
                   <Textarea
@@ -510,7 +510,7 @@ export default function HomePage() {
                 <Button 
                   type="submit" 
                   size="lg" 
-                  className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-lg py-6 font-semibold"
+                  className="w-full bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg py-5 sm:py-6 font-semibold"
                   disabled={leadMutation.isPending || (rut ? rutError !== '' : false) || formData.reasons.length === 0 || !formData.region}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
@@ -522,23 +522,23 @@ export default function HomePage() {
           </div>
         )}
 
-        <div className="flex justify-center gap-4 mt-4">
-          <Button variant="outline" size="lg" asChild>
+        <div className="flex justify-center gap-4 mt-4 px-4">
+          <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
             <Link href="/comparador">Ver Comparador</Link>
           </Button>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="bg-gradient-to-b from-background via-muted/20 to-background py-16 md:py-20 lg:py-24">
-        <div className="container space-y-12">
-          <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
-            <p className="text-primary text-sm font-semibold uppercase tracking-wider">BENEFICIOS</p>
-            <h2 className="font-heading text-3xl leading-[1.1] sm:text-4xl md:text-5xl lg:text-6xl font-bold">
+      <section className="bg-gradient-to-b from-background via-muted/20 to-background py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6">
+        <div className="container space-y-8 sm:space-y-12">
+          <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-3 sm:gap-4 text-center px-2">
+            <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">BENEFICIOS</p>
+            <h2 className="font-heading text-2xl sm:text-3xl leading-[1.1] md:text-4xl lg:text-5xl xl:text-6xl font-bold">
               ¿Por qué elegir <span className="text-primary">SolucionSalud</span>?
             </h2>
           </div>
-          <div className="mx-auto grid justify-center gap-6 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
+          <div className="mx-auto grid justify-center gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 px-2">
             <Card className="border-2 hover:border-primary/50 hover:shadow-xl transition-all duration-300 group cursor-pointer">
               <CardHeader className="space-y-4">
                 <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -577,31 +577,31 @@ export default function HomePage() {
       </section>
 
       {/* Sección Quienes Somos */}
-      <section id="quienes-somos" className="relative bg-gradient-to-b from-background via-muted/10 to-background py-16 md:py-24">
+      <section id="quienes-somos" className="relative bg-gradient-to-b from-background via-muted/10 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
         <div className="container">
-          <div className="grid gap-10 md:grid-cols-3">
-            <div className="md:col-span-2 space-y-8">
-              <div className="space-y-3">
-                <p className="text-primary text-sm font-semibold uppercase tracking-wider">NUESTRA EMPRESA</p>
-                <h2 className="text-3xl md:text-4xl font-bold text-primary">SOLUCIONSALUD</h2>
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+          <div className="grid gap-8 sm:gap-10 md:grid-cols-3">
+            <div className="md:col-span-2 space-y-6 sm:space-y-8">
+              <div className="space-y-2 sm:space-y-3">
+                <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NUESTRA EMPRESA</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">SOLUCIONSALUD</h2>
+                <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
                   QUIENES SOMOS
                 </h3>
               </div>
-              <div className="space-y-6 text-muted-foreground">
-                <p className="text-lg leading-relaxed">
+              <div className="space-y-4 sm:space-y-6 text-muted-foreground">
+                <p className="text-base sm:text-lg leading-relaxed">
                   SolucionSalud es una plataforma web <strong className="text-foreground font-semibold">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
                 </p>
-                <p className="leading-relaxed text-base">
+                <p className="leading-relaxed text-sm sm:text-base">
                   Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
                 </p>
-                <p className="leading-relaxed text-base">
+                <p className="leading-relaxed text-sm sm:text-base">
                   Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
                 </p>
               </div>
             </div>
             <div>
-              <Card className="sticky top-24 border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+              <Card className="md:sticky md:top-24 border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
                 <CardHeader className="pb-4">
                   <CardTitle className="text-xl font-bold text-primary">Lo que necesitas saber</CardTitle>
                   <CardDescription className="text-sm">
@@ -685,24 +685,24 @@ export default function HomePage() {
       </section>
 
       {/* Sección Plataforma */}
-      <section id="plataforma" className="relative bg-gradient-to-b from-muted/30 via-background to-muted/20 py-20 md:py-28 overflow-hidden">
+      <section id="plataforma" className="relative bg-gradient-to-b from-muted/30 via-background to-muted/20 py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden px-4 sm:px-6">
         {/* Background decorative elements */}
         <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-40 h-40 sm:w-80 sm:h-80 bg-orange-500 rounded-full blur-3xl"></div>
         </div>
         
         <div className="container relative z-10">
-          <div className="text-center mb-20 space-y-5">
-            <p className="text-primary text-sm font-semibold uppercase tracking-wider">SOMOS LA MEJOR PLATAFORMA</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+          <div className="text-center mb-12 sm:mb-16 md:mb-20 space-y-3 sm:space-y-5 px-2">
+            <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">SOMOS LA MEJOR PLATAFORMA</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
               PARA COTIZAR PLANES DE ISAPRE
             </h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
               Hacemos que sea simple y fácil la búsqueda de planes de Isapre, tanto para cotizantes y ejecutivos.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-3 mb-16">
+          <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 mb-12 sm:mb-16">
             <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl group bg-background/50 backdrop-blur-sm">
               <CardHeader className="space-y-4 pb-4">
                 <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-all">
@@ -743,39 +743,39 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
-          <div className="text-center">
+          <div className="text-center px-4">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-10 py-7 rounded-full font-semibold group"
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-7 rounded-full font-semibold group w-full sm:w-auto"
               onClick={(e) => {
                 e.preventDefault();
                 document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' });
               }}
             >
               Cotiza tu plan de isapre ahora!
-              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* Sección Superintendencia */}
-      <section id="superintendencia" className="relative container py-20 md:py-28">
-        <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground p-10 md:p-14 rounded-2xl mb-16 text-center shadow-2xl relative overflow-hidden">
+      <section id="superintendencia" className="relative container py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6">
+        <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground p-6 sm:p-8 md:p-10 lg:p-14 rounded-2xl mb-12 sm:mb-16 text-center shadow-2xl relative overflow-hidden">
           {/* Decorative background pattern */}
           <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-64 h-64 border-2 border-primary-foreground rounded-full -mr-32 -mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 border-2 border-primary-foreground rounded-full -ml-24 -mb-24"></div>
+            <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 border-2 border-primary-foreground rounded-full -mr-16 sm:-mr-32 -mt-16 sm:-mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-48 sm:h-48 border-2 border-primary-foreground rounded-full -ml-12 sm:-ml-24 -mb-12 sm:-mb-24"></div>
           </div>
           <div className="relative z-10">
-            <h2 className="text-2xl md:text-3xl font-bold mb-4">SUPERINTENDENCIA DE SALUD</h2>
-            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
-            <p className="max-w-3xl mx-auto text-lg leading-relaxed opacity-95">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">SUPERINTENDENCIA DE SALUD</h2>
+            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
+            <p className="max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed opacity-95 px-2">
               La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
             </p>
           </div>
         </div>
-        <div className="grid gap-6 md:grid-cols-3">
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
           <Card className="hover:shadow-lg transition-shadow border-2">
             <CardHeader className="space-y-3">
               <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -843,25 +843,25 @@ export default function HomePage() {
       </section>
 
       {/* Sección Isapres Chile */}
-      <section id="isapres-chile" className="bg-primary text-primary-foreground py-16 md:py-24 relative overflow-hidden">
+      <section id="isapres-chile" className="bg-primary text-primary-foreground py-12 sm:py-16 md:py-24 relative overflow-hidden px-4 sm:px-6">
         {/* Background decorative icons */}
         <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-10 w-20 h-20 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute top-32 left-1/4 w-16 h-16 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute bottom-20 left-10 w-12 h-12 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute top-20 right-1/4 w-16 h-16 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute bottom-32 right-20 w-20 h-20 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute top-10 left-4 sm:left-10 w-10 h-10 sm:w-20 sm:h-20 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute top-32 left-1/4 w-8 h-8 sm:w-16 sm:h-16 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute bottom-20 left-4 sm:left-10 w-6 h-6 sm:w-12 sm:h-12 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute top-20 right-1/4 w-8 h-8 sm:w-16 sm:h-16 border-2 border-primary-foreground rounded-full"></div>
+          <div className="absolute bottom-32 right-10 sm:right-20 w-10 h-10 sm:w-20 sm:h-20 border-2 border-primary-foreground rounded-full"></div>
         </div>
 
         <div className="container relative z-10">
-          <div className="grid gap-8 md:grid-cols-2">
+          <div className="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2">
             {/* Columna Izquierda */}
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div>
-                <h2 className="text-2xl md:text-3xl font-bold mb-2">ASOCIACIÓN DE ISAPRES DE CHILE (AICH)</h2>
-                <h3 className="text-3xl md:text-4xl font-bold text-orange-500 mb-6">ISAPRES DE CHILE</h3>
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-2">ASOCIACIÓN DE ISAPRES DE CHILE (AICH)</h2>
+                <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-orange-500 mb-4 sm:mb-6">ISAPRES DE CHILE</h3>
               </div>
-              <div className="space-y-4 text-primary-foreground/90 leading-relaxed">
+              <div className="space-y-3 sm:space-y-4 text-primary-foreground/90 leading-relaxed text-sm sm:text-base">
                 <p>
                   La Asociación de Isapres de Chile (AICH) es una asociación gremial, fundada en 1984, teniendo como asociadas al 100% de las Instituciones de Salud Previsional (Isapres) abiertas del país.
                 </p>
@@ -878,9 +878,9 @@ export default function HomePage() {
             </div>
 
             {/* Columna Derecha - Caja azul más clara */}
-            <div className="bg-primary/80 rounded-xl p-6 md:p-8 space-y-6">
-              <h4 className="text-2xl font-bold">LAS Isapres</h4>
-              <div className="space-y-4 text-primary-foreground/90 leading-relaxed">
+            <div className="bg-primary/80 rounded-xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6">
+              <h4 className="text-xl sm:text-2xl font-bold">LAS Isapres</h4>
+              <div className="space-y-3 sm:space-y-4 text-primary-foreground/90 leading-relaxed text-sm sm:text-base">
                 <p>
                   Las Instituciones de Salud Previsional (Isapres) son entidades privadas que funcionan en base a un esquema de seguros, las cuales están facultados para recibir y administrar la cotización obligatoria de salud (7% de su remuneración imponible) de los trabajadores y personas, que libre e individualmente optaron por ellas en lugar del sistema de salud estatal (FONASA). A cargo de estas cotizaciones las Isapres financian prestaciones de salud y el pago de licencias médicas. Estas prestaciones de salud se otorgan mediante la contratación de servicios médicos financiados por las Isapres.
                 </p>
@@ -894,13 +894,13 @@ export default function HomePage() {
       </section>
 
       {/* Sección Noticias */}
-      <section id="noticias" className="container py-16 md:py-24">
-        <div className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <Newspaper className="h-8 w-8 text-primary" />
+      <section id="noticias" className="container py-12 sm:py-16 md:py-24 px-4 sm:px-6">
+        <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 mb-3 sm:mb-4">
+            <Newspaper className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold">Noticias</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Noticias</h2>
+          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
             Mantente informado sobre las últimas noticias del sector de salud en Chile.
           </p>
         </div>
@@ -908,16 +908,16 @@ export default function HomePage() {
       </section>
 
       {/* Sección Descargas */}
-      <section id="descargas" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
+      <section id="descargas" className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
         <div className="container">
-          <div className="text-center mb-12 space-y-4">
-            <p className="text-primary text-sm font-semibold uppercase tracking-wider">ACCESO DIRECTO</p>
-            <h2 className="text-3xl md:text-4xl font-bold">DESCARGAS</h2>
-            <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
+          <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4">
+            <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">ACCESO DIRECTO</p>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">DESCARGAS</h2>
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
               En esta sección podrá descargar los documentos y boletines de interés para los usuarios del sistema de salud que se encuentran disponibles en nuestro sitio web.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
             <Card className="hover:shadow-lg transition-shadow border-2">
               <CardHeader className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -1021,49 +1021,49 @@ export default function HomePage() {
       </section>
 
       {/* Sección Mujeres */}
-      <section id="mujeres" className="bg-gradient-to-b from-background to-muted/30 py-16 md:py-24">
+      <section id="mujeres" className="bg-gradient-to-b from-background to-muted/30 py-12 sm:py-16 md:py-24 px-4 sm:px-6">
         <div className="container">
           {/* Banner Hero */}
-          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background rounded-xl p-8 md:p-12 mb-16 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background rounded-xl p-6 sm:p-8 md:p-12 mb-12 sm:mb-16 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
-              <div className="absolute top-10 left-10 w-32 h-32 border-2 border-primary rounded-full"></div>
-              <div className="absolute top-20 right-20 w-24 h-24 border-2 border-primary rounded-full"></div>
+              <div className="absolute top-10 left-4 sm:left-10 w-16 h-16 sm:w-32 sm:h-32 border-2 border-primary rounded-full"></div>
+              <div className="absolute top-20 right-10 sm:right-20 w-12 h-12 sm:w-24 sm:h-24 border-2 border-primary rounded-full"></div>
             </div>
-            <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
-              <div className="space-y-4">
-                <p className="text-primary text-sm font-semibold uppercase tracking-wider">NOSOTRAS</p>
-                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+            <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center relative z-10">
+              <div className="space-y-3 sm:space-y-4">
+                <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NOSOTRAS</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
                   PLANES DE SALUD PENSADO EN NOSOTRAS
                 </h2>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                   Desde abril de 2020, todas las mujeres pueden acceder a planes con mayor cobertura y menor precio.
                 </p>
-                <p className="text-sm text-muted-foreground italic">
+                <p className="text-xs sm:text-sm text-muted-foreground italic">
                   *Para que se haga efectivo sólo debes solicitar el cambio de plan o cambiarte de Isapre.
                 </p>
               </div>
               <div className="flex justify-center md:justify-end">
-                <div className="w-64 h-64 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Heart className="h-32 w-32 text-primary/30" />
+                <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Heart className="h-24 w-24 sm:h-32 sm:w-32 text-primary/30" />
                 </div>
               </div>
             </div>
           </div>
 
           {/* Sección de Beneficios */}
-          <div className="space-y-12">
-            <div className="text-center space-y-4">
-              <p className="text-primary text-sm font-semibold uppercase tracking-wider">NUESTROS BENEFICIOS</p>
-              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+          <div className="space-y-8 sm:space-y-12">
+            <div className="text-center space-y-3 sm:space-y-4 px-2">
+              <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NUESTROS BENEFICIOS</p>
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
                 COMO MUJERES TENEMOS NUESTRAS PROPIAS NECESIDADES DE SALUD
               </h3>
-              <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+              <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
                 Porque consideramos que la salud es lo más importante para nosotras y nuestra familia, nos queremos sentir seguras de las coberturas que nos brinda un plan de Isapre.
               </p>
             </div>
 
             {/* 4 Columnas de Beneficios */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
               {/* Maternidad */}
               <Card className="border-2 hover:shadow-lg transition-shadow">
                 <CardHeader className="space-y-3">
@@ -1144,23 +1144,23 @@ export default function HomePage() {
       </section>
 
       {/* Sección Ley Corta */}
-      <section id="ley-corta" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
+      <section id="ley-corta" className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
         <div className="container">
           {/* Título Principal */}
-          <div className="text-center mb-12 space-y-4">
-            <p className="text-primary text-sm font-semibold uppercase tracking-wider">
+          <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4 px-2">
+            <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">
               TE EXPLICAMOS LOS ASPECTOS CLAVE DE LA LEY N° 21.674
             </p>
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
               ¿QUÉ ES LA LEY CORTA?
             </h2>
-            <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
               Te explicamos en simple todo lo que necesitas saber sobre la Ley Corta, sus implicancias, fechas importantes y más.
             </p>
           </div>
 
           {/* Fechas Importantes */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
             {/* Fecha 1 */}
             <Card className="border-2 hover:shadow-lg transition-shadow">
               <CardHeader className="space-y-3">
