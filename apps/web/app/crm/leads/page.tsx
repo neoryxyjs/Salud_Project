@@ -288,7 +288,7 @@ export default function LeadsPage() {
               <TableHead>Nombre</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Teléfono</TableHead>
-              <TableHead>Plan</TableHead>
+              <TableHead>Isapre Actual</TableHead>
               <TableHead>Región</TableHead>
               <TableHead>Estado</TableHead>
               <TableHead>Fecha</TableHead>
@@ -324,7 +324,7 @@ export default function LeadsPage() {
                     <TableCell>{lead.email || '-'}</TableCell>
                     <TableCell>{lead.phone || '-'}</TableCell>
                     <TableCell>
-                      {lead.plan?.name || '-'}
+                      {lead.currentInsurer || '-'}
                     </TableCell>
                     <TableCell>{lead.region || '-'}</TableCell>
                     <TableCell>
