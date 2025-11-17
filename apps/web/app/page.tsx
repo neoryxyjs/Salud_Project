@@ -579,6 +579,7 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
+          </div>
         </div>
       </section>
 
