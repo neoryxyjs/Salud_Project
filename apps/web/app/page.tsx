@@ -476,91 +476,105 @@ export default function HomePage() {
       </section>
 
       {/* Sección Quienes Somos */}
-      <section id="quienes-somos" className="container py-12 md:py-24">
-        <div className="grid gap-8 md:grid-cols-3">
-          <div className="md:col-span-2 space-y-6">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-primary">SOLUCIONSALUD</h2>
-              <h3 className="text-4xl md:text-5xl font-bold text-orange-600">QUIENES SOMOS</h3>
+      <section id="quienes-somos" className="relative bg-gradient-to-b from-background via-muted/10 to-background py-16 md:py-24">
+        <div className="container">
+          <div className="grid gap-10 md:grid-cols-3">
+            <div className="md:col-span-2 space-y-8">
+              <div className="space-y-3">
+                <p className="text-primary text-sm font-semibold uppercase tracking-wider">NUESTRA EMPRESA</p>
+                <h2 className="text-3xl md:text-4xl font-bold text-primary">SOLUCIONSALUD</h2>
+                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+                  QUIENES SOMOS
+                </h3>
+              </div>
+              <div className="space-y-6 text-muted-foreground">
+                <p className="text-lg leading-relaxed">
+                  SolucionSalud es una plataforma web <strong className="text-foreground font-semibold">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
+                </p>
+                <p className="leading-relaxed text-base">
+                  Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
+                </p>
+                <p className="leading-relaxed text-base">
+                  Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
+                </p>
+              </div>
             </div>
-            <div className="space-y-4 text-muted-foreground">
-              <p className="text-lg leading-relaxed">
-                SolucionSalud es una plataforma web <strong className="text-foreground">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
-              </p>
-              <p className="leading-relaxed">
-                Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
-              </p>
-              <p className="leading-relaxed">
-                Sólo debes hacer clic y uno de nuestros ejecutivos se contactará a la brevedad. No tomes decisiones sin informarte, deja que nosotros te ayudemos a elegir el mejor plan. Nuestros ejecutivos te brindarán una asesoría cercana y amigable.
-              </p>
-            </div>
-          </div>
-          <div>
-            <Card className="sticky top-24">
-              <CardHeader>
-                <CardTitle className="text-xl font-bold">Lo que necesitas saber</CardTitle>
-                <CardDescription>
-                  Información importante sobre Isapres y planes de salud
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-2">
+            <div>
+              <Card className="sticky top-24 border-2 shadow-lg hover:shadow-xl transition-shadow duration-300">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-xl font-bold text-primary">Lo que necesitas saber</CardTitle>
+                  <CardDescription className="text-sm">
+                    Información importante sobre Isapres y planes de salud
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-3">
                 <a 
                   href="https://www.superdesalud.gob.cl/registro/isapres/#:~:text=Las%20Instituciones%20de%20Salud%20Previsional,seis%20abiertas%20y%20tres%20cerradas)" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <FileText className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Qué son las Isapres</span>
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <FileText className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm">Qué son las Isapres</span>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </a>
                 <a 
                   href="#que-son-planes" 
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <BookOpen className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Qué son los planes de salud</span>
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <BookOpen className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm">Qué son los planes de salud</span>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ArrowRight className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all" />
                 </a>
                 <a 
                   href="https://www.superdesalud.gob.cl/tax-marco-normativo/leyes-3002/" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <Scale className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Normativa vigente MINSAL</span>
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Scale className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm">Normativa vigente MINSAL</span>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </a>
                 <a 
                   href="https://www.superdesalud.gob.cl/tax-materias-prestadores/ley-de-derechos-y-deberes-4185/" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <Users className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Derecho de los usuarios</span>
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <Users className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm">Derecho de los usuarios</span>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </a>
                 <a 
                   href="https://www.superdesalud.gob.cl/tax-materias-isapres/contrato-de-salud-3464/" 
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-3 rounded-lg border hover:bg-accent hover:border-primary transition-colors group"
+                  className="flex items-center justify-between p-4 rounded-xl border-2 hover:border-primary/50 hover:bg-primary/5 transition-all duration-300 group shadow-sm hover:shadow-md"
                 >
                   <div className="flex items-center gap-3">
-                    <FileCheck className="h-5 w-5 text-primary" />
-                    <span className="font-medium">Contratos de Salud</span>
+                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                      <FileCheck className="h-5 w-5 text-primary" />
+                    </div>
+                    <span className="font-medium text-sm">Contratos de Salud</span>
                   </div>
-                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                  <ExternalLink className="h-4 w-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-0.5 transition-all" />
                 </a>
               </CardContent>
             </Card>
@@ -569,75 +583,95 @@ export default function HomePage() {
       </section>
 
       {/* Sección Plataforma */}
-      <section id="plataforma" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
-        <div className="container">
-          <div className="text-center mb-16 space-y-4">
+      <section id="plataforma" className="relative bg-gradient-to-b from-muted/30 via-background to-muted/20 py-20 md:py-28 overflow-hidden">
+        {/* Background decorative elements */}
+        <div className="absolute inset-0 -z-10 opacity-5">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-orange-500 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container relative z-10">
+          <div className="text-center mb-20 space-y-5">
             <p className="text-primary text-sm font-semibold uppercase tracking-wider">SOMOS LA MEJOR PLATAFORMA</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-orange-600">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
               PARA COTIZAR PLANES DE ISAPRE
             </h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
               Hacemos que sea simple y fácil la búsqueda de planes de Isapre, tanto para cotizantes y ejecutivos.
             </p>
           </div>
-          <div className="grid gap-8 md:grid-cols-3 mb-12">
-            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
-              <CardHeader className="space-y-3">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Users className="h-6 w-6 text-primary" />
+          <div className="grid gap-8 md:grid-cols-3 mb-16">
+            <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl group bg-background/50 backdrop-blur-sm">
+              <CardHeader className="space-y-4 pb-4">
+                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-all">
+                  <Users className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
                 </div>
-                <CardTitle className="text-xl text-primary">Asesores profesionales</CardTitle>
+                <CardTitle className="text-xl text-primary group-hover:text-primary/90 transition-colors">Asesores profesionales</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   Contamos con ejecutivos altamente calificados y de mucha experiencia en el mercado.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
-              <CardHeader className="space-y-3">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Search className="h-6 w-6 text-primary" />
+            <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl group bg-background/50 backdrop-blur-sm">
+              <CardHeader className="space-y-4 pb-4">
+                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-all">
+                  <Search className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
                 </div>
-                <CardTitle className="text-xl text-primary">Cotizar es fácil</CardTitle>
+                <CardTitle className="text-xl text-primary group-hover:text-primary/90 transition-colors">Cotizar es fácil</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   De forma rápida y simple podrás elegir uno o más planes y contactar a un ejecutivo en menos de 30 minutos.
                 </p>
               </CardContent>
             </Card>
-            <Card className="border-2 hover:border-primary transition-colors hover:shadow-lg">
-              <CardHeader className="space-y-3">
-                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Heart className="h-6 w-6 text-primary" />
+            <Card className="border-2 hover:border-primary/50 transition-all duration-300 hover:shadow-xl group bg-background/50 backdrop-blur-sm">
+              <CardHeader className="space-y-4 pb-4">
+                <div className="h-14 w-14 rounded-xl bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center group-hover:from-primary/30 group-hover:to-primary/20 transition-all">
+                  <Heart className="h-7 w-7 text-primary group-hover:scale-110 transition-transform" />
                 </div>
-                <CardTitle className="text-xl text-primary">Planes a tu medida</CardTitle>
+                <CardTitle className="text-xl text-primary group-hover:text-primary/90 transition-colors">Planes a tu medida</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-muted-foreground leading-relaxed">
+                <p className="text-muted-foreground leading-relaxed text-sm">
                   En SolucionSalud encontrarás el plan que más se acomode a tu perfil y al de tu familia.
                 </p>
               </CardContent>
             </Card>
           </div>
           <div className="text-center">
-            <Button size="lg" className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6">
-              <ArrowRight className="mr-2 h-5 w-5" />
+            <Button 
+              size="lg" 
+              className="bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-primary-foreground shadow-lg hover:shadow-xl transition-all duration-300 text-lg px-10 py-7 rounded-full font-semibold group"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
               Cotiza tu plan de isapre ahora!
+              <ArrowRight className="ml-2 h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         </div>
       </section>
 
       {/* Sección Superintendencia */}
-      <section id="superintendencia" className="container py-16 md:py-24">
-        <div className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground p-8 md:p-12 rounded-xl mb-12 text-center shadow-lg">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3">SUPERINTENDENCIA DE SALUD</h2>
-          <h3 className="text-3xl md:text-4xl font-bold mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
-          <p className="max-w-3xl mx-auto text-lg leading-relaxed opacity-95">
-            La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
-          </p>
+      <section id="superintendencia" className="relative container py-20 md:py-28">
+        <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground p-10 md:p-14 rounded-2xl mb-16 text-center shadow-2xl relative overflow-hidden">
+          {/* Decorative background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-64 h-64 border-2 border-primary-foreground rounded-full -mr-32 -mt-32"></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 border-2 border-primary-foreground rounded-full -ml-24 -mb-24"></div>
+          </div>
+          <div className="relative z-10">
+            <h2 className="text-2xl md:text-3xl font-bold mb-4">SUPERINTENDENCIA DE SALUD</h2>
+            <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
+            <p className="max-w-3xl mx-auto text-lg leading-relaxed opacity-95">
+              La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
+            </p>
+          </div>
         </div>
         <div className="grid gap-6 md:grid-cols-3">
           <Card className="hover:shadow-lg transition-shadow border-2">
