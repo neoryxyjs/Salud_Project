@@ -8,14 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const regions = [
-  { value: 'RM', label: 'Región Metropolitana' },
-  { value: 'V', label: 'Valparaíso' },
-  { value: 'VIII', label: 'Biobío' },
-  { value: 'IX', label: 'Araucanía' },
-  { value: 'X', label: 'Los Lagos' },
-];
+import { CHILEAN_REGIONS } from '@/lib/constants';
 
 interface RegionFilterProps {
   value?: string;
@@ -31,7 +24,8 @@ export function RegionFilter({ value, onChange }: RegionFilterProps) {
           <SelectValue placeholder="Selecciona una región" />
         </SelectTrigger>
         <SelectContent>
-          {regions.map((region) => (
+          <SelectItem value="">Todas las regiones</SelectItem>
+          {CHILEAN_REGIONS.map((region) => (
             <SelectItem key={region.value} value={region.value}>
               {region.label}
             </SelectItem>
