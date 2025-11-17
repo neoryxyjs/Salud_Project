@@ -9,6 +9,7 @@ import { CheckCircle2, ArrowLeft } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
+import { validateRUT, formatRUT } from '@/lib/rut-validator';
 
 export default function FormularioPage() {
   const [formData, setFormData] = useState({
@@ -17,6 +18,8 @@ export default function FormularioPage() {
     phone: '',
     region: '',
   });
+  const [rut, setRut] = useState('');
+  const [rutError, setRutError] = useState('');
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -48,9 +51,36 @@ export default function FormularioPage() {
     },
   });
 
+  const handleRutChange = (value: string) => {
+    const cleanValue = value.replace(/\./g, '').replace(/-/g, '');
+    
+    if (cleanValue.length >= 8) {
+      const formatted = formatRUT(cleanValue);
+      if (!validateRUT(formatted)) {
+        setRutError('RUT inválido');
+        setRut(formatted);
+      } else {
+        setRutError('');
+        setRut(formatted);
+      }
+    } else {
+      setRut(cleanValue);
+      setRutError('');
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    leadMutation.mutate(formData);
+    
+    if (rut && rutError) {
+      alert('Por favor corrige el RUT antes de enviar');
+      return;
+    }
+    
+    leadMutation.mutate({
+      ...formData,
+      rut: rut || undefined,
+    });
   };
 
   return (
@@ -119,18 +149,31 @@ export default function FormularioPage() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="region">Región</Label>
+                  <Label htmlFor="rut">R.U.T.</Label>
+                  <Input
+                    id="rut"
+                    placeholder="12.345.678-9"
+                    value={rut}
+                    onChange={(e) => handleRutChange(e.target.value)}
+                  />
+                  {rutError && (
+                    <p className="text-sm text-destructive">{rutError}</p>
+                  )}
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="region">Región *</Label>
                   <Input
                     id="region"
                     placeholder="Región Metropolitana"
                     value={formData.region}
                     onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                    required
                   />
                 </div>
                 <Button 
                   type="submit" 
                   className="w-full"
-                  disabled={leadMutation.isPending}
+                  disabled={leadMutation.isPending || (rut && !!rutError)}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
                 </Button>

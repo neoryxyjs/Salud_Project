@@ -105,12 +105,14 @@ export default function HomePage() {
     }
     
     if (formData.reasons.length === 0) {
+      alert('Por favor selecciona al menos un motivo');
       return;
     }
     
     leadMutation.mutate({
       ...formData,
       rut: rut || undefined,
+      reasons: formData.reasons, // Asegurar que se envíen los motivos
     });
   };
 
@@ -146,7 +148,7 @@ export default function HomePage() {
             <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Información Personal */}
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
                     <Label htmlFor="name" className="flex items-center gap-2">
                       <User className="h-4 w-4" />
@@ -185,6 +187,45 @@ export default function HomePage() {
                       placeholder="+56 9 1234 5678"
                       value={formData.phone}
                       onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="rut">R.U.T.</Label>
+                    <Input
+                      id="rut"
+                      placeholder="12.345.678-9"
+                      value={rut}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        const cleanValue = value.replace(/\./g, '').replace(/-/g, '');
+                        
+                        if (cleanValue.length >= 8) {
+                          const formatted = formatRUT(cleanValue);
+                          if (!validateRUT(formatted)) {
+                            setRutError('RUT inválido');
+                            setRut(formatted);
+                          } else {
+                            setRutError('');
+                            setRut(formatted);
+                          }
+                        } else {
+                          setRut(cleanValue);
+                          setRutError('');
+                        }
+                      }}
+                    />
+                    {rutError && (
+                      <p className="text-sm text-destructive">{rutError}</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="region">Región *</Label>
+                    <Input
+                      id="region"
+                      placeholder="Región Metropolitana"
+                      value={formData.region}
+                      onChange={(e) => setFormData({ ...formData, region: e.target.value })}
                       required
                     />
                   </div>
@@ -245,7 +286,7 @@ export default function HomePage() {
                   type="submit" 
                   size="lg" 
                   className="w-full"
-                  disabled={leadMutation.isPending || (rut && !!rutError) || formData.reasons.length === 0}
+                  disabled={leadMutation.isPending || (rut && !!rutError) || formData.reasons.length === 0 || !formData.region}
                 >
                   {leadMutation.isPending ? 'Enviando...' : 'Enviar Solicitud'}
                 </Button>

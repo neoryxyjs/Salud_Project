@@ -49,6 +49,15 @@ const statusOptions = [
   { value: 'lost', label: 'Perdido', color: 'destructive' },
 ];
 
+const REASONS = [
+  { id: 'muy_cara', label: 'Muy cara' },
+  { id: 'cubre_poco', label: 'La isapre me cubre poco' },
+  { id: 'subieron_plan', label: 'Me subieron el plan de salud' },
+  { id: 'mejorar_coberturas', label: 'Mejorar coberturas' },
+  { id: 'no_gusta', label: 'No me gusta mi Isapre actual' },
+  { id: 'otros', label: 'Otros' },
+];
+
 export default function LeadsPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
@@ -338,8 +347,16 @@ export default function LeadsPage() {
                   <p className="text-sm">{selectedLead.phone || '-'}</p>
                 </div>
                 <div className="space-y-2">
+                  <Label>R.U.T.</Label>
+                  <p className="text-sm">{selectedLead.rut || '-'}</p>
+                </div>
+                <div className="space-y-2">
                   <Label>Región</Label>
                   <p className="text-sm">{selectedLead.region || '-'}</p>
+                </div>
+                <div className="space-y-2">
+                  <Label>Isapre Actual</Label>
+                  <p className="text-sm">{selectedLead.currentInsurer || '-'}</p>
                 </div>
                 <div className="space-y-2">
                   <Label>Plan</Label>
@@ -366,6 +383,31 @@ export default function LeadsPage() {
                   </Select>
                 </div>
               </div>
+
+              {/* Motivos seleccionados */}
+              {selectedLead.reasons && selectedLead.reasons.length > 0 && (
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold">Motivos para revisar Isapre</Label>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedLead.reasons.map((reason: string) => {
+                      const reasonLabel = REASONS.find(r => r.id === reason)?.label || reason;
+                      return (
+                        <Badge key={reason} variant="secondary">
+                          {reasonLabel}
+                        </Badge>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* Comentarios */}
+              {selectedLead.comments && (
+                <div className="space-y-2">
+                  <Label className="text-base font-semibold">Comentarios del Cliente</Label>
+                  <p className="text-sm bg-muted p-3 rounded-md">{selectedLead.comments}</p>
+                </div>
+              )}
 
               <div className="space-y-2">
                 <Label>Notas</Label>
