@@ -17,8 +17,17 @@ RUN npm install
 COPY apps/api ./apps/api
 COPY prisma ./prisma
 
+# Instalar dependencias del workspace (esto instalará dependencias de todos los workspaces)
+# Volver a la raíz para instalar dependencias del workspace
+WORKDIR /app
+RUN echo "Installing workspace dependencies..." && npm install
+
 # Build del API
 WORKDIR /app/apps/api
+
+# Verificar que las dependencias estén instaladas y si no, instalarlas directamente
+RUN echo "Checking dependencies..." && \
+    (npm list axios rss-parser 2>/dev/null || (echo "Installing missing dependencies..." && npm install axios@^1.13.2 rss-parser@^3.13.0))
 
 # Generar Prisma Client
 RUN echo "Generating Prisma Client..." && npx prisma generate --schema=./prisma/schema.prisma
