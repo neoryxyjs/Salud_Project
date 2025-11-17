@@ -19,11 +19,11 @@ export function SiteFooter() {
           <div className="space-y-4">
             <div>
               <h3 className="text-2xl font-bold mb-2">
-                <span className="text-primary-foreground">Que</span>
-                <span className="text-orange-500">Plan</span>
+                <span className="text-primary-foreground">Solucion</span>
+                <span className="text-orange-500">Salud</span>
               </h3>
               <p className="text-sm text-primary-foreground/90 leading-relaxed">
-                QuePlan es la única plataforma web 100% gratuita que te permite comparar, cotizar y solicitar planes y seguros de salud de todas las Isapres y aseguradoras de Chile.
+                SolucionSalud es la única plataforma web 100% gratuita que te permite comparar, cotizar y solicitar planes y seguros de salud de todas las Isapres y aseguradoras de Chile.
               </p>
             </div>
             <div className="flex gap-3">
@@ -129,7 +129,7 @@ export function SiteFooter() {
 
           {/* Contacto */}
           <div className="space-y-4">
-            <h4 className="text-lg font-bold uppercase">QUEPLAN</h4>
+            <h4 className="text-lg font-bold uppercase">SOLUCIONSALUD</h4>
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2 text-primary-foreground/90">
                 <Phone className="h-4 w-4" />
@@ -137,7 +137,7 @@ export function SiteFooter() {
               </li>
               <li className="flex items-center gap-2 text-primary-foreground/90">
                 <Mail className="h-4 w-4" />
-                <a href="mailto:info@queplan.cl" className="hover:underline">info@queplan.cl</a>
+                <a href="mailto:info@solucionsalud.cl" className="hover:underline">info@solucionsalud.cl</a>
               </li>
               <li className="flex items-start gap-2 text-primary-foreground/90">
                 <MapPin className="h-4 w-4 mt-0.5" />
@@ -151,7 +151,7 @@ export function SiteFooter() {
         <div className="border-t border-primary-foreground/20 pt-6 mt-8">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <p className="text-primary-foreground/80">
-              2024 QuePlan © Derechos reservados
+              2024 SolucionSalud © Derechos reservados
             </p>
             <Link href="/politica-privacidad" className="text-primary-foreground/80 hover:underline">
               Política de privacidad

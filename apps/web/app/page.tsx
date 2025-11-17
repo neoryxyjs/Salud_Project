@@ -125,6 +125,7 @@ function NewsSection() {
 export default function HomePage() {
   const router = useRouter();
   const [utmParams, setUtmParams] = useState<Record<string, string>>({});
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     // Capturar UTM parameters de la URL solo en el cliente
@@ -219,7 +220,7 @@ export default function HomePage() {
     <div className="flex flex-col">
       {/* Sección Inicio */}
       <section id="inicio" className="container space-y-6 py-8 md:py-12 lg:py-24">
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
+        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-6 text-center">
           <h1 className="font-heading text-3xl sm:text-5xl md:text-6xl lg:text-7xl">
             Compara Planes de Salud
             <br />
@@ -228,23 +229,31 @@ export default function HomePage() {
           <p className="max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
             Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
           </p>
+          
+          {/* Botón Asesoría Gratuita */}
+          <Button 
+            size="lg" 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6"
+            onClick={() => setShowForm(!showForm)}
+          >
+            {showForm ? 'Ocultar Formulario' : 'Asesoría Gratuita'}
+            <ArrowRight className="ml-2 h-5 w-5" />
+          </Button>
         </div>
 
-        {/* Formulario Asesoría Gratuita */}
-        <div className="mx-auto max-w-3xl mt-8">
-          <Card className="border-2">
-            <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
-              <Button className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 mb-4" type="button">
-                Asesoría Gratuita
-              </Button>
-              <CardTitle className="text-2xl text-center text-primary-foreground">
-                ¿Quieres revisar tu Isapre?
-              </CardTitle>
-              <CardDescription className="text-center text-primary-foreground/90">
-                Cuéntanos qué te gustaría mejorar y te ayudaremos a encontrar la mejor opción
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-6">
+        {/* Formulario Asesoría Gratuita - Oculto por defecto */}
+        {showForm && (
+          <div className="mx-auto max-w-3xl mt-8 animate-in fade-in slide-in-from-top-4 duration-300">
+            <Card className="border-2">
+              <CardHeader className="bg-primary text-primary-foreground rounded-t-lg">
+                <CardTitle className="text-2xl text-center text-primary-foreground">
+                  ¿Quieres revisar tu Isapre?
+                </CardTitle>
+                <CardDescription className="text-center text-primary-foreground/90">
+                  Cuéntanos qué te gustaría mejorar y te ayudaremos a encontrar la mejor opción
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="p-6">
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* Información Personal */}
                 <div className="grid gap-4 md:grid-cols-2">
@@ -412,7 +421,7 @@ export default function HomePage() {
       <section className="container space-y-6 py-8 md:py-12 lg:py-24">
         <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 text-center">
           <h2 className="font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl">
-            ¿Por qué elegir QuePlan?
+            ¿Por qué elegir SolucionSalud?
           </h2>
         </div>
         <div className="mx-auto grid justify-center gap-4 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3">
@@ -451,12 +460,12 @@ export default function HomePage() {
         <div className="grid gap-8 md:grid-cols-3">
           <div className="md:col-span-2 space-y-6">
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-primary">QUEPLAN</h2>
+              <h2 className="text-2xl font-bold text-primary">SOLUCIONSALUD</h2>
               <h3 className="text-4xl md:text-5xl font-bold text-orange-600">QUIENES SOMOS</h3>
             </div>
             <div className="space-y-4 text-muted-foreground">
               <p className="text-lg leading-relaxed">
-                QuePlan es una plataforma web <strong className="text-foreground">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
+                SolucionSalud es una plataforma web <strong className="text-foreground">100% en línea y gratuita</strong>, para cotizar y comparar planes de salud de todas las Isapres de Chile.
               </p>
               <p className="leading-relaxed">
                 Nuestra plataforma concentra la información de todos los planes de todas las Isapres. La plataforma es muy fácil de usar, podrás seleccionar, comparar y elegir el plan que más se adapte a tus necesidades de salud y cobertura.
@@ -587,7 +596,7 @@ export default function HomePage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground leading-relaxed">
-                  En QuePlan encontrarás el plan que más se acomode a tu perfil y al de tu familia.
+                  En SolucionSalud encontrarás el plan que más se acomode a tu perfil y al de tu familia.
                 </p>
               </CardContent>
             </Card>

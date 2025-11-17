@@ -194,7 +194,7 @@ export class NewsService {
         description: 'Expertos comparten recomendaciones clave para que los usuarios tomen decisiones informadas al contratar o cambiar su plan de salud. Compara coberturas, precios y beneficios.',
         url: 'https://www.superdesalud.gob.cl',
         publishedAt: new Date(now.getTime() - 8 * 24 * 60 * 60 * 1000).toISOString(), // 8 días atrás
-        source: 'QuePlan',
+        source: 'SolucionSalud',
       },
     ];
   }

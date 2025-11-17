@@ -8,7 +8,7 @@ import { Providers } from './providers';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'QuePlan - Comparador de Planes de Salud',
+  title: 'SolucionSalud - Comparador de Planes de Salud',
   description: 'Compara planes de salud de las principales Isapres de Chile',
 };
 

@@ -48,7 +48,7 @@ export default function LoginPage() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@queplan.cl"
+                placeholder="admin@solucionsalud.cl"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -75,8 +75,8 @@ export default function LoginPage() {
           </form>
           <div className="mt-4 text-sm text-muted-foreground">
             <p>Credenciales de prueba:</p>
-            <p>Admin: admin@queplan.cl / admin123</p>
-            <p>Manager: manager@queplan.cl / manager123</p>
+            <p>Admin: admin@solucionsalud.cl / admin123</p>
+            <p>Manager: manager@solucionsalud.cl / manager123</p>
           </div>
         </CardContent>
       </Card>

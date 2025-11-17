@@ -9,20 +9,20 @@ async function main() {
   const managerPassword = await bcrypt.hash('manager123', 10);
 
   const admin = await prisma.user.upsert({
-    where: { email: 'admin@queplan.cl' },
+    where: { email: 'admin@solucionsalud.cl' },
     update: {},
     create: {
-      email: 'admin@queplan.cl',
+      email: 'admin@solucionsalud.cl',
       password: adminPassword,
       role: 'ADMIN',
     },
   });
 
   const manager = await prisma.user.upsert({
-    where: { email: 'manager@queplan.cl' },
+    where: { email: 'manager@solucionsalud.cl' },
     update: {},
     create: {
-      email: 'manager@queplan.cl',
+      email: 'manager@solucionsalud.cl',
       password: managerPassword,
       role: 'MANAGER',
     },
