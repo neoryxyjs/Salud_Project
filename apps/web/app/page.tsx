@@ -152,6 +152,8 @@ export default function HomePage() {
     email: '',
     phone: '',
     region: '',
+    currentInsurer: '',
+    paymentRegion: '',
     reasons: [] as string[],
     comments: '',
   });
@@ -220,6 +222,8 @@ export default function HomePage() {
         email: '',
         phone: '',
         region: '',
+        currentInsurer: '',
+        paymentRegion: '',
         reasons: [],
         comments: '',
       });
@@ -421,6 +425,44 @@ export default function HomePage() {
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Seleccionar región" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CHILEAN_REGIONS.map((region) => (
+                          <SelectItem key={region.value} value={region.value}>
+                            {region.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="currentInsurer">Isapre Actual</Label>
+                    <Select 
+                      value={formData.currentInsurer} 
+                      onValueChange={(value) => setFormData({ ...formData, currentInsurer: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar Isapre actual" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No tengo Isapre</SelectItem>
+                        <SelectItem value="banmedica">Banmédica</SelectItem>
+                        <SelectItem value="colmena">Colmena Golden Cross</SelectItem>
+                        <SelectItem value="consalud">Consalud</SelectItem>
+                        <SelectItem value="cruz-blanca">Cruz Blanca</SelectItem>
+                        <SelectItem value="nueva-masvida">Nueva Masvida</SelectItem>
+                        <SelectItem value="vida-tres">Vida Tres</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="paymentRegion">Región donde paga su Isapre</Label>
+                    <Select 
+                      value={formData.paymentRegion} 
+                      onValueChange={(value) => setFormData({ ...formData, paymentRegion: value })}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar región de pago" />
                       </SelectTrigger>
                       <SelectContent>
                         {CHILEAN_REGIONS.map((region) => (
