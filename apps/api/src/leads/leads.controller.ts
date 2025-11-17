@@ -104,5 +104,12 @@ export class LeadsController {
   remove(@Param('id') id: string) {
     return this.leadsService.remove(id);
   }
+
+  @Delete('cleanup/sample')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  removeSampleLeads() {
+    return this.leadsService.removeSampleLeads();
+  }
 }
 

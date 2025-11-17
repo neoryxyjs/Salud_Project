@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import { MoreHorizontal, Search, Phone, Mail, FileText, Clock } from 'lucide-react';
+import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -40,6 +40,8 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
+import { Checkbox } from '@/components/ui/checkbox';
+import { validateRUT, formatRUT } from '@/lib/rut-validator';
 
 const statusOptions = [
   { value: 'new', label: 'Nuevo', color: 'default' },
@@ -64,8 +66,22 @@ export default function LeadsPage() {
   const [search, setSearch] = useState('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [newActivityType, setNewActivityType] = useState('note');
   const [newActivityDescription, setNewActivityDescription] = useState('');
+  const [newLead, setNewLead] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    rut: '',
+    region: '',
+    currentInsurer: '',
+    reasons: [] as string[],
+    comments: '',
+    planId: '',
+    status: 'new',
+    notes: '',
+  });
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -77,6 +93,16 @@ export default function LeadsPage() {
       });
       if (search) params.append('search', search);
       const { data } = await api.get(`/leads?${params.toString()}`);
+      return data;
+    },
+    retry: false,
+  });
+
+  // Obtener planes para el selector
+  const { data: plansData } = useQuery({
+    queryKey: ['plans'],
+    queryFn: async () => {
+      const { data } = await api.get('/plans');
       return data;
     },
     retry: false,
@@ -134,6 +160,30 @@ export default function LeadsPage() {
     },
   });
 
+  const createMutation = useMutation({
+    mutationFn: async (leadData: any) => {
+      const { data } = await api.post('/leads', leadData);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      setIsCreateDialogOpen(false);
+      setNewLead({
+        name: '',
+        email: '',
+        phone: '',
+        rut: '',
+        region: '',
+        currentInsurer: '',
+        reasons: [],
+        comments: '',
+        planId: '',
+        status: 'new',
+        notes: '',
+      });
+    },
+  });
+
   const handleStatusChange = (leadId: string, newStatus: string) => {
     updateMutation.mutate({ id: leadId, status: newStatus });
   };
@@ -176,6 +226,13 @@ export default function LeadsPage() {
             Administra y gestiona tus leads
           </p>
         </div>
+        <Button 
+          onClick={() => setIsCreateDialogOpen(true)}
+          className="bg-primary text-primary-foreground hover:bg-primary/90"
+        >
+          <Plus className="mr-2 h-4 w-4" />
+          Crear Lead
+        </Button>
       </div>
 
       <div className="flex items-center gap-4">
@@ -533,6 +590,226 @@ export default function LeadsPage() {
             </Button>
             <Button onClick={handleSave} disabled={updateMutation.isPending}>
               {updateMutation.isPending ? 'Guardando...' : 'Guardar Cambios'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Diálogo para Crear Lead */}
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Crear Nuevo Lead</DialogTitle>
+            <DialogDescription>
+              Completa la información del nuevo lead
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-6">
+            {/* Información Personal */}
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="new-name" className="flex items-center gap-2">
+                  <User className="h-4 w-4" />
+                  Nombre completo *
+                </Label>
+                <Input
+                  id="new-name"
+                  placeholder="Juan Pérez"
+                  value={newLead.name}
+                  onChange={(e) => setNewLead({ ...newLead, name: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-email" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  Email
+                </Label>
+                <Input
+                  id="new-email"
+                  type="email"
+                  placeholder="juan@email.com"
+                  value={newLead.email}
+                  onChange={(e) => setNewLead({ ...newLead, email: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-phone" className="flex items-center gap-2">
+                  <Phone className="h-4 w-4" />
+                  Teléfono
+                </Label>
+                <Input
+                  id="new-phone"
+                  type="tel"
+                  placeholder="+56 9 1234 5678"
+                  value={newLead.phone}
+                  onChange={(e) => setNewLead({ ...newLead, phone: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-rut">R.U.T.</Label>
+                <Input
+                  id="new-rut"
+                  placeholder="12.345.678-9"
+                  value={newLead.rut}
+                  onChange={(e) => {
+                    const value = e.target.value;
+                    const cleanValue = value.replace(/\./g, '').replace(/-/g, '');
+                    if (cleanValue.length >= 8) {
+                      const formatted = formatRUT(cleanValue);
+                      setNewLead({ ...newLead, rut: formatted });
+                    } else {
+                      setNewLead({ ...newLead, rut: cleanValue });
+                    }
+                  }}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-region">Región</Label>
+                <Input
+                  id="new-region"
+                  placeholder="Región Metropolitana"
+                  value={newLead.region}
+                  onChange={(e) => setNewLead({ ...newLead, region: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-current-insurer">Isapre Actual</Label>
+                <Input
+                  id="new-current-insurer"
+                  placeholder="Banmédica"
+                  value={newLead.currentInsurer}
+                  onChange={(e) => setNewLead({ ...newLead, currentInsurer: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-plan">Plan</Label>
+                <Select value={newLead.planId} onValueChange={(value) => setNewLead({ ...newLead, planId: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar plan (opcional)" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {plansData?.map((plan: any) => (
+                      <SelectItem key={plan.id} value={plan.id}>
+                        {plan.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="new-status">Estado</Label>
+                <Select value={newLead.status} onValueChange={(value) => setNewLead({ ...newLead, status: value })}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((status) => (
+                      <SelectItem key={status.value} value={status.value}>
+                        {status.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Motivos */}
+            <div className="space-y-3">
+              <Label className="text-base font-semibold">
+                Motivos para revisar Isapre (opcional)
+              </Label>
+              <div className="space-y-2">
+                {REASONS.map((reason) => {
+                  const isChecked = newLead.reasons.includes(reason.id);
+                  return (
+                    <div
+                      key={reason.id}
+                      className={`flex items-center space-x-3 p-3 rounded-lg border transition-colors ${
+                        isChecked
+                          ? 'bg-primary/10 border-primary'
+                          : 'bg-muted/50 hover:bg-muted'
+                      }`}
+                    >
+                      <Checkbox
+                        id={`new-reason-${reason.id}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            setNewLead({
+                              ...newLead,
+                              reasons: [...newLead.reasons, reason.id],
+                            });
+                          } else {
+                            setNewLead({
+                              ...newLead,
+                              reasons: newLead.reasons.filter((r) => r !== reason.id),
+                            });
+                          }
+                        }}
+                      />
+                      <Label
+                        htmlFor={`new-reason-${reason.id}`}
+                        className="flex-1 cursor-pointer font-normal"
+                      >
+                        {reason.label}
+                      </Label>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Comentarios y Notas */}
+            <div className="space-y-2">
+              <Label htmlFor="new-comments">Comentarios del Cliente</Label>
+              <Textarea
+                id="new-comments"
+                placeholder="Comentarios adicionales..."
+                value={newLead.comments}
+                onChange={(e) => setNewLead({ ...newLead, comments: e.target.value })}
+                rows={3}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="new-notes">Notas Internas</Label>
+              <Textarea
+                id="new-notes"
+                placeholder="Notas internas sobre el lead..."
+                value={newLead.notes}
+                onChange={(e) => setNewLead({ ...newLead, notes: e.target.value })}
+                rows={3}
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>
+              Cancelar
+            </Button>
+            <Button 
+              onClick={() => {
+                if (!newLead.name) {
+                  alert('El nombre es obligatorio');
+                  return;
+                }
+                createMutation.mutate({
+                  name: newLead.name,
+                  email: newLead.email || undefined,
+                  phone: newLead.phone || undefined,
+                  rut: newLead.rut || undefined,
+                  region: newLead.region || undefined,
+                  currentInsurer: newLead.currentInsurer || undefined,
+                  reasons: newLead.reasons.length > 0 ? newLead.reasons : undefined,
+                  comments: newLead.comments || undefined,
+                  planId: newLead.planId || undefined,
+                  status: newLead.status,
+                  notes: newLead.notes || undefined,
+                });
+              }}
+              disabled={createMutation.isPending || !newLead.name}
+              className="bg-primary text-primary-foreground hover:bg-primary/90"
+            >
+              {createMutation.isPending ? 'Creando...' : 'Crear Lead'}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -223,5 +223,17 @@ export class LeadsService {
       where: { id },
     });
   }
+
+  async removeSampleLeads() {
+    // Eliminar todos los leads que tengan email de ejemplo
+    const result = await this.prisma.lead.deleteMany({
+      where: {
+        email: {
+          contains: '@example.com',
+        },
+      },
+    });
+    return { deleted: result.count };
+  }
 }
 
