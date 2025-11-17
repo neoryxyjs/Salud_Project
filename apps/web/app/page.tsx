@@ -856,15 +856,125 @@ export default function HomePage() {
       </section>
 
       {/* Sección Mujeres */}
-      <section id="mujeres" className="container py-16 md:py-24">
-        <div className="text-center mb-12 space-y-4">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-            <Heart className="h-8 w-8 text-primary" />
+      <section id="mujeres" className="bg-gradient-to-b from-background to-muted/30 py-16 md:py-24">
+        <div className="container">
+          {/* Banner Hero */}
+          <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background rounded-xl p-8 md:p-12 mb-16 relative overflow-hidden">
+            <div className="absolute inset-0 opacity-5">
+              <div className="absolute top-10 left-10 w-32 h-32 border-2 border-primary rounded-full"></div>
+              <div className="absolute top-20 right-20 w-24 h-24 border-2 border-primary rounded-full"></div>
+            </div>
+            <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
+              <div className="space-y-4">
+                <p className="text-primary text-sm font-semibold uppercase tracking-wider">NOSOTRAS</p>
+                <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+                  PLANES DE SALUD PENSADO EN NOSOTRAS
+                </h2>
+                <p className="text-muted-foreground leading-relaxed">
+                  Desde abril de 2020, todas las mujeres pueden acceder a planes con mayor cobertura y menor precio.
+                </p>
+                <p className="text-sm text-muted-foreground italic">
+                  *Para que se haga efectivo sólo debes solicitar el cambio de plan o cambiarte de Isapre.
+                </p>
+              </div>
+              <div className="flex justify-center md:justify-end">
+                <div className="w-64 h-64 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Heart className="h-32 w-32 text-primary/30" />
+                </div>
+              </div>
+            </div>
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold">Mujeres</h2>
-          <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-            Información especializada en planes de salud para mujeres.
-          </p>
+
+          {/* Sección de Beneficios */}
+          <div className="space-y-12">
+            <div className="text-center space-y-4">
+              <p className="text-primary text-sm font-semibold uppercase tracking-wider">NUESTROS BENEFICIOS</p>
+              <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+                COMO MUJERES TENEMOS NUESTRAS PROPIAS NECESIDADES DE SALUD
+              </h3>
+              <p className="text-muted-foreground text-lg max-w-3xl mx-auto leading-relaxed">
+                Porque consideramos que la salud es lo más importante para nosotras y nuestra familia, nos queremos sentir seguras de las coberturas que nos brinda un plan de Isapre.
+              </p>
+            </div>
+
+            {/* 4 Columnas de Beneficios */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Maternidad */}
+              <Card className="border-2 hover:shadow-lg transition-shadow">
+                <CardHeader className="space-y-3">
+                  <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Heart className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl text-primary">Maternidad</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed text-sm">
+                    En la actualidad, por ley, desde diciembre de 2019, todos los nuevos planes de Isapre deben incluir cobertura en maternidad. Las Isapres ya no pueden comercializar planes con maternidad reducida.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Cuidados ginecológicos */}
+              <Card className="border-2 hover:shadow-lg transition-shadow">
+                <CardHeader className="space-y-3">
+                  <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <Shield className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl text-primary">Cuidados ginecológicos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed text-sm">
+                    Según la Sociedad Americana Contra El Cáncer, las mamografías deben realizarse anualmente a partir de los 40 años de edad. Esta frecuencia debe mantenerse hasta los 55 años, momento en el que el estudio puede hacerse cada dos años.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Tratamientos estéticos */}
+              <Card className="border-2 hover:shadow-lg transition-shadow">
+                <CardHeader className="space-y-3">
+                  <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <TrendingUp className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl text-primary">Tratamientos estéticos</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed text-sm">
+                    Cirugía estética a cargo de un staff especializado que brinda asesoramiento para acceder a la práctica más adecuada en cara, mamas o contorno corporal.
+                  </p>
+                </CardContent>
+              </Card>
+
+              {/* Los beneficios */}
+              <Card className="border-2 hover:shadow-lg transition-shadow">
+                <CardHeader className="space-y-3">
+                  <div className="h-16 w-16 rounded-full bg-blue-100 flex items-center justify-center">
+                    <CheckCircle2 className="h-8 w-8 text-blue-600" />
+                  </div>
+                  <CardTitle className="text-xl text-primary">Los beneficios</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-muted-foreground leading-relaxed text-sm">
+                    La plataforma de descuentos de las Isapres ofrecen beneficios extra para quienes eligen Plan Mujer en diferentes rubros como tiempo libre, belleza, fitness y gastronomía, entre otros.
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Botón CTA */}
+            <div className="text-center pt-8">
+              <Button 
+                size="lg" 
+                className="bg-primary text-primary-foreground hover:bg-primary/90 text-lg px-8 py-6"
+                onClick={(e) => {
+                  e.preventDefault();
+                  document.getElementById('inicio')?.scrollIntoView({ behavior: 'smooth' });
+                }}
+              >
+                Contacta un Asesor
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </div>
+          </div>
         </div>
       </section>
 
