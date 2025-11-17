@@ -75,6 +75,7 @@ model Lead {
   rut           String?
   region        String?
   currentInsurer String?
+  paymentRegion String?
   reasons       String[]       @default([])
   comments      String?
   utm           Json?
