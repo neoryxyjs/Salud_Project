@@ -10,6 +10,14 @@ import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { CHILEAN_REGIONS } from '@/lib/constants';
 
 export default function FormularioPage() {
   const [formData, setFormData] = useState({
@@ -235,13 +243,22 @@ export default function FormularioPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="region">Región *</Label>
-                  <Input
-                    id="region"
-                    placeholder="Región Metropolitana"
-                    value={formData.region}
-                    onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                  <Select 
+                    value={formData.region} 
+                    onValueChange={(value) => setFormData({ ...formData, region: value })}
                     required
-                  />
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Seleccionar región" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {CHILEAN_REGIONS.map((region) => (
+                        <SelectItem key={region.value} value={region.value}>
+                          {region.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
                 <Button 
                   type="submit" 

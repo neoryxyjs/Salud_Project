@@ -42,6 +42,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { Checkbox } from '@/components/ui/checkbox';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
+import { CHILEAN_REGIONS } from '@/lib/constants';
 
 const statusOptions = [
   { value: 'new', label: 'Nuevo', color: 'default' },
@@ -64,6 +65,8 @@ export default function LeadsPage() {
   const router = useRouter();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<string>('');
+  const [regionFilter, setRegionFilter] = useState<string>('');
   const [selectedLead, setSelectedLead] = useState<any>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
@@ -85,13 +88,15 @@ export default function LeadsPage() {
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
-    queryKey: ['leads', page, search],
+    queryKey: ['leads', page, search, statusFilter, regionFilter],
     queryFn: async () => {
       const params = new URLSearchParams({
         page: page.toString(),
         limit: '10',
       });
       if (search) params.append('search', search);
+      if (statusFilter) params.append('status', statusFilter);
+      if (regionFilter) params.append('region', regionFilter);
       const { data } = await api.get(`/leads?${params.toString()}`);
       return data;
     },
@@ -235,7 +240,7 @@ export default function LeadsPage() {
         </Button>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 flex-wrap">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -248,6 +253,32 @@ export default function LeadsPage() {
             className="pl-8"
           />
         </div>
+        <Select value={statusFilter} onValueChange={(value) => { setStatusFilter(value); setPage(1); }}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filtrar por estado" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todos los estados</SelectItem>
+            {statusOptions.map((status) => (
+              <SelectItem key={status.value} value={status.value}>
+                {status.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select value={regionFilter} onValueChange={(value) => { setRegionFilter(value); setPage(1); }}>
+          <SelectTrigger className="w-[200px]">
+            <SelectValue placeholder="Filtrar por región" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="">Todas las regiones</SelectItem>
+            {CHILEAN_REGIONS.map((region) => (
+              <SelectItem key={region.value} value={region.value}>
+                {region.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="rounded-md border">
@@ -666,12 +697,18 @@ export default function LeadsPage() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="new-region">Región</Label>
-                <Input
-                  id="new-region"
-                  placeholder="Región Metropolitana"
-                  value={newLead.region}
-                  onChange={(e) => setNewLead({ ...newLead, region: e.target.value })}
-                />
+                <Select value={newLead.region} onValueChange={(value) => setNewLead({ ...newLead, region: value })}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Seleccionar región" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CHILEAN_REGIONS.map((region) => (
+                      <SelectItem key={region.value} value={region.value}>
+                        {region.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="new-current-insurer">Isapre Actual</Label>

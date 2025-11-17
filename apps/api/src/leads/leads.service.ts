@@ -21,7 +21,7 @@ export class LeadsService {
     });
   }
 
-  async findAll(page = 1, limit = 10, search?: string) {
+  async findAll(page = 1, limit = 10, search?: string, status?: string, region?: string) {
     const skip = (page - 1) * limit;
     const where: any = {};
 
@@ -31,6 +31,14 @@ export class LeadsService {
         { email: { contains: search, mode: 'insensitive' } },
         { phone: { contains: search, mode: 'insensitive' } },
       ];
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
+    if (region) {
+      where.region = region;
     }
 
     const [data, total] = await Promise.all([

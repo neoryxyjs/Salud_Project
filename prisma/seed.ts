@@ -174,24 +174,7 @@ async function main() {
         },
       });
 
-      // Create some sample leads
-      if (i === 0) {
-        await prisma.lead.create({
-          data: {
-            planId: plan.id,
-            name: `Lead ${insurer.name} ${planName}`,
-            email: `lead${insurer.slug}${i}@example.com`,
-            phone: `+569${Math.floor(Math.random() * 10000000)}`,
-            region: 'RM',
-            status: i % 3 === 0 ? 'new' : i % 3 === 1 ? 'contacted' : 'qualified',
-            utm: {
-              source: 'google',
-              medium: 'cpc',
-              campaign: 'health-insurance',
-            },
-          },
-        });
-      }
+      // Leads are now created manually through the CRM interface
     }
   }
 

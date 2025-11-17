@@ -10,10 +10,18 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase, FileDown, Calendar, MessageCircle, X } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
+import { CHILEAN_REGIONS } from '@/lib/constants';
 
 const REASONS = [
   { id: 'muy_cara', label: 'Muy cara' },
@@ -406,13 +414,22 @@ export default function HomePage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="region">Región *</Label>
-                    <Input
-                      id="region"
-                      placeholder="Región Metropolitana"
-                      value={formData.region}
-                      onChange={(e) => setFormData({ ...formData, region: e.target.value })}
+                    <Select 
+                      value={formData.region} 
+                      onValueChange={(value) => setFormData({ ...formData, region: value })}
                       required
-                    />
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Seleccionar región" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {CHILEAN_REGIONS.map((region) => (
+                          <SelectItem key={region.value} value={region.value}>
+                            {region.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
 
