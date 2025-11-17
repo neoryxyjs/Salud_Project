@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase } from 'lucide-react';
+import { Search, Shield, TrendingUp, CheckCircle2, User, Mail, Phone, ArrowRight, ExternalLink, FileText, BookOpen, Scale, FileCheck, Users, Heart, Download, Newspaper, Briefcase, FileDown } from 'lucide-react';
 import { api } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import { validateRUT, formatRUT } from '@/lib/rut-validator';
@@ -610,13 +610,111 @@ export default function HomePage() {
       <section id="descargas" className="bg-gradient-to-b from-muted/50 to-background py-16 md:py-24">
         <div className="container">
           <div className="text-center mb-12 space-y-4">
-            <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary/10 mb-4">
-              <Download className="h-8 w-8 text-primary" />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold">Descargas</h2>
+            <p className="text-primary text-sm font-semibold uppercase tracking-wider">ACCESO DIRECTO</p>
+            <h2 className="text-3xl md:text-4xl font-bold">DESCARGAS</h2>
             <p className="text-muted-foreground text-lg max-w-2xl mx-auto leading-relaxed">
-              Descarga documentos, guías y recursos útiles sobre planes de salud.
+              En esta sección podrá descargar los documentos y boletines de interés para los usuarios del sistema de salud que se encuentran disponibles en nuestro sitio web.
             </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-3">
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-red-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div className="text-xs font-bold text-red-600">PDF</div>
+                </div>
+                <CardTitle className="text-lg text-primary">
+                  Normas administrativas de la Superintendencia de Salud
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  Compendio de normas administrativas de la Superintendencia de Salud en materia de Procedimientos.
+                </p>
+                <Button 
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                  asChild
+                >
+                  <a 
+                    href="https://www.tu7.cl/assets/common/descargas/articles-6678_recurso_1.pdf" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Descargar
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-red-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div className="text-xs font-bold text-red-600">PDF</div>
+                </div>
+                <CardTitle className="text-lg text-primary">
+                  Modificaciones legales propuestas por la ley larga de Isapres
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  Con la llamada Ley Larga, actualmente en discusión en el Congreso, se pretende introducir cambios legales que permitirían avanzar hacia la solución de los problemas que aún presenta el sistema de isapres.
+                </p>
+                <Button 
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                  asChild
+                >
+                  <a 
+                    href="https://www.tu7.cl/assets/common/descargas/articles-4065_recurso_1.pdf" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Descargar
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-lg bg-red-100 flex items-center justify-center">
+                    <FileText className="h-6 w-6 text-red-600" />
+                  </div>
+                  <div className="text-xs font-bold text-red-600">PDF</div>
+                </div>
+                <CardTitle className="text-lg text-primary">
+                  Las Instituciones de Salud Previsional (ISAPRE)
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed text-sm">
+                  Las Instituciones de Salud Previsional (ISAPRE) son un sistema privado de seguros de salud, actualmente conformado por nueve Aseguradoras (seis abiertas y tres cerradas).
+                </p>
+                <Button 
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                  asChild
+                >
+                  <a 
+                    href="https://www.tu7.cl/assets/common/descargas/Isapres.pdf" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    download
+                  >
+                    <FileDown className="mr-2 h-4 w-4" />
+                    Descargar
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
