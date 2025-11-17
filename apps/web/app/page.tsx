@@ -540,9 +540,15 @@ export default function HomePage() {
               <p className="text-muted-foreground leading-relaxed">
                 Desde septiembre de 2022, las personas beneficiarias de Fonasa de los tramos C y D tendrán gratuidad en todas sus atenciones en el sistema público de salud.
               </p>
-              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
-                Ver Más
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button 
+                variant="outline" 
+                className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
+                asChild
+              >
+                <a href="https://www.gob.cl/copagocero/" target="_blank" rel="noopener noreferrer">
+                  Ver Más
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
               </Button>
             </CardContent>
           </Card>
@@ -557,9 +563,15 @@ export default function HomePage() {
               <p className="text-muted-foreground leading-relaxed">
                 El nuevo plan se basa en nueva evidencia y fue elaborado en conjunto con especialistas, en un proceso de diálogo dirigido por la ministra María Begoña Yarza.
               </p>
-              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
-                Ver Más
-                <ArrowRight className="ml-2 h-4 w-4" />
+              <Button 
+                variant="outline" 
+                className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
+                asChild
+              >
+                <a href="https://www.gob.cl/pasoapaso/" target="_blank" rel="noopener noreferrer">
+                  Ver Más
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </a>
               </Button>
             </CardContent>
           </Card>
