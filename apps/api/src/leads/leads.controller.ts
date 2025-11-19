@@ -123,7 +123,7 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res() res: Response, @Request() req: any) {
+  async exportToExcel(@Res({ passthrough: false }) res: Response, @Request() req: any) {
     try {
       console.log('=== EXPORT EXCEL INICIADO ===');
       console.log('Request info:', {
