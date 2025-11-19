@@ -468,6 +468,11 @@ export class LeadsService {
     // PRIMERO agregar la hoja principal con TODOS los leads - esta es la más importante
     XLSX.utils.book_append_sheet(workbook, generalSheet, 'Resumen General');
     
+    // Verificar que la hoja principal se agregó correctamente
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+      throw new Error('Error: No se pudo agregar la hoja principal al workbook');
+    }
+    
     // Luego agregar hojas por estado (opcional)
     Object.keys(statusSheets).forEach((sheetName) => {
       XLSX.utils.book_append_sheet(workbook, statusSheets[sheetName], sheetName);
@@ -484,10 +489,12 @@ export class LeadsService {
     // Agregar hoja de estadísticas (opcional)
     XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
     
-    // Verificar que el workbook tenga al menos una hoja
+    // Verificar que el workbook tenga al menos la hoja principal
     if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      throw new Error('Error: El workbook no tiene hojas');
+      throw new Error('Error: El workbook no tiene hojas después de agregar todas las hojas');
     }
+    
+    console.log(`Workbook creado con ${workbook.SheetNames.length} hojas:`, workbook.SheetNames);
 
     // Generar buffer - asegurarse de que sea un Buffer válido
     const buffer = XLSX.write(workbook, { 
