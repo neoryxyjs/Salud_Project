@@ -123,23 +123,33 @@ export class LeadsController {
   @Roles(Role.ADMIN, Role.MANAGER)
   async exportToExcel(@Res({ passthrough: false }) res: Response) {
     try {
+      console.log('Iniciando exportación de Excel...');
       const buffer = await this.leadsService.exportToExcel();
       
       // Verificar que el buffer tenga contenido
       if (!buffer || buffer.length === 0) {
+        console.error('El buffer generado está vacío');
         throw new Error('El buffer generado está vacío');
       }
       
+      console.log(`Buffer generado correctamente. Tamaño: ${buffer.length} bytes`);
+      
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       
+      // Configurar headers antes de enviar
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', buffer.length.toString());
-      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       res.setHeader('X-Content-Type-Options', 'nosniff');
       
-      // Enviar el buffer como respuesta binaria
-      res.send(buffer);
+      // Enviar el buffer directamente sin transformaciones
+      res.writeHead(200);
+      res.end(buffer);
+      
+      console.log('Excel enviado correctamente al cliente');
     } catch (error) {
       console.error('Error al exportar Excel:', error);
       if (!res.headersSent) {

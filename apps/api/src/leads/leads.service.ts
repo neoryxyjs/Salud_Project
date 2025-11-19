@@ -246,7 +246,12 @@ export class LeadsService {
   }
 
   async findAllForExport() {
-    return this.prisma.lead.findMany({
+    // Primero verificar cuántos leads hay en total
+    const totalCount = await this.prisma.lead.count();
+    console.log(`Total de leads en la base de datos: ${totalCount}`);
+    
+    // Obtener todos los leads sin filtros
+    const leads = await this.prisma.lead.findMany({
       include: {
         plan: {
           include: {
@@ -277,6 +282,18 @@ export class LeadsService {
         createdAt: 'desc',
       },
     });
+    
+    console.log(`Leads obtenidos para exportación: ${leads.length}`);
+    if (leads.length > 0) {
+      console.log(`Primer lead ejemplo:`, {
+        id: leads[0].id,
+        name: leads[0].name,
+        email: leads[0].email,
+        status: leads[0].status,
+      });
+    }
+    
+    return leads;
   }
 
   async exportToExcel(): Promise<Buffer> {
