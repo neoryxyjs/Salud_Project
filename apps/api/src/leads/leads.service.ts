@@ -4,6 +4,7 @@ import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { CreateActivityDto } from './dto/create-activity.dto';
 import * as XLSX from 'xlsx';
+import * as ExcelJS from 'exceljs';
 
 @Injectable()
 export class LeadsService {
@@ -458,9 +459,9 @@ export class LeadsService {
   }
 
   async generateTemplateExcel(): Promise<Buffer> {
-    console.log('📋 GENERANDO TEMPLATE EXCEL');
+    console.log('📋 GENERANDO TEMPLATE EXCEL CON VALIDACIÓN DE DATOS');
     
-    const workbook = XLSX.utils.book_new();
+    const workbook = new ExcelJS.Workbook();
     
     // Valores permitidos
     const estados = [
@@ -513,95 +514,148 @@ export class LeadsService {
       'Región de Arica y Parinacota',
     ];
 
+    // Crear hojas de referencia (ocultas)
+    const estadosSheet = workbook.addWorksheet('_Estados');
+    estados.forEach((estado, index) => {
+      estadosSheet.getCell(`A${index + 1}`).value = estado;
+    });
+
+    const motivosSheet = workbook.addWorksheet('_Motivos');
+    motivos.forEach((motivo, index) => {
+      motivosSheet.getCell(`A${index + 1}`).value = motivo;
+    });
+
+    const isapresSheet = workbook.addWorksheet('_Isapres');
+    isapres.forEach((isapre, index) => {
+      isapresSheet.getCell(`A${index + 1}`).value = isapre;
+    });
+
+    const regionesSheet = workbook.addWorksheet('_Regiones');
+    regiones.forEach((region, index) => {
+      regionesSheet.getCell(`A${index + 1}`).value = region;
+    });
+
+    // Ocultar hojas de referencia
+    estadosSheet.state = 'hidden';
+    motivosSheet.state = 'hidden';
+    isapresSheet.state = 'hidden';
+    regionesSheet.state = 'hidden';
+
     // Hoja principal: Template
-    const templateData = [
-      // Encabezados
-      {
-        'ID': 'Opcional - Dejar vacío para crear nuevo, o usar ID existente para actualizar',
-        'Nombre': 'Requerido - Nombre completo',
-        'Email': 'Requerido - Email válido',
-        'Teléfono': 'Opcional - Formato: +56912345678',
-        'RUT': 'Opcional - Formato: 12.345.678-9',
-        'Región': 'Opcional - Ver hoja "Valores Permitidos"',
-        'Isapre Actual': 'Opcional - Ver hoja "Valores Permitidos"',
-        'Motivos': 'Opcional - Separar por comas. Ver hoja "Valores Permitidos"',
-        'Comentarios': 'Opcional - Texto libre',
-        'Estado': 'Opcional - Ver hoja "Valores Permitidos"',
-        'Notas': 'Opcional - Notas internas',
-      },
-      // Fila de ejemplo
-      {
-        'ID': '',
-        'Nombre': 'Juan Pérez',
-        'Email': 'juan@email.com',
-        'Teléfono': '+56912345678',
-        'RUT': '12.345.678-9',
-        'Región': 'Región Metropolitana',
-        'Isapre Actual': 'Banmédica',
-        'Motivos': 'Muy cara, Mejorar coberturas',
-        'Comentarios': 'Cliente interesado en mejorar su plan',
-        'Estado': 'Nuevo',
-        'Notas': 'Contactar esta semana',
-      },
-    ];
-
-    const templateSheet = XLSX.utils.json_to_sheet(templateData);
+    const templateSheet = workbook.addWorksheet('Template');
     
+    // Encabezados
+    templateSheet.getRow(1).values = [
+      'ID',
+      'Nombre',
+      'Email',
+      'Teléfono',
+      'RUT',
+      'Región',
+      'Isapre Actual',
+      'Motivos',
+      'Comentarios',
+      'Estado',
+      'Notas',
+    ];
+
+    // Estilo de encabezados
+    templateSheet.getRow(1).font = { bold: true };
+    templateSheet.getRow(1).fill = {
+      type: 'pattern',
+      pattern: 'solid',
+      fgColor: { argb: 'FFE0E0E0' },
+    };
+
+    // Fila de ejemplo
+    templateSheet.getRow(2).values = [
+      '',
+      'Juan Pérez',
+      'juan@email.com',
+      '+56912345678',
+      '12.345.678-9',
+      'Región Metropolitana',
+      'Banmédica',
+      'Muy cara, Mejorar coberturas',
+      'Cliente interesado en mejorar su plan',
+      'Nuevo',
+      'Contactar esta semana',
+    ];
+
     // Ajustar ancho de columnas
-    const colWidths = [
-      { wch: 40 }, // ID
-      { wch: 20 }, // Nombre
-      { wch: 25 }, // Email
-      { wch: 15 }, // Teléfono
-      { wch: 15 }, // RUT
-      { wch: 25 }, // Región
-      { wch: 20 }, // Isapre Actual
-      { wch: 40 }, // Motivos
-      { wch: 40 }, // Comentarios
-      { wch: 15 }, // Estado
-      { wch: 30 }, // Notas
-    ];
-    templateSheet['!cols'] = colWidths;
-
-    XLSX.utils.book_append_sheet(workbook, templateSheet, 'Template');
-
-    // Hoja de valores permitidos
-    const valoresPermitidos = [
-      { 'Campo': 'Estado', 'Valores Permitidos': estados.join(', ') },
-      { 'Campo': 'Motivos', 'Valores Permitidos': motivos.join(', ') },
-      { 'Campo': 'Isapre Actual', 'Valores Permitidos': isapres.join(', ') },
-      { 'Campo': 'Región', 'Valores Permitidos': regiones.join(', ') },
+    templateSheet.columns = [
+      { width: 40 }, // ID
+      { width: 20 }, // Nombre
+      { width: 25 }, // Email
+      { width: 15 }, // Teléfono
+      { width: 15 }, // RUT
+      { width: 25 }, // Región
+      { width: 20 }, // Isapre Actual
+      { width: 40 }, // Motivos
+      { width: 40 }, // Comentarios
+      { width: 20 }, // Estado
+      { width: 30 }, // Notas
     ];
 
-    const valoresSheet = XLSX.utils.json_to_sheet(valoresPermitidos);
-    valoresSheet['!cols'] = [{ wch: 20 }, { wch: 80 }];
-    XLSX.utils.book_append_sheet(workbook, valoresSheet, 'Valores Permitidos');
+    // Agregar validación de datos (dropdowns) a partir de la fila 2
+    // Aplicar a las primeras 1000 filas para que funcione en todas las filas nuevas
+    
+    // Columna F (6): Región
+    for (let row = 2; row <= 1000; row++) {
+      const cell = templateSheet.getCell(row, 6);
+      cell.dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: [`'_Regiones'!$A$1:$A$${regiones.length}`],
+        showErrorMessage: true,
+        errorStyle: 'warning',
+        errorTitle: 'Valor inválido',
+        error: 'Por favor, selecciona un valor de la lista.',
+      };
+    }
 
-    // Hoja con listas detalladas
-    const estadosList = estados.map(e => ({ 'Estado': e }));
-    const estadosSheet = XLSX.utils.json_to_sheet(estadosList);
-    estadosSheet['!cols'] = [{ wch: 20 }];
-    XLSX.utils.book_append_sheet(workbook, estadosSheet, 'Estados');
+    // Columna G (7): Isapre Actual
+    for (let row = 2; row <= 1000; row++) {
+      const cell = templateSheet.getCell(row, 7);
+      cell.dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: [`'_Isapres'!$A$1:$A$${isapres.length}`],
+        showErrorMessage: true,
+        errorStyle: 'warning',
+        errorTitle: 'Valor inválido',
+        error: 'Por favor, selecciona un valor de la lista.',
+      };
+    }
 
-    const motivosList = motivos.map(m => ({ 'Motivo': m }));
-    const motivosSheet = XLSX.utils.json_to_sheet(motivosList);
-    motivosSheet['!cols'] = [{ wch: 30 }];
-    XLSX.utils.book_append_sheet(workbook, motivosSheet, 'Motivos');
+    // Columna J (10): Estado
+    for (let row = 2; row <= 1000; row++) {
+      const cell = templateSheet.getCell(row, 10);
+      cell.dataValidation = {
+        type: 'list',
+        allowBlank: true,
+        formulae: [`'_Estados'!$A$1:$A$${estados.length}`],
+        showErrorMessage: true,
+        errorStyle: 'warning',
+        errorTitle: 'Valor inválido',
+        error: 'Por favor, selecciona un valor de la lista.',
+      };
+    }
 
-    const isapresList = isapres.map(i => ({ 'Isapre': i }));
-    const isapresSheet = XLSX.utils.json_to_sheet(isapresList);
-    isapresSheet['!cols'] = [{ wch: 25 }];
-    XLSX.utils.book_append_sheet(workbook, isapresSheet, 'Isapres');
-
-    const regionesList = regiones.map(r => ({ 'Región': r }));
-    const regionesSheet = XLSX.utils.json_to_sheet(regionesList);
-    regionesSheet['!cols'] = [{ wch: 30 }];
-    XLSX.utils.book_append_sheet(workbook, regionesSheet, 'Regiones');
+    // Hoja de valores permitidos (visible)
+    const valoresSheet = workbook.addWorksheet('Valores Permitidos');
+    valoresSheet.getRow(1).values = ['Campo', 'Valores Permitidos'];
+    valoresSheet.getRow(1).font = { bold: true };
+    valoresSheet.getRow(2).values = ['Estado', estados.join(', ')];
+    valoresSheet.getRow(3).values = ['Motivos', motivos.join(', ')];
+    valoresSheet.getRow(4).values = ['Isapre Actual', isapres.join(', ')];
+    valoresSheet.getRow(5).values = ['Región', regiones.join(', ')];
+    valoresSheet.columns = [{ width: 20 }, { width: 80 }];
 
     // Generar buffer
-    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    const buffer = await workbook.xlsx.writeBuffer();
     
-    console.log('✅ Template Excel generado');
+    console.log('✅ Template Excel con validación generado');
     
     return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
   }
