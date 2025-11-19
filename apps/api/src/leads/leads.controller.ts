@@ -69,57 +69,6 @@ export class LeadsController {
     );
   }
 
-  @Get(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  findOne(@Param('id') id: string) {
-    return this.leadsService.findOne(id);
-  }
-
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  update(
-    @Param('id') id: string,
-    @Body() updateLeadDto: UpdateLeadDto,
-    @Request() req,
-  ) {
-    return this.leadsService.update(id, updateLeadDto, req.user?.id);
-  }
-
-  @Post(':id/activities')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  createActivity(
-    @Param('id') id: string,
-    @Body() createActivityDto: CreateActivityDto,
-    @Request() req,
-  ) {
-    return this.leadsService.createActivity(id, createActivityDto, req.user?.id);
-  }
-
-  @Get('stats/summary')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  getStats() {
-    return this.leadsService.getStats();
-  }
-
-
-  @Delete(':id')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  remove(@Param('id') id: string) {
-    return this.leadsService.remove(id);
-  }
-
-  @Delete('cleanup/sample')
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Roles(Role.ADMIN, Role.MANAGER)
-  removeSampleLeads() {
-    return this.leadsService.removeSampleLeads();
-  }
-
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
@@ -163,6 +112,56 @@ export class LeadsController {
         });
       }
     }
+  }
+
+  @Get('stats/summary')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  getStats() {
+    return this.leadsService.getStats();
+  }
+
+  @Get(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  findOne(@Param('id') id: string) {
+    return this.leadsService.findOne(id);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  update(
+    @Param('id') id: string,
+    @Body() updateLeadDto: UpdateLeadDto,
+    @Request() req,
+  ) {
+    return this.leadsService.update(id, updateLeadDto, req.user?.id);
+  }
+
+  @Post(':id/activities')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  createActivity(
+    @Param('id') id: string,
+    @Body() createActivityDto: CreateActivityDto,
+    @Request() req,
+  ) {
+    return this.leadsService.createActivity(id, createActivityDto, req.user?.id);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  remove(@Param('id') id: string) {
+    return this.leadsService.remove(id);
+  }
+
+  @Delete('cleanup/sample')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  removeSampleLeads() {
+    return this.leadsService.removeSampleLeads();
   }
 }
 
