@@ -343,6 +343,13 @@ export class LeadsService {
       'qualified': 'Calificado',
       'converted': 'Convertido',
       'lost': 'Perdido',
+      'contesta': 'Contesta',
+      'no_contesta': 'No contesta',
+      'buzon': 'Buzón',
+      'volver_llamar': 'Volver a llamar',
+      'en_proceso': 'En proceso',
+      'cursado': 'Cursado (Contrato generado)',
+      'no_interesa': 'No le interesa',
     };
 
     // 2. MAPEAR A EXCEL
@@ -401,6 +408,13 @@ export class LeadsService {
         qualified: 'Calificados',
         converted: 'Convertidos',
         lost: 'Perdidos',
+        contesta: 'Contesta',
+        no_contesta: 'No contesta',
+        buzon: 'Buzón',
+        volver_llamar: 'Volver a llamar',
+        en_proceso: 'En proceso',
+        cursado: 'Cursado',
+        no_interesa: 'No le interesa',
       };
       XLSX.utils.book_append_sheet(workbook, sheet, names[status] || status);
     });
@@ -443,6 +457,155 @@ export class LeadsService {
     return finalBuffer;
   }
 
+  async generateTemplateExcel(): Promise<Buffer> {
+    console.log('📋 GENERANDO TEMPLATE EXCEL');
+    
+    const workbook = XLSX.utils.book_new();
+    
+    // Valores permitidos
+    const estados = [
+      'Nuevo',
+      'Contactado',
+      'Calificado',
+      'Convertido',
+      'Perdido',
+      'Contesta',
+      'No contesta',
+      'Buzón',
+      'Volver a llamar',
+      'En proceso',
+      'Cursado (Contrato generado)',
+      'No le interesa',
+    ];
+    const motivos = [
+      'Muy cara',
+      'La isapre me cubre poco',
+      'Me subieron el plan de salud',
+      'Mejorar coberturas',
+      'No me gusta mi Isapre actual',
+      'Otros',
+    ];
+    const isapres = [
+      'Banmédica',
+      'Colmena Golden Cross',
+      'Consalud',
+      'Cruz Blanca',
+      'Esencial Isapre',
+      'Nueva Masvida',
+      'Vida Tres',
+    ];
+    const regiones = [
+      'Región Metropolitana',
+      'Región de Valparaíso',
+      'Región del Biobío',
+      'Región de La Araucanía',
+      'Región de Los Lagos',
+      'Región de Tarapacá',
+      'Región de Antofagasta',
+      'Región de Atacama',
+      'Región de Coquimbo',
+      'Región de O\'Higgins',
+      'Región del Maule',
+      'Región de Ñuble',
+      'Región de Los Ríos',
+      'Región de Aysén',
+      'Región de Magallanes',
+      'Región de Arica y Parinacota',
+    ];
+
+    // Hoja principal: Template
+    const templateData = [
+      // Encabezados
+      {
+        'ID': 'Opcional - Dejar vacío para crear nuevo, o usar ID existente para actualizar',
+        'Nombre': 'Requerido - Nombre completo',
+        'Email': 'Requerido - Email válido',
+        'Teléfono': 'Opcional - Formato: +56912345678',
+        'RUT': 'Opcional - Formato: 12.345.678-9',
+        'Región': 'Opcional - Ver hoja "Valores Permitidos"',
+        'Isapre Actual': 'Opcional - Ver hoja "Valores Permitidos"',
+        'Motivos': 'Opcional - Separar por comas. Ver hoja "Valores Permitidos"',
+        'Comentarios': 'Opcional - Texto libre',
+        'Estado': 'Opcional - Ver hoja "Valores Permitidos"',
+        'Notas': 'Opcional - Notas internas',
+      },
+      // Fila de ejemplo
+      {
+        'ID': '',
+        'Nombre': 'Juan Pérez',
+        'Email': 'juan@email.com',
+        'Teléfono': '+56912345678',
+        'RUT': '12.345.678-9',
+        'Región': 'Región Metropolitana',
+        'Isapre Actual': 'Banmédica',
+        'Motivos': 'Muy cara, Mejorar coberturas',
+        'Comentarios': 'Cliente interesado en mejorar su plan',
+        'Estado': 'Nuevo',
+        'Notas': 'Contactar esta semana',
+      },
+    ];
+
+    const templateSheet = XLSX.utils.json_to_sheet(templateData);
+    
+    // Ajustar ancho de columnas
+    const colWidths = [
+      { wch: 40 }, // ID
+      { wch: 20 }, // Nombre
+      { wch: 25 }, // Email
+      { wch: 15 }, // Teléfono
+      { wch: 15 }, // RUT
+      { wch: 25 }, // Región
+      { wch: 20 }, // Isapre Actual
+      { wch: 40 }, // Motivos
+      { wch: 40 }, // Comentarios
+      { wch: 15 }, // Estado
+      { wch: 30 }, // Notas
+    ];
+    templateSheet['!cols'] = colWidths;
+
+    XLSX.utils.book_append_sheet(workbook, templateSheet, 'Template');
+
+    // Hoja de valores permitidos
+    const valoresPermitidos = [
+      { 'Campo': 'Estado', 'Valores Permitidos': estados.join(', ') },
+      { 'Campo': 'Motivos', 'Valores Permitidos': motivos.join(', ') },
+      { 'Campo': 'Isapre Actual', 'Valores Permitidos': isapres.join(', ') },
+      { 'Campo': 'Región', 'Valores Permitidos': regiones.join(', ') },
+    ];
+
+    const valoresSheet = XLSX.utils.json_to_sheet(valoresPermitidos);
+    valoresSheet['!cols'] = [{ wch: 20 }, { wch: 80 }];
+    XLSX.utils.book_append_sheet(workbook, valoresSheet, 'Valores Permitidos');
+
+    // Hoja con listas detalladas
+    const estadosList = estados.map(e => ({ 'Estado': e }));
+    const estadosSheet = XLSX.utils.json_to_sheet(estadosList);
+    estadosSheet['!cols'] = [{ wch: 20 }];
+    XLSX.utils.book_append_sheet(workbook, estadosSheet, 'Estados');
+
+    const motivosList = motivos.map(m => ({ 'Motivo': m }));
+    const motivosSheet = XLSX.utils.json_to_sheet(motivosList);
+    motivosSheet['!cols'] = [{ wch: 30 }];
+    XLSX.utils.book_append_sheet(workbook, motivosSheet, 'Motivos');
+
+    const isapresList = isapres.map(i => ({ 'Isapre': i }));
+    const isapresSheet = XLSX.utils.json_to_sheet(isapresList);
+    isapresSheet['!cols'] = [{ wch: 25 }];
+    XLSX.utils.book_append_sheet(workbook, isapresSheet, 'Isapres');
+
+    const regionesList = regiones.map(r => ({ 'Región': r }));
+    const regionesSheet = XLSX.utils.json_to_sheet(regionesList);
+    regionesSheet['!cols'] = [{ wch: 30 }];
+    XLSX.utils.book_append_sheet(workbook, regionesSheet, 'Regiones');
+
+    // Generar buffer
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    
+    console.log('✅ Template Excel generado');
+    
+    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+  }
+
   async importFromExcel(buffer: Buffer, userId?: string) {
     console.log('📥 IMPORTAR EXCEL INICIADO');
     
@@ -463,6 +626,14 @@ export class LeadsService {
         'Calificado': 'qualified',
         'Convertido': 'converted',
         'Perdido': 'lost',
+        'Contesta': 'contesta',
+        'No contesta': 'no_contesta',
+        'Buzón': 'buzon',
+        'Volver a llamar': 'volver_llamar',
+        'En proceso': 'en_proceso',
+        'Cursado (Contrato generado)': 'cursado',
+        'Cursado': 'cursado', // También aceptar sin el paréntesis
+        'No le interesa': 'no_interesa',
       };
 
       const reasonMap: { [key: string]: string } = {

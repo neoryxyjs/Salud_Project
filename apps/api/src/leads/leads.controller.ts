@@ -72,6 +72,38 @@ export class LeadsController {
     );
   }
 
+  @Get('template')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  async downloadTemplate(@Res({ passthrough: false }) res: Response) {
+    try {
+      console.log('📋 DESCARGANDO TEMPLATE EXCEL');
+      const buffer = await this.leadsService.generateTemplateExcel();
+      
+      if (!buffer || buffer.length === 0) {
+        return res.status(500).json({ 
+          error: 'Error al generar el template Excel',
+        });
+      }
+      
+      const filename = `template_importacion_leads.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.setHeader('Content-Length', buffer.length.toString());
+      
+      return res.send(buffer);
+    } catch (error) {
+      console.error('ERROR:', error);
+      if (!res.headersSent) {
+        return res.status(500).json({ 
+          error: 'Error al generar el template Excel',
+          message: error instanceof Error ? error.message : 'Error desconocido'
+        });
+      }
+    }
+  }
+
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)

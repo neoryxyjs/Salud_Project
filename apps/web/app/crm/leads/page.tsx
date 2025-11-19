@@ -50,6 +50,13 @@ const statusOptions = [
   { value: 'qualified', label: 'Calificado', color: 'default' },
   { value: 'converted', label: 'Convertido', color: 'default' },
   { value: 'lost', label: 'Perdido', color: 'destructive' },
+  { value: 'contesta', label: 'Contesta', color: 'default' },
+  { value: 'no_contesta', label: 'No contesta', color: 'secondary' },
+  { value: 'buzon', label: 'Buzón', color: 'secondary' },
+  { value: 'volver_llamar', label: 'Volver a llamar', color: 'default' },
+  { value: 'en_proceso', label: 'En proceso', color: 'default' },
+  { value: 'cursado', label: 'Cursado (Contrato generado)', color: 'default' },
+  { value: 'no_interesa', label: 'No le interesa', color: 'destructive' },
 ];
 
 const REASONS = [
@@ -208,6 +215,36 @@ export default function LeadsPage() {
         status: selectedLead.status,
         notes: selectedLead.notes,
       });
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      const response = await api.get('/leads/template', {
+        responseType: 'blob',
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+
+      const blob = response.data instanceof Blob ? response.data : new Blob([response.data], {
+        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+      });
+
+      const downloadUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = downloadUrl;
+      link.setAttribute('download', 'template_importacion_leads.xlsx');
+      document.body.appendChild(link);
+      link.click();
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(downloadUrl);
+      }, 100);
+    } catch (error: any) {
+      console.error('Error al descargar template:', error);
+      alert(`Error al descargar el template: ${error.message || 'Error desconocido'}`);
     }
   };
 
@@ -395,6 +432,14 @@ export default function LeadsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <Button 
+            onClick={handleDownloadTemplate}
+            variant="outline"
+            className="border-green-600 text-green-600 hover:bg-green-600 hover:text-white"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Descargar Template
+          </Button>
           <input
             type="file"
             accept=".xlsx,.xls"
