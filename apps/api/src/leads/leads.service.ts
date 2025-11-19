@@ -490,12 +490,30 @@ export class LeadsService {
             const leadId = row['ID'] || row['id'];
             const name = row['Nombre'] || row['nombre'] || '';
             const email = row['Email'] || row['email'] || '';
-            const phone = row['Teléfono'] || row['telefono'] || '';
+            
+            // Convertir teléfono a string (puede venir como número desde Excel)
+            let phone = row['Teléfono'] || row['telefono'] || '';
+            if (phone && typeof phone === 'number') {
+              phone = phone.toString();
+            }
+            phone = phone || null;
+            
             const rut = row['RUT'] || row['rut'] || '';
             const region = row['Región'] || row['region'] || '';
             const currentInsurer = row['Isapre Actual'] || row['isapre_actual'] || '';
-            const comments = row['Comentarios'] || row['comentarios'] || '';
-            const notes = row['Notas'] || row['notas'] || '';
+            
+            // Convertir comentarios y notas a string (pueden venir como números)
+            let comments = row['Comentarios'] || row['comentarios'] || '';
+            if (comments && typeof comments !== 'string') {
+              comments = String(comments);
+            }
+            comments = comments || null;
+            
+            let notes = row['Notas'] || row['notas'] || '';
+            if (notes && typeof notes !== 'string') {
+              notes = String(notes);
+            }
+            notes = notes || null;
             
             // Traducir estado de español a inglés
             const statusSpanish = row['Estado'] || row['estado'] || 'Nuevo';
@@ -505,7 +523,9 @@ export class LeadsService {
             const reasonsText = row['Motivos'] || row['motivos'] || '';
             const reasonsArray: string[] = [];
             if (reasonsText) {
-              const reasonsList = reasonsText.split(',').map((r: string) => r.trim());
+              // Convertir a string si viene como número
+              const reasonsTextStr = typeof reasonsText === 'string' ? reasonsText : String(reasonsText);
+              const reasonsList = reasonsTextStr.split(',').map((r: string) => r.trim()).filter(r => r);
               reasonsList.forEach((reasonText: string) => {
                 const reasonId = reasonMap[reasonText] || reasonText;
                 if (reasonId && !reasonsArray.includes(reasonId)) {
@@ -527,16 +547,16 @@ export class LeadsService {
             }
 
             const leadData = {
-              name,
-              email,
-              phone: phone || null,
-              rut: rut || null,
-              region: region || null,
-              currentInsurer: currentInsurer || null,
+              name: String(name),
+              email: String(email),
+              phone: phone,
+              rut: rut ? String(rut) : null,
+              region: region ? String(region) : null,
+              currentInsurer: currentInsurer ? String(currentInsurer) : null,
               reasons: reasonsArray,
-              comments: comments || null,
-              notes: notes || null,
-              status,
+              comments: comments,
+              notes: notes,
+              status: String(status),
               userId: userId || null,
             };
 
