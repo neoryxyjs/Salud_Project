@@ -254,9 +254,9 @@ export default function HomePage() {
 
   return (
     <div className="flex flex-col">
-      {/* Notificación de éxito */}
+      {/* Notificación de éxito - Fixed para no interferir con el scroll */}
       {showSuccessNotification && (
-        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-md animate-in slide-in-from-top-4 duration-500">
+        <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] w-full max-w-md animate-in slide-in-from-top-4 duration-500">
           <Card className="border-2 border-green-500 shadow-2xl bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900">
             <CardContent className="p-6">
               <div className="flex items-start gap-4">
@@ -295,43 +295,86 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Sección Inicio */}
-      <section id="inicio" className="relative container space-y-4 sm:space-y-6 py-8 sm:py-12 md:py-16 lg:py-24 overflow-hidden px-4 sm:px-6">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="absolute top-10 left-4 sm:top-20 sm:left-10 w-48 h-48 sm:w-72 sm:h-72 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-4 sm:bottom-20 sm:right-10 w-64 h-64 sm:w-96 sm:h-96 bg-orange-500 rounded-full blur-3xl"></div>
+      {/* Sección Inicio - Primera sección visible */}
+      <section id="inicio" className={`relative w-full overflow-hidden min-h-screen ${showForm ? 'pt-12 sm:pt-16 md:pt-20 lg:pt-28 pb-16 sm:pb-20 md:pb-24 lg:pb-32' : 'py-12 sm:py-16 md:py-20 lg:py-28'}`}>
+        {/* Background Image de Isapres - Semi-transparente */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full h-full"
+          style={{
+            backgroundImage: `url('https://www.ciperchile.cl/wp-content/uploads/isapres--e1658269664927.jpg')`,
+          }}
+        >
+          {/* Overlay semi-transparente para legibilidad y efecto visual */}
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/70 via-primary/50 to-orange-600/60"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-background/85 via-background/60 to-background/70"></div>
+          <div className="absolute inset-0 bg-background/40"></div>
         </div>
         
-        <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-4 sm:gap-6 text-center relative z-10">
-          <div className="space-y-4 sm:space-y-6 w-full px-2">
-            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight">
-              Compara Planes de Salud
-              <br />
-              <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent">
-                Encuentra el Mejor Plan
-              </span>
-            </h1>
-            <p className="max-w-[42rem] mx-auto leading-relaxed text-muted-foreground text-base sm:text-lg md:text-xl sm:leading-8 text-balance px-2">
-              Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
-            </p>
-          </div>
-          
-          {/* Botón Asesoría Gratuita */}
-          <Button 
-            size="lg" 
-            className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-7 rounded-full font-semibold group"
-            onClick={() => setShowForm(!showForm)}
-          >
-            {showForm ? 'Ocultar Formulario' : 'Asesoría Gratuita'}
-            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
-          </Button>
+        {/* Elementos decorativos vibrantes en el fondo */}
+        <div className="absolute inset-0 -z-10 w-full">
+          <div className="absolute top-10 left-4 sm:top-20 sm:left-10 w-64 h-64 sm:w-96 sm:h-96 bg-primary rounded-full blur-3xl opacity-25 animate-pulse"></div>
+          <div className="absolute bottom-10 right-4 sm:bottom-20 sm:right-10 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-orange-500 rounded-full blur-3xl opacity-20"></div>
+          <div className="absolute top-1/2 left-1/4 w-48 h-48 sm:w-72 sm:h-72 bg-blue-400 rounded-full blur-3xl opacity-15"></div>
         </div>
+        
+        <div className="container mx-auto relative z-10 px-4 sm:px-6 flex items-center justify-center min-h-[calc(100vh-80px)]">
+          {/* Hero Section */}
+          <div className="flex max-w-[58rem] mx-auto flex-col items-center gap-4 sm:gap-6 text-center w-full">
+            <div className="space-y-4 sm:space-y-6 w-full px-2">
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight drop-shadow-lg text-foreground">
+                Compara Planes de Salud
+                <br />
+                <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent drop-shadow-md">
+                  Encuentra el Mejor Plan
+                </span>
+              </h1>
+              <p className="max-w-[42rem] mx-auto leading-relaxed text-foreground/95 text-base sm:text-lg md:text-xl sm:leading-8 text-balance px-2 drop-shadow-md font-semibold">
+                Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
+              </p>
+            </div>
+            
+            {/* Botones CTA */}
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
+              <Button 
+                size="lg" 
+                className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground hover:from-primary/90 hover:to-primary shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-7 rounded-full font-semibold group w-full sm:w-auto min-w-[200px] sm:min-w-[220px]"
+                onClick={() => setShowForm(true)}
+              >
+                Asesoría Gratuita
+                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5 group-hover:translate-x-1 transition-transform" />
+              </Button>
+              <Button 
+                variant="outline" 
+                size="lg" 
+                className="w-full sm:w-auto border-2 shadow-lg hover:shadow-xl transition-all duration-300 text-base sm:text-lg px-6 sm:px-10 py-5 sm:py-7 rounded-full font-semibold min-w-[200px] sm:min-w-[220px]" 
+                asChild
+              >
+                <Link href="/comparador">Ver Comparador</Link>
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        {/* Formulario Asesoría Gratuita - Oculto por defecto */}
-        {showForm && (
-          <div className="mx-auto max-w-3xl mt-6 sm:mt-12 px-4 sm:px-0 animate-in fade-in slide-in-from-top-4 duration-500">
-            <Card className="border-2 shadow-2xl hover:shadow-3xl transition-shadow duration-300 overflow-hidden">
+      {/* Formulario Asesoría Gratuita - Modal/Overlay encima de la página */}
+      {showForm && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/50 backdrop-blur-sm animate-in fade-in duration-300"
+          onClick={() => setShowForm(false)}
+        >
+          <div 
+            className="relative w-full max-w-3xl max-h-[90vh] overflow-y-auto animate-in slide-in-from-bottom-4 duration-500 ease-out"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Card className="border-2 shadow-2xl hover:shadow-3xl transition-shadow duration-300 overflow-hidden bg-background">
+              {/* Botón cerrar */}
+              <button
+                onClick={() => setShowForm(false)}
+                className="absolute top-4 right-4 z-10 rounded-full bg-background/80 backdrop-blur-sm p-2 hover:bg-muted transition-colors shadow-lg"
+                aria-label="Cerrar formulario"
+              >
+                <X className="h-5 w-5 text-foreground" />
+              </button>
               <CardHeader className="bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-t-lg p-4 sm:p-6 md:p-8">
                 <CardTitle className="text-xl sm:text-2xl md:text-3xl text-center text-primary-foreground font-bold">
                   ¿Quieres revisar tu Isapre?
@@ -476,7 +519,7 @@ export default function HomePage() {
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar región" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="!z-[110]">
                           {CHILEAN_REGIONS.map((region) => (
                             <SelectItem key={region.value} value={region.value}>
                               {region.label}
@@ -494,7 +537,7 @@ export default function HomePage() {
                         <SelectTrigger>
                           <SelectValue placeholder="Seleccionar Isapre actual" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent className="!z-[110]">
                           <SelectItem value="none">No tengo Isapre</SelectItem>
                           <SelectItem value="banmedica">Banmédica</SelectItem>
                           <SelectItem value="colmena">Colmena Golden Cross</SelectItem>
@@ -523,22 +566,33 @@ export default function HomePage() {
               </CardContent>
             </Card>
           </div>
-        )}
-
-        <div className="flex justify-center gap-4 mt-4 px-4">
-          <Button variant="outline" size="lg" className="w-full sm:w-auto" asChild>
-            <Link href="/comparador">Ver Comparador</Link>
-          </Button>
         </div>
-      </section>
+      )}
 
-      {/* Features Section */}
-      <section className="bg-gradient-to-b from-background via-muted/20 to-background py-12 sm:py-16 md:py-20 lg:py-24 px-4 sm:px-6">
-        <div className="container space-y-8 sm:space-y-12">
+      {/* Sección Beneficios - Aparece al hacer scroll */}
+      <section className="relative w-full py-12 sm:py-16 md:py-20 lg:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen y gradiente */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full h-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1576091160399-112ba8d25d1f?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/40 via-background/70 to-orange-500/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/80 to-background/70"></div>
+        </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-primary rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-orange-500 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto space-y-8 sm:space-y-12 px-4 sm:px-6 relative z-10">
           <div className="mx-auto flex max-w-[58rem] flex-col items-center gap-3 sm:gap-4 text-center px-2">
             <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">BENEFICIOS</p>
-            <h2 className="font-heading text-2xl sm:text-3xl leading-[1.1] md:text-4xl lg:text-5xl xl:text-6xl font-bold">
-              ¿Por qué elegir <span className="text-primary">Solucion De Salud</span>?
+            <h2 className="font-heading text-2xl sm:text-3xl leading-[1.1] md:text-4xl lg:text-5xl xl:text-6xl font-bold drop-shadow-md text-foreground">
+              ¿Por qué elegir <span className="text-primary drop-shadow-lg">Solucion De Salud</span>?
             </h2>
           </div>
           <div className="mx-auto grid justify-center gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:max-w-[64rem] md:grid-cols-3 px-2">
@@ -579,15 +633,32 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Quienes Somos */}
-      <section id="quienes-somos" className="relative bg-gradient-to-b from-background via-muted/10 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-        <div className="container">
+      {/* Sección Quienes Somos - Aparece al hacer scroll */}
+      <section id="quienes-somos" className="relative w-full py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 via-background/80 to-primary/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background/80"></div>
+        </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-15">
+          <div className="absolute top-20 right-20 w-64 h-64 bg-blue-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-primary rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="grid gap-8 sm:gap-10 md:grid-cols-3">
             <div className="md:col-span-2 space-y-6 sm:space-y-8">
               <div className="space-y-2 sm:space-y-3">
                 <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NUESTRA EMPRESA</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary">SOLUCION DE SALUD</h2>
-                <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-primary drop-shadow-md">SOLUCION DE SALUD</h2>
+                <h3 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
                   QUIENES SOMOS
                 </h3>
               </div>
@@ -687,21 +758,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Plataforma */}
-      <section id="plataforma" className="relative bg-gradient-to-b from-muted/30 via-background to-muted/20 py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden px-4 sm:px-6">
-        {/* Background decorative elements */}
-        <div className="absolute inset-0 -z-10 opacity-5">
-          <div className="absolute top-0 right-0 w-48 h-48 sm:w-96 sm:h-96 bg-primary rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-40 h-40 sm:w-80 sm:h-80 bg-orange-500 rounded-full blur-3xl"></div>
+      {/* Sección Plataforma - Aparece al hacer scroll */}
+      <section id="plataforma" className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-orange-500/30 via-background/70 to-primary/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/50 via-background/75 to-background/60"></div>
         </div>
         
-        <div className="container relative z-10">
+        {/* Background decorative elements más vibrantes */}
+        <div className="absolute inset-0 -z-10 w-full opacity-25">
+          <div className="absolute top-0 right-0 w-96 h-96 sm:w-[600px] sm:h-[600px] bg-primary rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 sm:w-[500px] sm:h-[500px] bg-orange-500 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-30"></div>
+        </div>
+        
+        <div className="container mx-auto relative z-10 px-4 sm:px-6">
           <div className="text-center mb-12 sm:mb-16 md:mb-20 space-y-3 sm:space-y-5 px-2">
             <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">SOMOS LA MEJOR PLATAFORMA</p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold bg-gradient-to-r from-orange-600 to-orange-500 bg-clip-text text-transparent drop-shadow-lg">
               PARA COTIZAR PLANES DE ISAPRE
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+            <p className="text-foreground/90 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed drop-shadow-sm font-medium">
               Hacemos que sea simple y fácil la búsqueda de planes de Isapre, tanto para cotizantes y ejecutivos.
             </p>
           </div>
@@ -762,101 +845,131 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Superintendencia */}
-      <section id="superintendencia" className="relative container py-12 sm:py-16 md:py-20 lg:py-28 px-4 sm:px-6">
-        <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground p-6 sm:p-8 md:p-10 lg:p-14 rounded-2xl mb-12 sm:mb-16 text-center shadow-2xl relative overflow-hidden">
-          {/* Decorative background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 border-2 border-primary-foreground rounded-full -mr-16 sm:-mr-32 -mt-16 sm:-mt-32"></div>
-            <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-48 sm:h-48 border-2 border-primary-foreground rounded-full -ml-12 sm:-ml-24 -mb-12 sm:-mb-24"></div>
-          </div>
-          <div className="relative z-10">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">SUPERINTENDENCIA DE SALUD</h2>
-            <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
-            <p className="max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed opacity-95 px-2">
-              La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
-            </p>
-          </div>
+      {/* Sección Superintendencia - Aparece al hacer scroll */}
+      <section id="superintendencia" className="relative w-full py-12 sm:py-16 md:py-20 lg:py-28 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1582719471384-894fbb16e074?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-500/25 via-background/75 to-primary/25"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/70 to-background/80"></div>
         </div>
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-          <Card className="hover:shadow-lg transition-shadow border-2">
-            <CardHeader className="space-y-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Users className="h-6 w-6 text-primary" />
-              </div>
-              <CardTitle className="text-lg">Caracterización de los profesionales de la salud en Chile</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground leading-relaxed">
-                Esta herramienta permitirá observar periódicamente las magnitudes de un conjunto de características de profesionales, técnicos y auxiliares de salud del país.
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-20">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-primary rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="bg-gradient-to-r from-primary via-primary/95 to-primary/90 text-primary-foreground p-6 sm:p-8 md:p-10 lg:p-14 rounded-2xl mb-12 sm:mb-16 text-center shadow-2xl relative overflow-hidden">
+            {/* Decorative background pattern */}
+            <div className="absolute inset-0 opacity-10">
+              <div className="absolute top-0 right-0 w-32 h-32 sm:w-64 sm:h-64 border-2 border-primary-foreground rounded-full -mr-16 sm:-mr-32 -mt-16 sm:-mt-32"></div>
+              <div className="absolute bottom-0 left-0 w-24 h-24 sm:w-48 sm:h-48 border-2 border-primary-foreground rounded-full -ml-12 sm:-ml-24 -mb-12 sm:-mb-24"></div>
+            </div>
+            <div className="relative z-10">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-3 sm:mb-4">SUPERINTENDENCIA DE SALUD</h2>
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-4 sm:mb-6">TUS DERECHOS, NUESTRA PRIORIDAD</h3>
+              <p className="max-w-3xl mx-auto text-sm sm:text-base md:text-lg leading-relaxed opacity-95 px-2">
+                La Misión de la Superintendencia de Salud es proteger, promover, y velar por el cumplimiento igualitario de los derechos de las personas en salud, con relación a Fonasa, Isapres y prestadores.
               </p>
-              <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
-                Ver Más
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow border-2">
-            <CardHeader className="space-y-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Heart className="h-6 w-6 text-primary" />
-              </div>
-              <CardTitle className="text-lg">Atención gratuita en la red pública</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground leading-relaxed">
-                Desde septiembre de 2022, las personas beneficiarias de Fonasa de los tramos C y D tendrán gratuidad en todas sus atenciones en el sistema público de salud.
-              </p>
-              <Button 
-                variant="outline" 
-                className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
-                asChild
-              >
-                <a href="https://www.gob.cl/copagocero/" target="_blank" rel="noopener noreferrer">
+            </div>
+          </div>
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Users className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">Caracterización de los profesionales de la salud en Chile</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed">
+                  Esta herramienta permitirá observar periódicamente las magnitudes de un conjunto de características de profesionales, técnicos y auxiliares de salud del país.
+                </p>
+                <Button variant="outline" className="w-full text-orange-600 border-orange-600 hover:bg-orange-50">
                   Ver Más
                   <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-          <Card className="hover:shadow-lg transition-shadow border-2">
-            <CardHeader className="space-y-3">
-              <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Shield className="h-6 w-6 text-primary" />
-              </div>
-              <CardTitle className="text-lg">Revisa toda la información sobre el proceso de vacunación COVID-19</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <p className="text-muted-foreground leading-relaxed">
-                El nuevo plan se basa en nueva evidencia y fue elaborado en conjunto con especialistas, en un proceso de diálogo dirigido por la ministra María Begoña Yarza.
-              </p>
-              <Button 
-                variant="outline" 
-                className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
-                asChild
-              >
-                <a href="https://www.gob.cl/pasoapaso/" target="_blank" rel="noopener noreferrer">
-                  Ver Más
-                  <ArrowRight className="ml-2 h-4 w-4" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Heart className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">Atención gratuita en la red pública</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed">
+                  Desde septiembre de 2022, las personas beneficiarias de Fonasa de los tramos C y D tendrán gratuidad en todas sus atenciones en el sistema público de salud.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
+                  asChild
+                >
+                  <a href="https://www.gob.cl/copagocero/" target="_blank" rel="noopener noreferrer">
+                    Ver Más
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+            <Card className="hover:shadow-lg transition-shadow border-2">
+              <CardHeader className="space-y-3">
+                <div className="h-12 w-12 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Shield className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">Revisa toda la información sobre el proceso de vacunación COVID-19</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <p className="text-muted-foreground leading-relaxed">
+                  El nuevo plan se basa en nueva evidencia y fue elaborado en conjunto con especialistas, en un proceso de diálogo dirigido por la ministra María Begoña Yarza.
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full text-orange-600 border-orange-600 hover:bg-orange-50"
+                  asChild
+                >
+                  <a href="https://www.gob.cl/pasoapaso/" target="_blank" rel="noopener noreferrer">
+                    Ver Más
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
-      {/* Sección Isapres Chile */}
-      <section id="isapres-chile" className="bg-primary text-primary-foreground py-12 sm:py-16 md:py-24 relative overflow-hidden px-4 sm:px-6">
-        {/* Background decorative icons */}
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-10 left-4 sm:left-10 w-10 h-10 sm:w-20 sm:h-20 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute top-32 left-1/4 w-8 h-8 sm:w-16 sm:h-16 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute bottom-20 left-4 sm:left-10 w-6 h-6 sm:w-12 sm:h-12 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute top-20 right-1/4 w-8 h-8 sm:w-16 sm:h-16 border-2 border-primary-foreground rounded-full"></div>
-          <div className="absolute bottom-32 right-10 sm:right-20 w-10 h-10 sm:w-20 sm:h-20 border-2 border-primary-foreground rounded-full"></div>
+      {/* Sección Isapres Chile - Aparece al hacer scroll */}
+      <section id="isapres-chile" className="relative w-full bg-primary text-primary-foreground py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full opacity-20"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-primary/90 via-primary/95 to-primary/90"></div>
+        </div>
+        
+        {/* Background decorative icons más vibrantes */}
+        <div className="absolute inset-0 opacity-20 pointer-events-none w-full">
+          <div className="absolute top-10 left-4 sm:left-10 w-16 h-16 sm:w-32 sm:h-32 border-4 border-primary-foreground/30 rounded-full animate-pulse"></div>
+          <div className="absolute top-32 left-1/4 w-12 h-12 sm:w-24 sm:h-24 border-3 border-primary-foreground/30 rounded-full"></div>
+          <div className="absolute bottom-20 left-4 sm:left-10 w-10 h-10 sm:w-20 sm:h-20 border-3 border-primary-foreground/30 rounded-full"></div>
+          <div className="absolute top-20 right-1/4 w-12 h-12 sm:w-24 sm:h-24 border-3 border-primary-foreground/30 rounded-full animate-pulse"></div>
+          <div className="absolute bottom-32 right-10 sm:right-20 w-16 h-16 sm:w-32 sm:h-32 border-4 border-primary-foreground/30 rounded-full"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-40 sm:h-40 border-4 border-primary-foreground/20 rounded-full"></div>
         </div>
 
-        <div className="container relative z-10">
+        <div className="container mx-auto relative z-10 px-4 sm:px-6">
           <div className="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-2">
             {/* Columna Izquierda */}
             <div className="space-y-4 sm:space-y-6">
@@ -896,27 +1009,63 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Noticias */}
-      <section id="noticias" className="container py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-        <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4">
-          <div className="inline-flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 mb-3 sm:mb-4">
-            <Newspaper className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
-          </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">Noticias</h2>
-          <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
-            Mantente informado sobre las últimas noticias del sector de salud en Chile.
-          </p>
+      {/* Sección Noticias - Aparece al hacer scroll */}
+      <section id="noticias" className="relative w-full py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1504711434969-e33886168f5c?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-slate-500/20 via-background/80 to-gray-500/20"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/70 via-background/80 to-background/70"></div>
         </div>
-        <NewsSection />
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-15">
+          <div className="absolute top-0 right-0 w-96 h-96 bg-slate-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-gray-400 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
+          <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4">
+            <div className="inline-flex items-center justify-center h-12 w-12 sm:h-16 sm:w-16 rounded-full bg-primary/10 mb-3 sm:mb-4">
+              <Newspaper className="h-6 w-6 sm:h-8 sm:w-8 text-primary" />
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-md text-foreground">Noticias</h2>
+          <p className="text-foreground/90 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2 drop-shadow-sm font-medium">
+              Mantente informado sobre las últimas noticias del sector de salud en Chile.
+            </p>
+          </div>
+          <NewsSection />
+        </div>
       </section>
 
-      {/* Sección Descargas */}
-      <section id="descargas" className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-        <div className="container">
+      {/* Sección Descargas - Aparece al hacer scroll */}
+      <section id="descargas" className="relative w-full py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-amber-500/25 via-background/75 to-yellow-500/25"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/65 via-background/75 to-background/70"></div>
+        </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-20">
+          <div className="absolute top-20 left-20 w-72 h-72 bg-amber-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-20 w-80 h-80 bg-yellow-400 rounded-full blur-3xl"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4">
             <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">ACCESO DIRECTO</p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold">DESCARGAS</h2>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold drop-shadow-md text-foreground">DESCARGAS</h2>
+            <p className="text-foreground/90 text-sm sm:text-base md:text-lg max-w-2xl mx-auto leading-relaxed px-2 drop-shadow-sm font-medium">
               En esta sección podrá descargar los documentos y boletines de interés para los usuarios del sistema de salud que se encuentran disponibles en nuestro sitio web.
             </p>
           </div>
@@ -1023,9 +1172,27 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Mujeres */}
-      <section id="mujeres" className="bg-gradient-to-b from-background to-muted/30 py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-        <div className="container">
+      {/* Sección Mujeres - Aparece al hacer scroll */}
+      <section id="mujeres" className="relative w-full py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1559757175-0eb30cd8c063?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/30 via-background/70 to-rose-500/30"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/60 via-background/75 to-background/70"></div>
+        </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-20">
+          <div className="absolute top-0 left-0 w-96 h-96 bg-pink-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-rose-400 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-pink-300 rounded-full blur-3xl opacity-30"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           {/* Banner Hero */}
           <div className="bg-gradient-to-r from-primary/10 via-primary/5 to-background rounded-xl p-6 sm:p-8 md:p-12 mb-12 sm:mb-16 relative overflow-hidden">
             <div className="absolute inset-0 opacity-5">
@@ -1035,10 +1202,10 @@ export default function HomePage() {
             <div className="grid md:grid-cols-2 gap-6 sm:gap-8 items-center relative z-10">
               <div className="space-y-3 sm:space-y-4">
                 <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NOSOTRAS</p>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600 drop-shadow-lg">
                   PLANES DE SALUD PENSADO EN NOSOTRAS
                 </h2>
-                <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
+                <p className="text-foreground/90 leading-relaxed text-sm sm:text-base drop-shadow-sm font-medium">
                   Desde abril de 2020, todas las mujeres pueden acceder a planes con mayor cobertura y menor precio.
                 </p>
                 <p className="text-xs sm:text-sm text-muted-foreground italic">
@@ -1057,10 +1224,10 @@ export default function HomePage() {
           <div className="space-y-8 sm:space-y-12">
             <div className="text-center space-y-3 sm:space-y-4 px-2">
               <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">NUESTROS BENEFICIOS</p>
-              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600">
+              <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-orange-600 drop-shadow-lg">
                 COMO MUJERES TENEMOS NUESTRAS PROPIAS NECESIDADES DE SALUD
               </h3>
-              <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+              <p className="text-foreground/90 text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed drop-shadow-sm font-medium">
                 Porque consideramos que la salud es lo más importante para nosotras y nuestra familia, nos queremos sentir seguras de las coberturas que nos brinda un plan de Isapre.
               </p>
             </div>
@@ -1146,18 +1313,36 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Sección Ley Corta */}
-      <section id="ley-corta" className="bg-gradient-to-b from-muted/50 to-background py-12 sm:py-16 md:py-24 px-4 sm:px-6">
-        <div className="container">
+      {/* Sección Ley Corta - Aparece al hacer scroll */}
+      <section id="ley-corta" className="relative w-full py-12 sm:py-16 md:py-24 overflow-hidden scroll-mt-20">
+        {/* Background con imagen */}
+        <div 
+          className="absolute inset-0 -z-10 bg-cover bg-center bg-no-repeat w-full"
+          style={{
+            backgroundImage: `url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-red-500/25 via-background/75 to-orange-500/25"></div>
+          <div className="absolute inset-0 bg-gradient-to-b from-background/65 via-background/75 to-background/70"></div>
+        </div>
+        
+        {/* Elementos decorativos */}
+        <div className="absolute inset-0 -z-10 w-full opacity-20">
+          <div className="absolute top-20 right-20 w-72 h-72 bg-red-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 left-20 w-80 h-80 bg-orange-400 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/3 left-1/3 w-56 h-56 bg-red-300 rounded-full blur-3xl opacity-25"></div>
+        </div>
+        
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           {/* Título Principal */}
           <div className="text-center mb-8 sm:mb-12 space-y-3 sm:space-y-4 px-2">
             <p className="text-primary text-xs sm:text-sm font-semibold uppercase tracking-wider">
               TE EXPLICAMOS LOS ASPECTOS CLAVE DE LA LEY N° 21.674
             </p>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary drop-shadow-lg">
               ¿QUÉ ES LA LEY CORTA?
             </h2>
-            <p className="text-muted-foreground text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed">
+            <p className="text-foreground/90 text-sm sm:text-base md:text-lg max-w-3xl mx-auto leading-relaxed drop-shadow-sm font-medium">
               Te explicamos en simple todo lo que necesitas saber sobre la Ley Corta, sus implicancias, fechas importantes y más.
             </p>
           </div>
