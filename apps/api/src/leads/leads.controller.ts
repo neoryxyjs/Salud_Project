@@ -123,7 +123,8 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res({ passthrough: false }) res: Response) {
+  @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  async exportToExcel(@Res({ passthrough: true }) res: Response) {
     try {
       console.log('=== INICIANDO EXPORTACIÓN DE EXCEL ===');
       const buffer = await this.leadsService.exportToExcel();
@@ -157,8 +158,7 @@ export class LeadsController {
       // Asegurar que el buffer sea un Buffer de Node.js
       const bufferToSend = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
       
-      // Configurar headers ANTES de enviar
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      // Configurar headers
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', bufferToSend.length.toString());
       res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -173,10 +173,8 @@ export class LeadsController {
         'Content-Disposition': res.getHeader('Content-Disposition'),
       });
       
-      // Enviar el buffer
-      res.end(bufferToSend, 'binary');
-      
-      console.log('✓ Excel enviado correctamente al cliente');
+      // Usar StreamableFile para enviar el buffer
+      return new StreamableFile(bufferToSend);
     } catch (error) {
       console.error('ERROR al exportar Excel:', error);
       console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
