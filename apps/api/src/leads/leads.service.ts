@@ -297,6 +297,8 @@ export class LeadsService {
   }
 
   async exportToExcel(): Promise<Buffer> {
+    console.log('=== INICIANDO EXPORTACIÓN DE EXCEL ===');
+    
     const leads = await this.findAllForExport();
     
     // Log para debugging
@@ -304,16 +306,21 @@ export class LeadsService {
     
     // Validar que haya leads
     if (!leads || leads.length === 0) {
+      console.error('ERROR: No hay leads para exportar');
       throw new Error('No hay leads para exportar');
     }
     
     // Validar que los leads tengan la estructura correcta
     if (!Array.isArray(leads)) {
+      console.error('ERROR: Los leads no están en el formato esperado', typeof leads);
       throw new Error('Los leads no están en el formato esperado');
     }
+    
+    console.log(`Validación exitosa. Procesando ${leads.length} leads...`);
 
     // Mapear los datos para Excel
-    const mapLeadToRow = (lead: any) => {
+    const mapLeadToRow = (lead: any, index: number) => {
+      try {
       const reasons = lead.reasons || [];
       const reasonsText = reasons.map((r: string) => {
         const reasonMap: { [key: string]: string } = {
@@ -362,18 +369,27 @@ export class LeadsService {
         'Asignado a': lead.user?.email || '',
         'Total Actividades': lead.activities?.length || 0,
       };
+      } catch (error) {
+        console.error(`Error mapeando lead ${index}:`, error);
+        throw error;
+      }
     };
 
-    // Hoja 1: Resumen General
-    const generalData = leads.map(mapLeadToRow);
+    // Hoja 1: Resumen General - ESTA ES LA HOJA PRINCIPAL CON TODOS LOS LEADS
+    const generalData = leads.map((lead, index) => mapLeadToRow(lead, index));
     
     // Validar que los datos mapeados no estén vacíos
     if (generalData.length === 0) {
       throw new Error('No se pudieron mapear los leads para el Excel');
     }
     
-    console.log(`Mapeados ${generalData.length} leads para Excel`);
+    // Crear la hoja principal con TODOS los leads
     const generalSheet = XLSX.utils.json_to_sheet(generalData);
+    
+    // Asegurarse de que la hoja tenga datos
+    if (!generalSheet || Object.keys(generalSheet).length === 0) {
+      throw new Error('Error al crear la hoja de Excel con los leads');
+    }
 
     // Hoja 2: Por Estado
     const statusGroups: { [key: string]: any[] } = {};
@@ -389,7 +405,7 @@ export class LeadsService {
     Object.keys(statusGroups).forEach((status) => {
       // Solo crear hojas para estados que tengan leads
       if (statusGroups[status].length > 0) {
-        const statusData = statusGroups[status].map(mapLeadToRow);
+        const statusData = statusGroups[status].map((lead, index) => mapLeadToRow(lead, index));
         const statusMap: { [key: string]: string } = {
           new: 'Nuevos',
           contacted: 'Contactados',
@@ -416,7 +432,7 @@ export class LeadsService {
     Object.keys(regionGroups).forEach((region) => {
       // Solo crear hojas para regiones que tengan leads
       if (regionGroups[region].length > 0) {
-        const regionData = regionGroups[region].map(mapLeadToRow);
+        const regionData = regionGroups[region].map((lead, index) => mapLeadToRow(lead, index));
         const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
         regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
       }
@@ -449,15 +465,15 @@ export class LeadsService {
     // Crear el workbook
     const workbook = XLSX.utils.book_new();
 
-    // Agregar hojas
+    // PRIMERO agregar la hoja principal con TODOS los leads - esta es la más importante
     XLSX.utils.book_append_sheet(workbook, generalSheet, 'Resumen General');
     
-    // Agregar hojas por estado
+    // Luego agregar hojas por estado (opcional)
     Object.keys(statusSheets).forEach((sheetName) => {
       XLSX.utils.book_append_sheet(workbook, statusSheets[sheetName], sheetName);
     });
 
-    // Agregar hojas por región (solo si hay menos de 10 regiones para no sobrecargar)
+    // Agregar hojas por región (opcional, solo si hay menos de 10 regiones)
     const regionKeys = Object.keys(regionSheets);
     if (regionKeys.length <= 10) {
       regionKeys.forEach((sheetName) => {
@@ -465,7 +481,13 @@ export class LeadsService {
       });
     }
 
+    // Agregar hoja de estadísticas (opcional)
     XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
+    
+    // Verificar que el workbook tenga al menos una hoja
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+      throw new Error('Error: El workbook no tiene hojas');
+    }
 
     // Generar buffer - asegurarse de que sea un Buffer válido
     const buffer = XLSX.write(workbook, { 

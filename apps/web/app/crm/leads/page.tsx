@@ -212,44 +212,52 @@ export default function LeadsPage() {
 
   const handleExportExcel = async () => {
     try {
-      const response = await api.get('/leads/export', {
-        responseType: 'blob',
+      // Usar fetch directamente para mejor control del blob
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+      const url = apiUrl.startsWith('http://') || apiUrl.startsWith('https://') 
+        ? apiUrl 
+        : `https://${apiUrl}`;
+      
+      const response = await fetch(`${url}/leads/export`, {
+        method: 'GET',
+        credentials: 'include', // Incluir cookies para autenticación
+        headers: {
+          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        },
       });
       
-      // Verificar que la respuesta tenga datos
-      if (!response.data) {
-        throw new Error('No se recibieron datos del servidor');
+      // Verificar que la respuesta sea exitosa
+      if (!response.ok) {
+        // Intentar leer el error como JSON
+        const errorText = await response.text();
+        try {
+          const errorData = JSON.parse(errorText);
+          throw new Error(errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`);
+        } catch {
+          throw new Error(`Error ${response.status}: ${response.statusText}`);
+        }
       }
       
-      // Verificar el tamaño del blob antes de procesarlo
-      let blob: Blob;
-      if (response.data instanceof Blob) {
-        blob = response.data;
-      } else {
-        blob = new Blob([response.data], {
-          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        });
-      }
+      // Obtener el blob de la respuesta
+      const blob = await response.blob();
       
       // Verificar que el blob tenga contenido
-      if (blob.size === 0) {
-        // Si está vacío, puede ser un error JSON, intentar leerlo
-        // Clonar el blob para poder leerlo sin consumirlo
-        const clonedBlob = blob.slice();
-        const text = await clonedBlob.text();
+      if (!blob || blob.size === 0) {
+        // Si está vacío, intentar leer como texto para ver si es un error
+        const text = await blob.text();
         if (text && text.trim().startsWith('{')) {
           try {
             const errorData = JSON.parse(text);
             throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
-          } catch (parseError) {
+          } catch {
             throw new Error('El archivo descargado está vacío');
           }
         }
         throw new Error('El archivo descargado está vacío. Verifica que haya leads para exportar.');
       }
       
-      // Verificar que el Content-Type sea el correcto (puede ser un error JSON)
-      const contentType = response.headers['content-type'] || '';
+      // Verificar el Content-Type
+      const contentType = response.headers.get('content-type') || '';
       if (contentType.includes('application/json')) {
         // Es un error JSON, leerlo
         const text = await blob.text();
@@ -257,33 +265,22 @@ export default function LeadsPage() {
         throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
       }
       
+      console.log(`Blob recibido: ${blob.size} bytes, tipo: ${contentType}`);
+      
       // Crear un enlace temporal para descargar el archivo
-      const url = window.URL.createObjectURL(blob);
+      const downloadUrl = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
+      link.href = downloadUrl;
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
       setTimeout(() => {
         document.body.removeChild(link);
-        window.URL.revokeObjectURL(url);
+        window.URL.revokeObjectURL(downloadUrl);
       }, 100);
     } catch (error: any) {
       console.error('Error al exportar:', error);
-      
-      // Si es un error de axios con respuesta, intentar leer el error
-      if (error.response && error.response.data instanceof Blob) {
-        try {
-          const text = await error.response.data.text();
-          const errorData = JSON.parse(text);
-          alert(`Error al exportar los leads: ${errorData.error || errorData.message || 'Error desconocido'}`);
-          return;
-        } catch {
-          // Si no se puede parsear, continuar con el error original
-        }
-      }
-      
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       alert(`Error al exportar los leads: ${errorMessage}`);
     }
