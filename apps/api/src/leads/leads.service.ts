@@ -281,6 +281,9 @@ export class LeadsService {
 
   async exportToExcel(): Promise<Buffer> {
     const leads = await this.findAllForExport();
+    
+    // Log para debugging
+    console.log(`Generando Excel con ${leads.length} leads`);
 
     // Mapear los datos para Excel
     const mapLeadToRow = (lead: any) => {

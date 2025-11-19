@@ -124,6 +124,12 @@ export class LeadsController {
   async exportToExcel(@Res({ passthrough: false }) res: Response) {
     try {
       const buffer = await this.leadsService.exportToExcel();
+      
+      // Verificar que el buffer tenga contenido
+      if (!buffer || buffer.length === 0) {
+        throw new Error('El buffer generado está vacío');
+      }
+      
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -132,12 +138,15 @@ export class LeadsController {
       res.setHeader('Cache-Control', 'no-cache');
       res.setHeader('X-Content-Type-Options', 'nosniff');
       
-      // Enviar el buffer directamente
-      res.end(buffer, 'binary');
+      // Enviar el buffer como respuesta binaria
+      res.send(buffer);
     } catch (error) {
       console.error('Error al exportar Excel:', error);
       if (!res.headersSent) {
-        res.status(500).json({ error: 'Error al generar el archivo Excel' });
+        res.status(500).json({ 
+          error: 'Error al generar el archivo Excel',
+          message: error instanceof Error ? error.message : 'Error desconocido'
+        });
       }
     }
   }

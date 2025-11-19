@@ -216,16 +216,45 @@ export default function LeadsPage() {
         responseType: 'blob',
       });
       
-      // Crear blob directamente desde la respuesta
-      const blob = response.data instanceof Blob 
-        ? response.data 
-        : new Blob([response.data], {
-            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-          });
+      // Verificar que la respuesta tenga datos
+      if (!response.data) {
+        throw new Error('No se recibieron datos del servidor');
+      }
+      
+      // Verificar el tamaño del blob antes de procesarlo
+      let blob: Blob;
+      if (response.data instanceof Blob) {
+        blob = response.data;
+      } else {
+        blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+      }
       
       // Verificar que el blob tenga contenido
       if (blob.size === 0) {
-        throw new Error('El archivo descargado está vacío');
+        // Si está vacío, puede ser un error JSON, intentar leerlo
+        // Clonar el blob para poder leerlo sin consumirlo
+        const clonedBlob = blob.slice();
+        const text = await clonedBlob.text();
+        if (text && text.trim().startsWith('{')) {
+          try {
+            const errorData = JSON.parse(text);
+            throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
+          } catch (parseError) {
+            throw new Error('El archivo descargado está vacío');
+          }
+        }
+        throw new Error('El archivo descargado está vacío. Verifica que haya leads para exportar.');
+      }
+      
+      // Verificar que el Content-Type sea el correcto (puede ser un error JSON)
+      const contentType = response.headers['content-type'] || '';
+      if (contentType.includes('application/json')) {
+        // Es un error JSON, leerlo
+        const text = await blob.text();
+        const errorData = JSON.parse(text);
+        throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
       }
       
       // Crear un enlace temporal para descargar el archivo
@@ -240,9 +269,23 @@ export default function LeadsPage() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(url);
       }, 100);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error al exportar:', error);
-      alert('Error al exportar los leads. Por favor, intenta nuevamente.');
+      
+      // Si es un error de axios con respuesta, intentar leer el error
+      if (error.response && error.response.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          const errorData = JSON.parse(text);
+          alert(`Error al exportar los leads: ${errorData.error || errorData.message || 'Error desconocido'}`);
+          return;
+        } catch {
+          // Si no se puede parsear, continuar con el error original
+        }
+      }
+      
+      const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+      alert(`Error al exportar los leads: ${errorMessage}`);
     }
   };
 
