@@ -212,16 +212,24 @@ export default function LeadsPage() {
 
   const handleExportExcel = async () => {
     try {
-      console.log('Iniciando descarga de Excel...');
-      
       // Usar la instancia de api que ya tiene configurada la autenticación
       const response = await api.get('/leads/export', {
         responseType: 'blob',
       });
       
-      console.log('Respuesta recibida:', response.status, response.statusText);
-      console.log('Content-Type:', response.headers['content-type']);
-      console.log('Content-Length:', response.headers['content-length']);
+      // Verificar el status code primero
+      if (response.status !== 200) {
+        throw new Error(`Error ${response.status}: ${response.statusText}`);
+      }
+      
+      // Verificar el Content-Type para detectar errores JSON
+      const contentType = response.headers['content-type'] || '';
+      if (contentType.includes('application/json')) {
+        // Es un error JSON, leerlo
+        const text = await response.data.text();
+        const errorData = JSON.parse(text);
+        throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
+      }
       
       // Verificar que la respuesta tenga datos
       if (!response.data) {
@@ -238,14 +246,10 @@ export default function LeadsPage() {
         });
       }
       
-      console.log('Blob recibido, tamaño:', blob.size, 'bytes');
-      
       // Verificar que el blob tenga contenido
       if (!blob || blob.size === 0) {
-        console.error('El blob está vacío');
         // Si está vacío, intentar leer como texto para ver si es un error
         const text = await blob.text();
-        console.error('Contenido del blob vacío:', text);
         if (text && text.trim().startsWith('{')) {
           try {
             const errorData = JSON.parse(text);
@@ -256,17 +260,6 @@ export default function LeadsPage() {
         }
         throw new Error('El archivo descargado está vacío. Verifica que haya leads para exportar.');
       }
-      
-      // Verificar el Content-Type
-      const contentType = response.headers['content-type'] || '';
-      if (contentType.includes('application/json')) {
-        // Es un error JSON, leerlo
-        const text = await blob.text();
-        const errorData = JSON.parse(text);
-        throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
-      }
-      
-      console.log(`Descargando archivo Excel: ${blob.size} bytes, tipo: ${contentType}`);
       
       // Crear un enlace temporal para descargar el archivo
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -281,24 +274,26 @@ export default function LeadsPage() {
         window.URL.revokeObjectURL(downloadUrl);
       }, 100);
     } catch (error: any) {
-      console.error('Error completo al exportar:', error);
+      console.error('Error al exportar:', error);
       
-      // Si es un error de axios con respuesta, intentar leer el error
-      if (error.response) {
-        if (error.response.status === 401) {
-          alert('Error de autenticación. Por favor, inicia sesión nuevamente.');
-          return;
-        }
-        
-        if (error.response.data instanceof Blob) {
-          try {
-            const text = await error.response.data.text();
+      // Manejar errores de autenticación
+      if (error.response?.status === 401) {
+        alert('Error de autenticación. Por favor, inicia sesión nuevamente.');
+        router.push('/auth/login');
+        return;
+      }
+      
+      // Si es un error de axios con respuesta blob, intentar leer el error
+      if (error.response?.data instanceof Blob) {
+        try {
+          const text = await error.response.data.text();
+          if (text && text.trim().startsWith('{')) {
             const errorData = JSON.parse(text);
             alert(`Error al exportar los leads: ${errorData.error || errorData.message || 'Error desconocido'}`);
             return;
-          } catch {
-            // Si no se puede parsear, continuar con el error original
           }
+        } catch {
+          // Si no se puede parsear, continuar con el error original
         }
       }
       
