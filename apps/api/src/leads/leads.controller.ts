@@ -10,6 +10,8 @@ import {
   Request,
   Delete,
   Res,
+  StreamableFile,
+  Header,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { LeadsService } from './leads.service';
@@ -121,7 +123,8 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res() res: Response) {
+  @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+  async exportToExcel(@Res({ passthrough: false }) res: Response) {
     try {
       const buffer = await this.leadsService.exportToExcel();
       
@@ -134,11 +137,10 @@ export class LeadsController {
       
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', buffer.length.toString());
       
-      return res.send(buffer);
+      return res.end(buffer);
     } catch (error) {
       if (!res.headersSent) {
         return res.status(500).json({ 
