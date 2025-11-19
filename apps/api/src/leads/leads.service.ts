@@ -313,163 +313,87 @@ export class LeadsService {
   }
 
   async exportToExcel(): Promise<Buffer> {
-    console.log('=== INICIANDO exportToExcel() ===');
-    
-    // Obtener todos los leads directamente
+    // 1. OBTENER LEADS DE LA TABLA
     const leads = await this.prisma.lead.findMany({
       orderBy: { createdAt: 'desc' },
     });
     
-    console.log(`Leads obtenidos: ${leads.length}`);
-    
-    if (!leads || leads.length === 0) {
+    if (leads.length === 0) {
       throw new Error('No hay leads para exportar');
     }
-    
-    console.log(`✓ ${leads.length} leads para exportar`);
 
-    // Mapear los datos para Excel - VERSIÓN SIMPLIFICADA
-    const mapLeadToRow = (lead: any) => {
-      const reasons = Array.isArray(lead.reasons) ? lead.reasons : [];
-      const reasonsText = reasons.map((r: string) => {
-        const reasonMap: { [key: string]: string } = {
-          muy_cara: 'Muy cara',
-          cubre_poco: 'La isapre me cubre poco',
-          subieron_plan: 'Me subieron el plan de salud',
-          mejorar_coberturas: 'Mejorar coberturas',
-          no_gusta: 'No me gusta mi Isapre actual',
-          otros: 'Otros',
-        };
-        return reasonMap[r] || r;
-      }).join(', ');
-
+    // 2. MAPEAR A EXCEL
+    const mapLead = (lead: any) => {
+      const reasons = Array.isArray(lead.reasons) ? lead.reasons.join(', ') : '';
       const utm = lead.utm && typeof lead.utm === 'object' ? lead.utm : {};
-      const statusMap: { [key: string]: string } = {
-        new: 'Nuevo',
-        contacted: 'Contactado',
-        qualified: 'Calificado',
-        converted: 'Convertido',
-        lost: 'Perdido',
-      };
-
+      
       return {
-        'ID': lead.id || '',
+        'ID': lead.id,
         'Nombre': lead.name || '',
         'Email': lead.email || '',
         'Teléfono': lead.phone || '',
         'RUT': lead.rut || '',
         'Región': lead.region || '',
         'Isapre Actual': lead.currentInsurer || '',
-        'Motivos': reasonsText,
+        'Motivos': reasons,
         'Comentarios': lead.comments || '',
-        'Estado': statusMap[lead.status] || lead.status || '',
+        'Estado': lead.status || 'new',
         'Notas': lead.notes || '',
-        'UTM Source': utm.source || '',
-        'UTM Medium': utm.medium || '',
-        'UTM Campaign': utm.campaign || '',
         'Fecha Creación': lead.createdAt ? new Date(lead.createdAt).toLocaleString('es-CL') : '',
-        'Fecha Actualización': lead.updatedAt ? new Date(lead.updatedAt).toLocaleString('es-CL') : '',
       };
     };
 
-    // Mapear todos los leads
-    console.log('Mapeando', leads.length, 'leads...');
-    const generalData = leads.map(mapLeadToRow);
-    
-    console.log('Datos mapeados:', generalData.length, 'filas');
-    console.log('Primer registro:', generalData[0] ? {
-      ID: generalData[0]['ID'],
-      Nombre: generalData[0]['Nombre'],
-      Email: generalData[0]['Email'],
-    } : 'No hay datos');
-    
-    // Crear la hoja principal
-    const generalSheet = XLSX.utils.json_to_sheet(generalData);
-    console.log('✓ Hoja principal creada');
-
-    // Agrupar por estado
-    const statusGroups: { [key: string]: any[] } = {};
-    leads.forEach((lead) => {
-      const status = lead.status || 'new';
-      if (!statusGroups[status]) statusGroups[status] = [];
-      statusGroups[status].push(lead);
-    });
-
-    // Agrupar por región
-    const regionGroups: { [key: string]: any[] } = {};
-    leads.forEach((lead) => {
-      const region = lead.region || 'Sin Región';
-      if (!regionGroups[region]) regionGroups[region] = [];
-      regionGroups[region].push(lead);
-    });
-
-    // Crear el workbook
+    // 3. CREAR WORKBOOK
     const workbook = XLSX.utils.book_new();
     
-    // Hoja 1: Todos los leads
-    XLSX.utils.book_append_sheet(workbook, generalSheet, 'Todos los Leads');
+    // Hoja 1: TODOS LOS LEADS
+    const allData = leads.map(mapLead);
+    const allSheet = XLSX.utils.json_to_sheet(allData);
+    XLSX.utils.book_append_sheet(workbook, allSheet, 'Todos los Leads');
     
-    // Hojas por estado
-    const statusMap: { [key: string]: string } = {
-      new: 'Nuevos',
-      contacted: 'Contactados',
-      qualified: 'Calificados',
-      converted: 'Convertidos',
-      lost: 'Perdidos',
-    };
+    // Hojas por ESTADO
+    const byStatus: { [key: string]: any[] } = {};
+    leads.forEach(lead => {
+      const status = lead.status || 'new';
+      if (!byStatus[status]) byStatus[status] = [];
+      byStatus[status].push(lead);
+    });
     
-    Object.keys(statusGroups).forEach((status) => {
-      if (statusGroups[status].length > 0) {
-        const statusData = statusGroups[status].map(mapLeadToRow);
-        const sheetName = statusMap[status] || status;
-        const statusSheet = XLSX.utils.json_to_sheet(statusData);
-        XLSX.utils.book_append_sheet(workbook, statusSheet, sheetName);
-      }
+    Object.keys(byStatus).forEach(status => {
+      const data = byStatus[status].map(mapLead);
+      const sheet = XLSX.utils.json_to_sheet(data);
+      const names: { [key: string]: string } = {
+        new: 'Nuevos',
+        contacted: 'Contactados',
+        qualified: 'Calificados',
+        converted: 'Convertidos',
+        lost: 'Perdidos',
+      };
+      XLSX.utils.book_append_sheet(workbook, sheet, names[status] || status);
+    });
+    
+    // Hojas por REGIÓN (máximo 10)
+    const byRegion: { [key: string]: any[] } = {};
+    leads.forEach(lead => {
+      const region = lead.region || 'Sin Región';
+      if (!byRegion[region]) byRegion[region] = [];
+      byRegion[region].push(lead);
+    });
+    
+    Object.keys(byRegion).slice(0, 10).forEach(region => {
+      const data = byRegion[region].map(mapLead);
+      const sheet = XLSX.utils.json_to_sheet(data);
+      XLSX.utils.book_append_sheet(workbook, sheet, `Región ${region.substring(0, 31)}`);
     });
 
-    // Hojas por región (máximo 10)
-    const regionKeys = Object.keys(regionGroups).slice(0, 10);
-    regionKeys.forEach((region) => {
-      if (regionGroups[region].length > 0) {
-        const regionData = regionGroups[region].map(mapLeadToRow);
-        const regionSheet = XLSX.utils.json_to_sheet(regionData);
-        const sheetName = region.length > 31 ? region.substring(0, 31) : region;
-        XLSX.utils.book_append_sheet(workbook, regionSheet, `Región ${sheetName}`);
-      }
-    });
-
-    // Generar buffer
-    console.log('Generando Excel con', workbook.SheetNames.length, 'hojas...');
-    console.log('Hojas:', workbook.SheetNames);
-    
-    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      throw new Error('El workbook no tiene hojas');
-    }
-    
-    const buffer = XLSX.write(workbook, { 
-      type: 'buffer', 
-      bookType: 'xlsx',
-    });
-    
-    console.log('Buffer generado:', {
-      existe: !!buffer,
-      esBuffer: Buffer.isBuffer(buffer),
-      longitud: buffer?.length || 0,
-    });
+    // 4. GENERAR BUFFER
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
     
     if (!buffer || buffer.length === 0) {
-      throw new Error('El buffer generado está vacío');
+      throw new Error('Error al generar el archivo Excel');
     }
     
-    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
-    
-    if (finalBuffer.length === 0) {
-      throw new Error('El buffer final está vacío después de la conversión');
-    }
-    
-    console.log('✓ Excel generado correctamente:', finalBuffer.length, 'bytes');
-    
-    return finalBuffer;
+    return Buffer.from(buffer);
   }
 
   private calculateStats(leads: any[]) {
