@@ -123,11 +123,19 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res({ passthrough: false }) res: Response) {
+  async exportToExcel(@Res() res: Response) {
     try {
+      console.log('=== EXPORT EXCEL INICIADO ===');
       const buffer = await this.leadsService.exportToExcel();
       
+      console.log('Buffer en controlador:', {
+        existe: !!buffer,
+        longitud: buffer?.length || 0,
+        esBuffer: Buffer.isBuffer(buffer),
+      });
+      
       if (!buffer || buffer.length === 0) {
+        console.error('ERROR: Buffer vacío');
         return res.status(500).json({ 
           error: 'Error al generar el archivo Excel',
           message: 'No hay datos para exportar'
@@ -140,8 +148,11 @@ export class LeadsController {
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.setHeader('Content-Length', buffer.length.toString());
       
-      res.end(buffer);
+      console.log('Enviando buffer de', buffer.length, 'bytes');
+      
+      return res.send(buffer);
     } catch (error) {
+      console.error('ERROR:', error);
       if (!res.headersSent) {
         return res.status(500).json({ 
           error: 'Error al generar el archivo Excel',

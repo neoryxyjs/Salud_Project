@@ -389,11 +389,25 @@ export class LeadsService {
     // 4. GENERAR BUFFER
     const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
     
+    console.log('Buffer generado:', {
+      existe: !!buffer,
+      longitud: buffer?.length || 0,
+      tipo: typeof buffer,
+      esBuffer: Buffer.isBuffer(buffer),
+    });
+    
     if (!buffer || buffer.length === 0) {
       throw new Error('Error al generar el archivo Excel');
     }
     
-    return Buffer.from(buffer);
+    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    
+    console.log('Buffer final:', {
+      longitud: finalBuffer.length,
+      esBuffer: Buffer.isBuffer(finalBuffer),
+    });
+    
+    return finalBuffer;
   }
 
   private calculateStats(leads: any[]) {
