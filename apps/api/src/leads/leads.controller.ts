@@ -123,12 +123,19 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res() res: Response) {
+  async exportToExcel(@Res({ passthrough: false }) res: Response) {
     try {
       console.log('=== INICIANDO EXPORTACIÓN DE EXCEL ===');
       const buffer = await this.leadsService.exportToExcel();
       
+      console.log('Buffer recibido:', {
+        existe: !!buffer,
+        esBuffer: Buffer.isBuffer(buffer),
+        longitud: buffer?.length || 0,
+      });
+      
       if (!buffer || buffer.length === 0) {
+        console.error('ERROR: Buffer vacío o null');
         return res.status(500).json({ 
           error: 'Error al generar el archivo Excel',
           message: 'El buffer generado está vacío. Verifica que haya leads para exportar.'
@@ -140,12 +147,21 @@ export class LeadsController {
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', buffer.length.toString());
+      res.setHeader('Cache-Control', 'no-cache');
       
       console.log(`✓ Enviando Excel: ${buffer.length} bytes`);
+      console.log('Headers:', {
+        'Content-Type': res.getHeader('Content-Type'),
+        'Content-Length': res.getHeader('Content-Length'),
+      });
       
-      res.send(buffer);
+      // Enviar el buffer directamente
+      res.end(buffer);
+      
+      console.log('✓ Excel enviado');
     } catch (error) {
       console.error('ERROR al exportar Excel:', error);
+      console.error('Stack:', error instanceof Error ? error.stack : 'No stack');
       
       if (!res.headersSent) {
         return res.status(500).json({ 

@@ -440,14 +440,36 @@ export class LeadsService {
 
     // Generar buffer
     console.log('Generando Excel con', workbook.SheetNames.length, 'hojas...');
+    console.log('Hojas:', workbook.SheetNames);
+    
+    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+      throw new Error('El workbook no tiene hojas');
+    }
+    
     const buffer = XLSX.write(workbook, { 
       type: 'buffer', 
       bookType: 'xlsx',
     });
     
-    console.log('✓ Excel generado:', buffer.length, 'bytes');
+    console.log('Buffer generado:', {
+      existe: !!buffer,
+      esBuffer: Buffer.isBuffer(buffer),
+      longitud: buffer?.length || 0,
+    });
     
-    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    if (!buffer || buffer.length === 0) {
+      throw new Error('El buffer generado está vacío');
+    }
+    
+    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    
+    if (finalBuffer.length === 0) {
+      throw new Error('El buffer final está vacío después de la conversión');
+    }
+    
+    console.log('✓ Excel generado correctamente:', finalBuffer.length, 'bytes');
+    
+    return finalBuffer;
   }
 
   private calculateStats(leads: any[]) {
