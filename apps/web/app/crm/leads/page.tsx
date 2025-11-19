@@ -212,13 +212,34 @@ export default function LeadsPage() {
 
   const handleExportExcel = async () => {
     try {
+      console.log('Iniciando descarga de Excel...');
+      
       // Usar la instancia de api que ya tiene configurada la autenticación
       const response = await api.get('/leads/export', {
         responseType: 'blob',
       });
       
+      console.log('Respuesta recibida:', {
+        status: response.status,
+        statusText: response.statusText,
+        contentType: response.headers['content-type'],
+        contentLength: response.headers['content-length'],
+      });
+      
       // Verificar el status code primero
       if (response.status !== 200) {
+        // Intentar leer el error si es JSON
+        if (response.data instanceof Blob) {
+          try {
+            const text = await response.data.text();
+            if (text && text.trim().startsWith('{')) {
+              const errorData = JSON.parse(text);
+              throw new Error(errorData.error || errorData.message || `Error ${response.status}`);
+            }
+          } catch {
+            throw new Error(`Error ${response.status}: ${response.statusText}`);
+          }
+        }
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
       
@@ -246,20 +267,33 @@ export default function LeadsPage() {
         });
       }
       
+      console.log('Blob recibido:', {
+        size: blob.size,
+        type: blob.type,
+      });
+      
       // Verificar que el blob tenga contenido
       if (!blob || blob.size === 0) {
+        console.error('El blob está vacío, intentando leer como texto...');
         // Si está vacío, intentar leer como texto para ver si es un error
-        const text = await blob.text();
-        if (text && text.trim().startsWith('{')) {
-          try {
-            const errorData = JSON.parse(text);
-            throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
-          } catch {
-            throw new Error('El archivo descargado está vacío');
+        try {
+          const text = await blob.text();
+          console.log('Contenido del blob vacío:', text);
+          if (text && text.trim().startsWith('{')) {
+            try {
+              const errorData = JSON.parse(text);
+              throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
+            } catch {
+              throw new Error('El archivo descargado está vacío');
+            }
           }
+        } catch (readError) {
+          console.error('Error al leer el blob vacío:', readError);
         }
         throw new Error('El archivo descargado está vacío. Verifica que haya leads para exportar.');
       }
+      
+      console.log(`Descargando archivo Excel: ${blob.size} bytes`);
       
       // Crear un enlace temporal para descargar el archivo
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -273,8 +307,10 @@ export default function LeadsPage() {
         document.body.removeChild(link);
         window.URL.revokeObjectURL(downloadUrl);
       }, 100);
+      
+      console.log('✓ Archivo descargado correctamente');
     } catch (error: any) {
-      console.error('Error al exportar:', error);
+      console.error('Error completo al exportar:', error);
       
       // Manejar errores de autenticación
       if (error.response?.status === 401) {
