@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User } from 'lucide-react';
+import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User, Download } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -210,6 +210,28 @@ export default function LeadsPage() {
     }
   };
 
+  const handleExportExcel = async () => {
+    try {
+      const response = await api.get('/leads/export', {
+        responseType: 'blob',
+      });
+      
+      // Crear un enlace temporal para descargar el archivo
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al exportar:', error);
+      alert('Error al exportar los leads. Por favor, intenta nuevamente.');
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -219,13 +241,23 @@ export default function LeadsPage() {
             Administra y gestiona tus leads
           </p>
         </div>
-        <Button 
-          onClick={() => setIsCreateDialogOpen(true)}
-          className="bg-primary text-primary-foreground hover:bg-primary/90"
-        >
-          <Plus className="mr-2 h-4 w-4" />
-          Crear Lead
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button 
+            onClick={handleExportExcel}
+            variant="outline"
+            className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Exportar a Excel
+          </Button>
+          <Button 
+            onClick={() => setIsCreateDialogOpen(true)}
+            className="bg-primary text-primary-foreground hover:bg-primary/90"
+          >
+            <Plus className="mr-2 h-4 w-4" />
+            Crear Lead
+          </Button>
+        </div>
       </div>
 
       <div className="flex items-center gap-4 flex-wrap">

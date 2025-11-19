@@ -3,6 +3,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
 import { CreateActivityDto } from './dto/create-activity.dto';
+import * as XLSX from 'xlsx';
 
 @Injectable()
 export class LeadsService {
@@ -242,6 +243,223 @@ export class LeadsService {
       },
     });
     return { deleted: result.count };
+  }
+
+  async findAllForExport() {
+    return this.prisma.lead.findMany({
+      include: {
+        plan: {
+          include: {
+            insurer: true,
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            email: true,
+          },
+        },
+        activities: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                email: true,
+              },
+            },
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async exportToExcel(): Promise<Buffer> {
+    const leads = await this.findAllForExport();
+
+    // Mapear los datos para Excel
+    const mapLeadToRow = (lead: any) => {
+      const reasons = lead.reasons || [];
+      const reasonsText = reasons.map((r: string) => {
+        const reasonMap: { [key: string]: string } = {
+          muy_cara: 'Muy cara',
+          cubre_poco: 'La isapre me cubre poco',
+          subieron_plan: 'Me subieron el plan de salud',
+          mejorar_coberturas: 'Mejorar coberturas',
+          no_gusta: 'No me gusta mi Isapre actual',
+          otros: 'Otros',
+        };
+        return reasonMap[r] || r;
+      }).join(', ');
+
+      const utm = lead.utm || {};
+      const utmSource = utm.source || '';
+      const utmMedium = utm.medium || '';
+      const utmCampaign = utm.campaign || '';
+
+      const statusMap: { [key: string]: string } = {
+        new: 'Nuevo',
+        contacted: 'Contactado',
+        qualified: 'Calificado',
+        converted: 'Convertido',
+        lost: 'Perdido',
+      };
+
+      return {
+        'ID': lead.id,
+        'Nombre': lead.name,
+        'Email': lead.email || '',
+        'Teléfono': lead.phone || '',
+        'RUT': lead.rut || '',
+        'Región': lead.region || '',
+        'Isapre Actual': lead.currentInsurer || '',
+        'Motivos': reasonsText,
+        'Comentarios': lead.comments || '',
+        'Estado': statusMap[lead.status] || lead.status,
+        'Notas': lead.notes || '',
+        'Plan': lead.plan?.name || '',
+        'Isapre Plan': lead.plan?.insurer?.name || '',
+        'UTM Source': utmSource,
+        'UTM Medium': utmMedium,
+        'UTM Campaign': utmCampaign,
+        'Fecha Creación': new Date(lead.createdAt).toLocaleString('es-CL'),
+        'Fecha Actualización': new Date(lead.updatedAt).toLocaleString('es-CL'),
+        'Asignado a': lead.user?.email || '',
+        'Total Actividades': lead.activities?.length || 0,
+      };
+    };
+
+    // Hoja 1: Resumen General
+    const generalData = leads.map(mapLeadToRow);
+    const generalSheet = XLSX.utils.json_to_sheet(generalData);
+
+    // Hoja 2: Por Estado
+    const statusGroups: { [key: string]: any[] } = {};
+    leads.forEach((lead) => {
+      const status = lead.status || 'new';
+      if (!statusGroups[status]) {
+        statusGroups[status] = [];
+      }
+      statusGroups[status].push(lead);
+    });
+
+    const statusSheets: { [key: string]: XLSX.WorkSheet } = {};
+    Object.keys(statusGroups).forEach((status) => {
+      const statusData = statusGroups[status].map(mapLeadToRow);
+      const statusMap: { [key: string]: string } = {
+        new: 'Nuevos',
+        contacted: 'Contactados',
+        qualified: 'Calificados',
+        converted: 'Convertidos',
+        lost: 'Perdidos',
+      };
+      const sheetName = statusMap[status] || status;
+      statusSheets[sheetName] = XLSX.utils.json_to_sheet(statusData);
+    });
+
+    // Hoja 3: Por Región
+    const regionGroups: { [key: string]: any[] } = {};
+    leads.forEach((lead) => {
+      const region = lead.region || 'Sin Región';
+      if (!regionGroups[region]) {
+        regionGroups[region] = [];
+      }
+      regionGroups[region].push(lead);
+    });
+
+    const regionSheets: { [key: string]: XLSX.WorkSheet } = {};
+    Object.keys(regionGroups).forEach((region) => {
+      const regionData = regionGroups[region].map(mapLeadToRow);
+      const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
+      regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
+    });
+
+    // Hoja 4: Estadísticas
+    const stats = this.calculateStats(leads);
+    const statsData = [
+      { 'Métrica': 'Total de Leads', 'Valor': stats.total },
+      { 'Métrica': 'Nuevos', 'Valor': stats.byStatus.new },
+      { 'Métrica': 'Contactados', 'Valor': stats.byStatus.contacted },
+      { 'Métrica': 'Calificados', 'Valor': stats.byStatus.qualified },
+      { 'Métrica': 'Convertidos', 'Valor': stats.byStatus.converted },
+      { 'Métrica': 'Perdidos', 'Valor': stats.byStatus.lost },
+      { 'Métrica': '', 'Valor': '' },
+      { 'Métrica': 'Por Región', 'Valor': '' },
+      ...Object.keys(stats.byRegion).map((region) => ({
+        'Métrica': region || 'Sin Región',
+        'Valor': stats.byRegion[region],
+      })),
+      { 'Métrica': '', 'Valor': '' },
+      { 'Métrica': 'Por Isapre Actual', 'Valor': '' },
+      ...Object.keys(stats.byInsurer).map((insurer) => ({
+        'Métrica': insurer || 'Sin Isapre',
+        'Valor': stats.byInsurer[insurer],
+      })),
+    ];
+    const statsSheet = XLSX.utils.json_to_sheet(statsData);
+
+    // Crear el workbook
+    const workbook = XLSX.utils.book_new();
+
+    // Agregar hojas
+    XLSX.utils.book_append_sheet(workbook, generalSheet, 'Resumen General');
+    
+    // Agregar hojas por estado
+    Object.keys(statusSheets).forEach((sheetName) => {
+      XLSX.utils.book_append_sheet(workbook, statusSheets[sheetName], sheetName);
+    });
+
+    // Agregar hojas por región (solo si hay menos de 10 regiones para no sobrecargar)
+    const regionKeys = Object.keys(regionSheets);
+    if (regionKeys.length <= 10) {
+      regionKeys.forEach((sheetName) => {
+        XLSX.utils.book_append_sheet(workbook, regionSheets[sheetName], `Región ${sheetName}`);
+      });
+    }
+
+    XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
+
+    // Generar buffer
+    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
+    return buffer;
+  }
+
+  private calculateStats(leads: any[]) {
+    const stats = {
+      total: leads.length,
+      byStatus: {
+        new: 0,
+        contacted: 0,
+        qualified: 0,
+        converted: 0,
+        lost: 0,
+      },
+      byRegion: {} as { [key: string]: number },
+      byInsurer: {} as { [key: string]: number },
+    };
+
+    leads.forEach((lead) => {
+      // Por estado
+      const status = lead.status || 'new';
+      if (stats.byStatus[status as keyof typeof stats.byStatus] !== undefined) {
+        stats.byStatus[status as keyof typeof stats.byStatus]++;
+      }
+
+      // Por región
+      const region = lead.region || 'Sin Región';
+      stats.byRegion[region] = (stats.byRegion[region] || 0) + 1;
+
+      // Por Isapre
+      const insurer = lead.currentInsurer || 'Sin Isapre';
+      stats.byInsurer[insurer] = (stats.byInsurer[insurer] || 0) + 1;
+    });
+
+    return stats;
   }
 }
 

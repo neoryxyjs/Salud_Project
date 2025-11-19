@@ -9,7 +9,9 @@ import {
   UseGuards,
   Request,
   Delete,
+  Res,
 } from '@nestjs/common';
+import { Response } from 'express';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
 import { UpdateLeadDto } from './dto/update-lead.dto';
@@ -114,6 +116,18 @@ export class LeadsController {
   @Roles(Role.ADMIN, Role.MANAGER)
   removeSampleLeads() {
     return this.leadsService.removeSampleLeads();
+  }
+
+  @Get('export')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  async exportToExcel(@Res() res: Response) {
+    const buffer = await this.leadsService.exportToExcel();
+    const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+    
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(buffer);
   }
 }
 
