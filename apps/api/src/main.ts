@@ -140,6 +140,23 @@ async function bootstrap() {
 
   app.use(cookieParser());
   
+  // Middleware de logging para todas las requests
+  app.use((req: any, res: any, next: any) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.path}`);
+    if (req.path.includes('/export')) {
+      console.log('📥 EXPORT REQUEST:', {
+        method: req.method,
+        path: req.path,
+        headers: {
+          'content-type': req.headers['content-type'],
+          'authorization': req.headers['authorization'] ? 'present' : 'missing',
+          'cookie': req.headers['cookie'] ? 'present' : 'missing',
+        },
+      });
+    }
+    next();
+  });
+  
   // Configurar CORS para aceptar todas las URLs de Vercel
   const allowedOrigins = process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())

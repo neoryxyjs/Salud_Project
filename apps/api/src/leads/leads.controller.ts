@@ -123,9 +123,14 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res() res: Response) {
+  async exportToExcel(@Res() res: Response, @Request() req: any) {
     try {
       console.log('=== EXPORT EXCEL INICIADO ===');
+      console.log('Request info:', {
+        method: req.method,
+        path: req.path,
+        user: req.user ? { id: req.user.id, email: req.user.email } : 'no user',
+      });
       const buffer = await this.leadsService.exportToExcel();
       
       console.log('Buffer en controlador:', {
