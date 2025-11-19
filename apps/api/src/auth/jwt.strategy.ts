@@ -10,7 +10,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromExtractors([
         // Primero intentar desde cookies
         (request) => {
-          return request?.cookies?.access_token;
+          const token = request?.cookies?.access_token;
+          if (token) {
+            console.log('✅ JWT encontrado en cookies');
+          } else {
+            console.log('❌ JWT no encontrado en cookies. Cookies disponibles:', request?.cookies ? Object.keys(request.cookies) : 'none');
+          }
+          return token;
         },
         // Si no está en cookies, intentar desde el header Authorization
         ExtractJwt.fromAuthHeaderAsBearerToken(),

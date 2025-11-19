@@ -152,6 +152,8 @@ async function bootstrap() {
           'authorization': req.headers['authorization'] ? 'present' : 'missing',
           'cookie': req.headers['cookie'] ? 'present' : 'missing',
         },
+        cookies: req.cookies ? Object.keys(req.cookies) : 'no cookies parsed',
+        access_token: req.cookies?.access_token ? 'present' : 'missing',
       });
     }
     next();
