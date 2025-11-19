@@ -313,10 +313,14 @@ export class LeadsService {
   }
 
   async exportToExcel(): Promise<Buffer> {
+    console.log('📊 SERVICIO exportToExcel() INICIADO');
+    
     // 1. OBTENER LEADS DE LA TABLA
     const leads = await this.prisma.lead.findMany({
       orderBy: { createdAt: 'desc' },
     });
+    
+    console.log(`📊 Leads obtenidos de la BD: ${leads.length}`);
     
     if (leads.length === 0) {
       throw new Error('No hay leads para exportar');
