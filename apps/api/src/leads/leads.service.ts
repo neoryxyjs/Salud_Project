@@ -326,10 +326,39 @@ export class LeadsService {
       throw new Error('No hay leads para exportar');
     }
 
+    // Mapeo de IDs de motivos a etiquetas en español
+    const reasonLabels: { [key: string]: string } = {
+      'muy_cara': 'Muy cara',
+      'cubre_poco': 'La isapre me cubre poco',
+      'subieron_plan': 'Me subieron el plan de salud',
+      'mejorar_coberturas': 'Mejorar coberturas',
+      'no_gusta': 'No me gusta mi Isapre actual',
+      'otros': 'Otros',
+    };
+
+    // Mapeo de estados en inglés a español
+    const statusLabels: { [key: string]: string } = {
+      'new': 'Nuevo',
+      'contacted': 'Contactado',
+      'qualified': 'Calificado',
+      'converted': 'Convertido',
+      'lost': 'Perdido',
+    };
+
     // 2. MAPEAR A EXCEL
     const mapLead = (lead: any) => {
-      const reasons = Array.isArray(lead.reasons) ? lead.reasons.join(', ') : '';
-      const utm = lead.utm && typeof lead.utm === 'object' ? lead.utm : {};
+      // Convertir IDs de motivos a etiquetas en español
+      const reasonsArray = Array.isArray(lead.reasons) ? lead.reasons : [];
+      const reasonsLabelsText = reasonsArray
+        .map((reasonId: string) => reasonLabels[reasonId] || reasonId)
+        .join(', ');
+      
+      // Traducir estado al español
+      const status = lead.status || 'new';
+      const statusInSpanish = statusLabels[status] || status;
+      
+      // Asegurar que los comentarios se muestren como texto plano
+      const comments = lead.comments || '';
       
       return {
         'ID': lead.id,
@@ -339,9 +368,9 @@ export class LeadsService {
         'RUT': lead.rut || '',
         'Región': lead.region || '',
         'Isapre Actual': lead.currentInsurer || '',
-        'Motivos': reasons,
-        'Comentarios': lead.comments || '',
-        'Estado': lead.status || 'new',
+        'Motivos': reasonsLabelsText,
+        'Comentarios': comments,
+        'Estado': statusInSpanish,
         'Notas': lead.notes || '',
         'Fecha Creación': lead.createdAt ? new Date(lead.createdAt).toLocaleString('es-CL') : '',
       };
