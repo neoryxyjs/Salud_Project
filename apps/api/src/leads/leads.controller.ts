@@ -123,27 +123,63 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  @Header('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
   async exportToExcel(@Res({ passthrough: false }) res: Response) {
     try {
+      console.log('=== INICIANDO EXPORTACIÓN DE EXCEL ===');
       const buffer = await this.leadsService.exportToExcel();
       
-      if (!buffer || buffer.length === 0) {
-        return res.status(500).json({ 
-          error: 'Error al generar el archivo Excel',
-          message: 'El buffer generado está vacío. Verifica que haya leads para exportar.'
-        });
+      console.log('Buffer recibido del servicio:', {
+        esBuffer: Buffer.isBuffer(buffer),
+        tipo: typeof buffer,
+        longitud: buffer?.length || 0,
+      });
+      
+      if (!buffer) {
+        console.error('ERROR: El buffer es null o undefined');
+        if (!res.headersSent) {
+          return res.status(500).json({ 
+            error: 'Error al generar el archivo Excel',
+            message: 'El buffer generado es null o undefined'
+          });
+        }
+        return;
       }
+      
+      if (buffer.length === 0) {
+        console.error('ERROR: El buffer está vacío (length = 0)');
+        if (!res.headersSent) {
+          return res.status(500).json({ 
+            error: 'Error al generar el archivo Excel',
+            message: 'El buffer generado está vacío. Verifica que haya leads para exportar.'
+          });
+        }
+        return;
+      }
+      
+      console.log(`✓ Buffer generado correctamente. Tamaño: ${buffer.length} bytes`);
       
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', buffer.length.toString());
+      res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+      res.setHeader('Pragma', 'no-cache');
+      res.setHeader('Expires', '0');
       
-      return res.end(buffer);
+      const bufferToSend = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+      
+      console.log(`Enviando buffer de ${bufferToSend.length} bytes...`);
+      
+      res.send(bufferToSend);
+      
+      console.log('✓ Excel enviado correctamente al cliente');
     } catch (error) {
+      console.error('ERROR al exportar Excel:', error);
+      console.error('Stack trace:', error instanceof Error ? error.stack : 'No stack trace');
+      
       if (!res.headersSent) {
-        return res.status(500).json({ 
+        res.status(500).json({ 
           error: 'Error al generar el archivo Excel',
           message: error instanceof Error ? error.message : 'Error desconocido'
         });

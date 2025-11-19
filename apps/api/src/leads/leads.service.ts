@@ -297,16 +297,27 @@ export class LeadsService {
   }
 
   async exportToExcel(): Promise<Buffer> {
+    console.log('=== INICIANDO exportToExcel() ===');
     const leads = await this.findAllForExport();
+    
+    console.log('Leads obtenidos en exportToExcel:', {
+      cantidad: leads?.length || 0,
+      esArray: Array.isArray(leads),
+      tipo: typeof leads,
+    });
     
     // Validar que haya leads
     if (!leads || leads.length === 0) {
+      console.error('ERROR: No hay leads para exportar');
       throw new Error('No hay leads para exportar');
     }
     
     if (!Array.isArray(leads)) {
+      console.error('ERROR: Los leads no están en el formato esperado');
       throw new Error('Los leads no están en el formato esperado');
     }
+    
+    console.log(`✓ Validación pasada. ${leads.length} leads para exportar`);
 
     // Mapear los datos para Excel
     const mapLeadToRow = (lead: any) => {
@@ -361,18 +372,34 @@ export class LeadsService {
     };
 
     // Hoja 1: Resumen General - ESTA ES LA HOJA PRINCIPAL CON TODOS LOS LEADS
+    console.log('Mapeando leads a formato Excel...');
     const generalData = leads.map(mapLeadToRow);
     
+    console.log('Datos mapeados:', {
+      cantidad: generalData.length,
+      primerRegistro: generalData[0] ? Object.keys(generalData[0]) : null,
+    });
+    
     if (generalData.length === 0) {
+      console.error('ERROR: No se pudieron mapear los leads para el Excel');
       throw new Error('No se pudieron mapear los leads para el Excel');
     }
     
     // Crear la hoja principal con TODOS los leads
+    console.log('Creando hoja de Excel...');
     const generalSheet = XLSX.utils.json_to_sheet(generalData);
     
+    console.log('Hoja creada:', {
+      existe: !!generalSheet,
+      keys: generalSheet ? Object.keys(generalSheet).length : 0,
+    });
+    
     if (!generalSheet || Object.keys(generalSheet).length === 0) {
+      console.error('ERROR: Error al crear la hoja de Excel con los leads');
       throw new Error('Error al crear la hoja de Excel con los leads');
     }
+    
+    console.log('✓ Hoja principal creada correctamente');
 
     // Hoja 2: Por Estado
     const statusGroups: { [key: string]: any[] } = {};
@@ -466,16 +493,39 @@ export class LeadsService {
     XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
 
     // Generar buffer
+    console.log('Generando buffer del Excel...');
+    console.log('Workbook info:', {
+      sheetNames: workbook.SheetNames,
+      cantidadHojas: workbook.SheetNames?.length || 0,
+    });
+    
     const buffer = XLSX.write(workbook, { 
       type: 'buffer', 
       bookType: 'xlsx',
     });
     
+    console.log('Buffer generado por XLSX.write:', {
+      existe: !!buffer,
+      esBuffer: Buffer.isBuffer(buffer),
+      longitud: buffer?.length || 0,
+      tipo: typeof buffer,
+    });
+    
     if (!buffer || buffer.length === 0) {
+      console.error('ERROR: Error al generar el buffer del archivo Excel');
       throw new Error('Error al generar el buffer del archivo Excel');
     }
     
-    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    
+    console.log('Buffer final:', {
+      esBuffer: Buffer.isBuffer(finalBuffer),
+      longitud: finalBuffer.length,
+    });
+    
+    console.log('=== FINALIZANDO exportToExcel() ===');
+    
+    return finalBuffer;
   }
 
   private calculateStats(leads: any[]) {
