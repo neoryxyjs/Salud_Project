@@ -14,14 +14,27 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     ]);
 
+    console.log('RolesGuard.canActivate:', {
+      requiredRoles,
+      path: context.switchToHttp().getRequest().path,
+    });
+
     if (!requiredRoles) {
+      console.log('✅ RolesGuard: No se requieren roles específicos');
       return true;
     }
 
     const { user } = context.switchToHttp().getRequest();
     
+    console.log('RolesGuard: Usuario:', {
+      hasUser: !!user,
+      userRole: user?.role,
+      requiredRoles,
+    });
+    
     // Si no hay usuario autenticado, lanzar error 401
     if (!user) {
+      console.error('❌ RolesGuard: Usuario no autenticado');
       throw new UnauthorizedException('Usuario no autenticado');
     }
 
@@ -29,9 +42,14 @@ export class RolesGuard implements CanActivate {
     const hasRole = requiredRoles.some((role) => user.role === role);
     
     if (!hasRole) {
+      console.error('❌ RolesGuard: Usuario no tiene los roles requeridos', {
+        userRole: user.role,
+        requiredRoles,
+      });
       throw new UnauthorizedException('No tienes permisos para acceder a este recurso');
     }
 
+    console.log('✅ RolesGuard: Usuario tiene los roles requeridos');
     return true;
   }
 }
