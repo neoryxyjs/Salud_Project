@@ -297,30 +297,19 @@ export class LeadsService {
   }
 
   async exportToExcel(): Promise<Buffer> {
-    console.log('=== INICIANDO EXPORTACIÓN DE EXCEL ===');
-    
     const leads = await this.findAllForExport();
-    
-    // Log para debugging
-    console.log(`Generando Excel con ${leads.length} leads`);
     
     // Validar que haya leads
     if (!leads || leads.length === 0) {
-      console.error('ERROR: No hay leads para exportar');
       throw new Error('No hay leads para exportar');
     }
     
-    // Validar que los leads tengan la estructura correcta
     if (!Array.isArray(leads)) {
-      console.error('ERROR: Los leads no están en el formato esperado', typeof leads);
       throw new Error('Los leads no están en el formato esperado');
     }
-    
-    console.log(`Validación exitosa. Procesando ${leads.length} leads...`);
 
     // Mapear los datos para Excel
-    const mapLeadToRow = (lead: any, index: number) => {
-      try {
+    const mapLeadToRow = (lead: any) => {
       const reasons = lead.reasons || [];
       const reasonsText = reasons.map((r: string) => {
         const reasonMap: { [key: string]: string } = {
@@ -348,8 +337,8 @@ export class LeadsService {
       };
 
       return {
-        'ID': lead.id,
-        'Nombre': lead.name,
+        'ID': lead.id || '',
+        'Nombre': lead.name || '',
         'Email': lead.email || '',
         'Teléfono': lead.phone || '',
         'RUT': lead.rut || '',
@@ -357,28 +346,23 @@ export class LeadsService {
         'Isapre Actual': lead.currentInsurer || '',
         'Motivos': reasonsText,
         'Comentarios': lead.comments || '',
-        'Estado': statusMap[lead.status] || lead.status,
+        'Estado': statusMap[lead.status] || lead.status || '',
         'Notas': lead.notes || '',
         'Plan': lead.plan?.name || '',
         'Isapre Plan': lead.plan?.insurer?.name || '',
         'UTM Source': utmSource,
         'UTM Medium': utmMedium,
         'UTM Campaign': utmCampaign,
-        'Fecha Creación': new Date(lead.createdAt).toLocaleString('es-CL'),
-        'Fecha Actualización': new Date(lead.updatedAt).toLocaleString('es-CL'),
+        'Fecha Creación': lead.createdAt ? new Date(lead.createdAt).toLocaleString('es-CL') : '',
+        'Fecha Actualización': lead.updatedAt ? new Date(lead.updatedAt).toLocaleString('es-CL') : '',
         'Asignado a': lead.user?.email || '',
         'Total Actividades': lead.activities?.length || 0,
       };
-      } catch (error) {
-        console.error(`Error mapeando lead ${index}:`, error);
-        throw error;
-      }
     };
 
     // Hoja 1: Resumen General - ESTA ES LA HOJA PRINCIPAL CON TODOS LOS LEADS
-    const generalData = leads.map((lead, index) => mapLeadToRow(lead, index));
+    const generalData = leads.map(mapLeadToRow);
     
-    // Validar que los datos mapeados no estén vacíos
     if (generalData.length === 0) {
       throw new Error('No se pudieron mapear los leads para el Excel');
     }
@@ -386,7 +370,6 @@ export class LeadsService {
     // Crear la hoja principal con TODOS los leads
     const generalSheet = XLSX.utils.json_to_sheet(generalData);
     
-    // Asegurarse de que la hoja tenga datos
     if (!generalSheet || Object.keys(generalSheet).length === 0) {
       throw new Error('Error al crear la hoja de Excel con los leads');
     }
@@ -403,9 +386,8 @@ export class LeadsService {
 
     const statusSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(statusGroups).forEach((status) => {
-      // Solo crear hojas para estados que tengan leads
       if (statusGroups[status].length > 0) {
-        const statusData = statusGroups[status].map((lead, index) => mapLeadToRow(lead, index));
+        const statusData = statusGroups[status].map(mapLeadToRow);
         const statusMap: { [key: string]: string } = {
           new: 'Nuevos',
           contacted: 'Contactados',
@@ -430,10 +412,9 @@ export class LeadsService {
 
     const regionSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(regionGroups).forEach((region) => {
-      // Solo crear hojas para regiones que tengan leads
       if (regionGroups[region].length > 0) {
-        const regionData = regionGroups[region].map((lead, index) => mapLeadToRow(lead, index));
-        const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
+        const regionData = regionGroups[region].map(mapLeadToRow);
+        const sheetName = region.length > 31 ? region.substring(0, 31) : region;
         regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
       }
     });
@@ -465,20 +446,15 @@ export class LeadsService {
     // Crear el workbook
     const workbook = XLSX.utils.book_new();
 
-    // PRIMERO agregar la hoja principal con TODOS los leads - esta es la más importante
+    // Agregar la hoja principal con TODOS los leads
     XLSX.utils.book_append_sheet(workbook, generalSheet, 'Resumen General');
     
-    // Verificar que la hoja principal se agregó correctamente
-    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      throw new Error('Error: No se pudo agregar la hoja principal al workbook');
-    }
-    
-    // Luego agregar hojas por estado (opcional)
+    // Agregar hojas por estado
     Object.keys(statusSheets).forEach((sheetName) => {
       XLSX.utils.book_append_sheet(workbook, statusSheets[sheetName], sheetName);
     });
 
-    // Agregar hojas por región (opcional, solo si hay menos de 10 regiones)
+    // Agregar hojas por región (solo si hay menos de 10 regiones)
     const regionKeys = Object.keys(regionSheets);
     if (regionKeys.length <= 10) {
       regionKeys.forEach((sheetName) => {
@@ -486,41 +462,20 @@ export class LeadsService {
       });
     }
 
-    // Agregar hoja de estadísticas (opcional)
+    // Agregar hoja de estadísticas
     XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
-    
-    // Verificar que el workbook tenga al menos la hoja principal
-    if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
-      throw new Error('Error: El workbook no tiene hojas después de agregar todas las hojas');
-    }
-    
-    console.log(`Workbook creado con ${workbook.SheetNames.length} hojas:`, workbook.SheetNames);
 
-    // Generar buffer - asegurarse de que sea un Buffer válido
+    // Generar buffer
     const buffer = XLSX.write(workbook, { 
       type: 'buffer', 
       bookType: 'xlsx',
-      compression: true,
     });
     
-    // Validar que el buffer se haya generado correctamente
     if (!buffer || buffer.length === 0) {
       throw new Error('Error al generar el buffer del archivo Excel');
     }
     
-    console.log(`Excel generado exitosamente. Tamaño del buffer: ${buffer.length} bytes`);
-    
-    // Asegurarse de que sea un Buffer de Node.js válido
-    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
-    
-    // Validación final antes de retornar
-    if (!finalBuffer || finalBuffer.length === 0) {
-      console.error('ERROR CRÍTICO: El buffer final está vacío después de la conversión');
-      throw new Error('Error al generar el buffer del archivo Excel: buffer vacío');
-    }
-    
-    console.log(`Buffer final validado. Tamaño: ${finalBuffer.length} bytes. Retornando...`);
-    return finalBuffer;
+    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
   }
 
   private calculateStats(leads: any[]) {
