@@ -212,41 +212,32 @@ export default function LeadsPage() {
 
   const handleExportExcel = async () => {
     try {
-      // Usar la misma instancia de api para mantener la autenticación
-      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const baseUrl = apiUrl.startsWith('http://') || apiUrl.startsWith('https://') 
-        ? apiUrl 
-        : `https://${apiUrl}`;
+      console.log('Iniciando descarga de Excel...');
       
-      console.log('Iniciando descarga de Excel desde:', `${baseUrl}/leads/export`);
-      
-      const response = await fetch(`${baseUrl}/leads/export`, {
-        method: 'GET',
-        credentials: 'include', // Incluir cookies para autenticación
-        headers: {
-          'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-        },
+      // Usar la instancia de api que ya tiene configurada la autenticación
+      const response = await api.get('/leads/export', {
+        responseType: 'blob',
       });
       
       console.log('Respuesta recibida:', response.status, response.statusText);
-      console.log('Content-Type:', response.headers.get('content-type'));
-      console.log('Content-Length:', response.headers.get('content-length'));
+      console.log('Content-Type:', response.headers['content-type']);
+      console.log('Content-Length:', response.headers['content-length']);
       
-      // Verificar que la respuesta sea exitosa
-      if (!response.ok) {
-        // Intentar leer el error como JSON
-        const errorText = await response.text();
-        console.error('Error en respuesta:', errorText);
-        try {
-          const errorData = JSON.parse(errorText);
-          throw new Error(errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`);
-        } catch {
-          throw new Error(`Error ${response.status}: ${response.statusText}`);
-        }
+      // Verificar que la respuesta tenga datos
+      if (!response.data) {
+        throw new Error('No se recibieron datos del servidor');
       }
       
-      // Obtener el blob de la respuesta
-      const blob = await response.blob();
+      // Obtener el blob
+      let blob: Blob;
+      if (response.data instanceof Blob) {
+        blob = response.data;
+      } else {
+        blob = new Blob([response.data], {
+          type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+      }
+      
       console.log('Blob recibido, tamaño:', blob.size, 'bytes');
       
       // Verificar que el blob tenga contenido
@@ -267,7 +258,7 @@ export default function LeadsPage() {
       }
       
       // Verificar el Content-Type
-      const contentType = response.headers.get('content-type') || '';
+      const contentType = response.headers['content-type'] || '';
       if (contentType.includes('application/json')) {
         // Es un error JSON, leerlo
         const text = await blob.text();
@@ -291,6 +282,26 @@ export default function LeadsPage() {
       }, 100);
     } catch (error: any) {
       console.error('Error completo al exportar:', error);
+      
+      // Si es un error de axios con respuesta, intentar leer el error
+      if (error.response) {
+        if (error.response.status === 401) {
+          alert('Error de autenticación. Por favor, inicia sesión nuevamente.');
+          return;
+        }
+        
+        if (error.response.data instanceof Blob) {
+          try {
+            const text = await error.response.data.text();
+            const errorData = JSON.parse(text);
+            alert(`Error al exportar los leads: ${errorData.error || errorData.message || 'Error desconocido'}`);
+            return;
+          } catch {
+            // Si no se puede parsear, continuar con el error original
+          }
+        }
+      }
+      
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       alert(`Error al exportar los leads: ${errorMessage}`);
     }
