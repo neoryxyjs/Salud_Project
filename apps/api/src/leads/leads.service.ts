@@ -246,54 +246,70 @@ export class LeadsService {
   }
 
   async findAllForExport() {
-    // Primero verificar cuántos leads hay en total
-    const totalCount = await this.prisma.lead.count();
-    console.log(`Total de leads en la base de datos: ${totalCount}`);
-    
-    // Obtener todos los leads sin filtros
-    const leads = await this.prisma.lead.findMany({
-      include: {
-        plan: {
-          include: {
-            insurer: true,
-          },
-        },
-        user: {
-          select: {
-            id: true,
-            email: true,
-          },
-        },
-        activities: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                email: true,
-              },
+    try {
+      // Primero verificar cuántos leads hay en total
+      const totalCount = await this.prisma.lead.count();
+      console.log(`[findAllForExport] Total de leads en la base de datos: ${totalCount}`);
+      
+      if (totalCount === 0) {
+        console.warn('[findAllForExport] No hay leads en la base de datos');
+        return [];
+      }
+      
+      // Obtener todos los leads sin filtros - SIMPLIFICADO para evitar problemas
+      const leads = await this.prisma.lead.findMany({
+        include: {
+          plan: {
+            include: {
+              insurer: true,
             },
           },
-          orderBy: {
-            createdAt: 'desc',
+          user: {
+            select: {
+              id: true,
+              email: true,
+            },
+          },
+          activities: {
+            include: {
+              user: {
+                select: {
+                  id: true,
+                  email: true,
+                },
+              },
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
           },
         },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
-    
-    console.log(`Leads obtenidos para exportación: ${leads.length}`);
-    if (leads.length > 0) {
-      console.log(`Primer lead ejemplo:`, {
-        id: leads[0].id,
-        name: leads[0].name,
-        email: leads[0].email,
-        status: leads[0].status,
+        orderBy: {
+          createdAt: 'desc',
+        },
       });
+      
+      console.log(`[findAllForExport] Leads obtenidos: ${leads.length}`);
+      
+      if (leads.length > 0) {
+        console.log(`[findAllForExport] Primer lead ejemplo:`, {
+          id: leads[0].id,
+          name: leads[0].name,
+          email: leads[0].email || 'sin email',
+          phone: leads[0].phone || 'sin teléfono',
+          status: leads[0].status,
+          region: leads[0].region || 'sin región',
+          reasons: leads[0].reasons || [],
+        });
+      } else {
+        console.warn('[findAllForExport] La consulta no devolvió ningún lead');
+      }
+      
+      return leads;
+    } catch (error) {
+      console.error('[findAllForExport] ERROR al obtener leads:', error);
+      throw error;
     }
-    
-    return leads;
   }
 
   async exportToExcel(): Promise<Buffer> {
@@ -321,54 +337,93 @@ export class LeadsService {
 
     // Mapear los datos para Excel
     const mapLeadToRow = (lead: any) => {
-      const reasons = lead.reasons || [];
-      const reasonsText = reasons.map((r: string) => {
-        const reasonMap: { [key: string]: string } = {
-          muy_cara: 'Muy cara',
-          cubre_poco: 'La isapre me cubre poco',
-          subieron_plan: 'Me subieron el plan de salud',
-          mejorar_coberturas: 'Mejorar coberturas',
-          no_gusta: 'No me gusta mi Isapre actual',
-          otros: 'Otros',
+      try {
+        // Procesar reasons
+        const reasons = Array.isArray(lead.reasons) ? lead.reasons : [];
+        const reasonsText = reasons.map((r: string) => {
+          const reasonMap: { [key: string]: string } = {
+            muy_cara: 'Muy cara',
+            cubre_poco: 'La isapre me cubre poco',
+            subieron_plan: 'Me subieron el plan de salud',
+            mejorar_coberturas: 'Mejorar coberturas',
+            no_gusta: 'No me gusta mi Isapre actual',
+            otros: 'Otros',
+          };
+          return reasonMap[r] || r;
+        }).join(', ');
+
+        // Procesar UTM - puede ser JSON o objeto
+        let utmSource = '';
+        let utmMedium = '';
+        let utmCampaign = '';
+        
+        if (lead.utm) {
+          try {
+            const utm = typeof lead.utm === 'string' ? JSON.parse(lead.utm) : lead.utm;
+            utmSource = utm?.source || '';
+            utmMedium = utm?.medium || '';
+            utmCampaign = utm?.campaign || '';
+          } catch {
+            // Si no se puede parsear, dejar vacío
+          }
+        }
+
+        const statusMap: { [key: string]: string } = {
+          new: 'Nuevo',
+          contacted: 'Contactado',
+          qualified: 'Calificado',
+          converted: 'Convertido',
+          lost: 'Perdido',
         };
-        return reasonMap[r] || r;
-      }).join(', ');
 
-      const utm = lead.utm || {};
-      const utmSource = utm.source || '';
-      const utmMedium = utm.medium || '';
-      const utmCampaign = utm.campaign || '';
-
-      const statusMap: { [key: string]: string } = {
-        new: 'Nuevo',
-        contacted: 'Contactado',
-        qualified: 'Calificado',
-        converted: 'Convertido',
-        lost: 'Perdido',
-      };
-
-      return {
-        'ID': lead.id || '',
-        'Nombre': lead.name || '',
-        'Email': lead.email || '',
-        'Teléfono': lead.phone || '',
-        'RUT': lead.rut || '',
-        'Región': lead.region || '',
-        'Isapre Actual': lead.currentInsurer || '',
-        'Motivos': reasonsText,
-        'Comentarios': lead.comments || '',
-        'Estado': statusMap[lead.status] || lead.status || '',
-        'Notas': lead.notes || '',
-        'Plan': lead.plan?.name || '',
-        'Isapre Plan': lead.plan?.insurer?.name || '',
-        'UTM Source': utmSource,
-        'UTM Medium': utmMedium,
-        'UTM Campaign': utmCampaign,
-        'Fecha Creación': lead.createdAt ? new Date(lead.createdAt).toLocaleString('es-CL') : '',
-        'Fecha Actualización': lead.updatedAt ? new Date(lead.updatedAt).toLocaleString('es-CL') : '',
-        'Asignado a': lead.user?.email || '',
-        'Total Actividades': lead.activities?.length || 0,
-      };
+        return {
+          'ID': String(lead.id || ''),
+          'Nombre': String(lead.name || ''),
+          'Email': String(lead.email || ''),
+          'Teléfono': String(lead.phone || ''),
+          'RUT': String(lead.rut || ''),
+          'Región': String(lead.region || ''),
+          'Isapre Actual': String(lead.currentInsurer || ''),
+          'Motivos': String(reasonsText),
+          'Comentarios': String(lead.comments || ''),
+          'Estado': String(statusMap[lead.status] || lead.status || ''),
+          'Notas': String(lead.notes || ''),
+          'Plan': String(lead.plan?.name || ''),
+          'Isapre Plan': String(lead.plan?.insurer?.name || ''),
+          'UTM Source': String(utmSource),
+          'UTM Medium': String(utmMedium),
+          'UTM Campaign': String(utmCampaign),
+          'Fecha Creación': lead.createdAt ? new Date(lead.createdAt).toLocaleString('es-CL') : '',
+          'Fecha Actualización': lead.updatedAt ? new Date(lead.updatedAt).toLocaleString('es-CL') : '',
+          'Asignado a': String(lead.user?.email || ''),
+          'Total Actividades': Number(lead.activities?.length || 0),
+        };
+      } catch (error) {
+        console.error('[mapLeadToRow] ERROR al mapear lead:', error, lead);
+        // Retornar un objeto con valores por defecto si hay error
+        return {
+          'ID': String(lead?.id || 'ERROR'),
+          'Nombre': String(lead?.name || 'ERROR'),
+          'Email': '',
+          'Teléfono': '',
+          'RUT': '',
+          'Región': '',
+          'Isapre Actual': '',
+          'Motivos': '',
+          'Comentarios': '',
+          'Estado': '',
+          'Notas': '',
+          'Plan': '',
+          'Isapre Plan': '',
+          'UTM Source': '',
+          'UTM Medium': '',
+          'UTM Campaign': '',
+          'Fecha Creación': '',
+          'Fecha Actualización': '',
+          'Asignado a': '',
+          'Total Actividades': 0,
+        };
+      }
     };
 
     // Hoja 1: Resumen General - ESTA ES LA HOJA PRINCIPAL CON TODOS LOS LEADS
