@@ -503,8 +503,17 @@ export class LeadsService {
     
     console.log(`Excel generado exitosamente. Tamaño del buffer: ${buffer.length} bytes`);
     
-    // Asegurarse de que sea un Buffer de Node.js
-    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    // Asegurarse de que sea un Buffer de Node.js válido
+    const finalBuffer = Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
+    
+    // Validación final antes de retornar
+    if (!finalBuffer || finalBuffer.length === 0) {
+      console.error('ERROR CRÍTICO: El buffer final está vacío después de la conversión');
+      throw new Error('Error al generar el buffer del archivo Excel: buffer vacío');
+    }
+    
+    console.log(`Buffer final validado. Tamaño: ${finalBuffer.length} bytes. Retornando...`);
+    return finalBuffer;
   }
 
   private calculateStats(leads: any[]) {
