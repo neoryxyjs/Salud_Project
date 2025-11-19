@@ -136,7 +136,7 @@ export class LeadsController {
       
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       
-      // Configurar headers antes de enviar
+      // Configurar headers y enviar el buffer
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
       res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
       res.setHeader('Content-Length', buffer.length.toString());
@@ -145,9 +145,8 @@ export class LeadsController {
       res.setHeader('Expires', '0');
       res.setHeader('X-Content-Type-Options', 'nosniff');
       
-      // Enviar el buffer directamente sin transformaciones
-      res.writeHead(200);
-      res.end(buffer);
+      // Enviar el buffer usando send() que es más confiable en Express
+      res.send(buffer);
       
       console.log('Excel enviado correctamente al cliente');
     } catch (error) {

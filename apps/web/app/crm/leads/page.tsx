@@ -212,13 +212,15 @@ export default function LeadsPage() {
 
   const handleExportExcel = async () => {
     try {
-      // Usar fetch directamente para mejor control del blob
+      // Usar la misma instancia de api para mantener la autenticación
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
-      const url = apiUrl.startsWith('http://') || apiUrl.startsWith('https://') 
+      const baseUrl = apiUrl.startsWith('http://') || apiUrl.startsWith('https://') 
         ? apiUrl 
         : `https://${apiUrl}`;
       
-      const response = await fetch(`${url}/leads/export`, {
+      console.log('Iniciando descarga de Excel desde:', `${baseUrl}/leads/export`);
+      
+      const response = await fetch(`${baseUrl}/leads/export`, {
         method: 'GET',
         credentials: 'include', // Incluir cookies para autenticación
         headers: {
@@ -226,10 +228,15 @@ export default function LeadsPage() {
         },
       });
       
+      console.log('Respuesta recibida:', response.status, response.statusText);
+      console.log('Content-Type:', response.headers.get('content-type'));
+      console.log('Content-Length:', response.headers.get('content-length'));
+      
       // Verificar que la respuesta sea exitosa
       if (!response.ok) {
         // Intentar leer el error como JSON
         const errorText = await response.text();
+        console.error('Error en respuesta:', errorText);
         try {
           const errorData = JSON.parse(errorText);
           throw new Error(errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`);
@@ -240,11 +247,14 @@ export default function LeadsPage() {
       
       // Obtener el blob de la respuesta
       const blob = await response.blob();
+      console.log('Blob recibido, tamaño:', blob.size, 'bytes');
       
       // Verificar que el blob tenga contenido
       if (!blob || blob.size === 0) {
+        console.error('El blob está vacío');
         // Si está vacío, intentar leer como texto para ver si es un error
         const text = await blob.text();
+        console.error('Contenido del blob vacío:', text);
         if (text && text.trim().startsWith('{')) {
           try {
             const errorData = JSON.parse(text);
@@ -265,7 +275,7 @@ export default function LeadsPage() {
         throw new Error(errorData.error || errorData.message || 'Error al generar el archivo');
       }
       
-      console.log(`Blob recibido: ${blob.size} bytes, tipo: ${contentType}`);
+      console.log(`Descargando archivo Excel: ${blob.size} bytes, tipo: ${contentType}`);
       
       // Crear un enlace temporal para descargar el archivo
       const downloadUrl = window.URL.createObjectURL(blob);
@@ -280,7 +290,7 @@ export default function LeadsPage() {
         window.URL.revokeObjectURL(downloadUrl);
       }, 100);
     } catch (error: any) {
-      console.error('Error al exportar:', error);
+      console.error('Error completo al exportar:', error);
       const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
       alert(`Error al exportar los leads: ${errorMessage}`);
     }
