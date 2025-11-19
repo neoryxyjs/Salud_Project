@@ -284,6 +284,16 @@ export class LeadsService {
     
     // Log para debugging
     console.log(`Generando Excel con ${leads.length} leads`);
+    
+    // Validar que haya leads
+    if (!leads || leads.length === 0) {
+      throw new Error('No hay leads para exportar');
+    }
+    
+    // Validar que los leads tengan la estructura correcta
+    if (!Array.isArray(leads)) {
+      throw new Error('Los leads no están en el formato esperado');
+    }
 
     // Mapear los datos para Excel
     const mapLeadToRow = (lead: any) => {
@@ -338,7 +348,14 @@ export class LeadsService {
     };
 
     // Hoja 1: Resumen General
-    const generalData = leads.length > 0 ? leads.map(mapLeadToRow) : [{}];
+    const generalData = leads.map(mapLeadToRow);
+    
+    // Validar que los datos mapeados no estén vacíos
+    if (generalData.length === 0) {
+      throw new Error('No se pudieron mapear los leads para el Excel');
+    }
+    
+    console.log(`Mapeados ${generalData.length} leads para Excel`);
     const generalSheet = XLSX.utils.json_to_sheet(generalData);
 
     // Hoja 2: Por Estado
@@ -353,18 +370,19 @@ export class LeadsService {
 
     const statusSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(statusGroups).forEach((status) => {
-      const statusData = statusGroups[status].length > 0 
-        ? statusGroups[status].map(mapLeadToRow) 
-        : [{}];
-      const statusMap: { [key: string]: string } = {
-        new: 'Nuevos',
-        contacted: 'Contactados',
-        qualified: 'Calificados',
-        converted: 'Convertidos',
-        lost: 'Perdidos',
-      };
-      const sheetName = statusMap[status] || status;
-      statusSheets[sheetName] = XLSX.utils.json_to_sheet(statusData);
+      // Solo crear hojas para estados que tengan leads
+      if (statusGroups[status].length > 0) {
+        const statusData = statusGroups[status].map(mapLeadToRow);
+        const statusMap: { [key: string]: string } = {
+          new: 'Nuevos',
+          contacted: 'Contactados',
+          qualified: 'Calificados',
+          converted: 'Convertidos',
+          lost: 'Perdidos',
+        };
+        const sheetName = statusMap[status] || status;
+        statusSheets[sheetName] = XLSX.utils.json_to_sheet(statusData);
+      }
     });
 
     // Hoja 3: Por Región
@@ -379,11 +397,12 @@ export class LeadsService {
 
     const regionSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(regionGroups).forEach((region) => {
-      const regionData = regionGroups[region].length > 0 
-        ? regionGroups[region].map(mapLeadToRow) 
-        : [{}];
-      const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
-      regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
+      // Solo crear hojas para regiones que tengan leads
+      if (regionGroups[region].length > 0) {
+        const regionData = regionGroups[region].map(mapLeadToRow);
+        const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
+        regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
+      }
     });
 
     // Hoja 4: Estadísticas
@@ -437,6 +456,13 @@ export class LeadsService {
       bookType: 'xlsx',
       compression: true,
     });
+    
+    // Validar que el buffer se haya generado correctamente
+    if (!buffer || buffer.length === 0) {
+      throw new Error('Error al generar el buffer del archivo Excel');
+    }
+    
+    console.log(`Excel generado exitosamente. Tamaño del buffer: ${buffer.length} bytes`);
     
     // Asegurarse de que sea un Buffer de Node.js
     return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
