@@ -500,7 +500,15 @@ export class LeadsService {
             
             const rut = row['RUT'] || row['rut'] || '';
             const region = row['Región'] || row['region'] || '';
-            const currentInsurer = row['Isapre Actual'] || row['isapre_actual'] || '';
+            
+            // Mapear Isapre Actual (puede venir con diferentes nombres de columna)
+            let currentInsurer = row['Isapre Actual'] || row['isapre_actual'] || row['Isapre'] || row['isapre'] || '';
+            // Convertir a string si viene como número u otro tipo
+            if (currentInsurer && typeof currentInsurer !== 'string') {
+              currentInsurer = String(currentInsurer);
+            }
+            // Limpiar espacios y convertir a null si está vacío
+            currentInsurer = currentInsurer && currentInsurer.trim() ? currentInsurer.trim() : null;
             
             // Convertir comentarios y notas a string (pueden venir como números)
             let comments = row['Comentarios'] || row['comentarios'] || '';
@@ -550,15 +558,20 @@ export class LeadsService {
               name: String(name),
               email: String(email),
               phone: phone,
-              rut: rut ? String(rut) : null,
-              region: region ? String(region) : null,
-              currentInsurer: currentInsurer ? String(currentInsurer) : null,
+              rut: rut ? String(rut).trim() : null,
+              region: region ? String(region).trim() : null,
+              currentInsurer: currentInsurer,
               reasons: reasonsArray,
               comments: comments,
               notes: notes,
               status: String(status),
               userId: userId || null,
             };
+
+            // Log para debugging
+            if (currentInsurer) {
+              console.log(`📝 Lead "${name}" - Isapre Actual: "${currentInsurer}"`);
+            }
 
             allLeads.push({
               id: leadId,
@@ -593,14 +606,16 @@ export class LeadsService {
             });
 
             if (existing) {
+              console.log(`🔄 Actualizando lead ${id} con datos:`, JSON.stringify(data, null, 2));
               await this.prisma.lead.update({
                 where: { id },
                 data,
               });
               results.updated++;
-              console.log(`✅ Lead ${id} actualizado`);
+              console.log(`✅ Lead ${id} actualizado - Isapre Actual: "${data.currentInsurer || 'null'}"`);
             } else {
               // Crear con el ID especificado
+              console.log(`➕ Creando lead ${id} con datos:`, JSON.stringify({ ...data, id }, null, 2));
               await this.prisma.lead.create({
                 data: {
                   ...data,
@@ -608,15 +623,16 @@ export class LeadsService {
                 },
               });
               results.created++;
-              console.log(`✅ Lead ${id} creado`);
+              console.log(`✅ Lead ${id} creado - Isapre Actual: "${data.currentInsurer || 'null'}"`);
             }
           } else {
             // Crear nuevo lead sin ID
-            await this.prisma.lead.create({
+            console.log(`➕ Creando nuevo lead con datos:`, JSON.stringify(data, null, 2));
+            const created = await this.prisma.lead.create({
               data,
             });
             results.created++;
-            console.log(`✅ Nuevo lead creado`);
+            console.log(`✅ Nuevo lead creado (ID: ${created.id}) - Isapre Actual: "${data.currentInsurer || 'null'}"`);
           }
         } catch (error: any) {
           results.errors++;
