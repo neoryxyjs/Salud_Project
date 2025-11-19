@@ -121,13 +121,25 @@ export class LeadsController {
   @Get('export')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Roles(Role.ADMIN, Role.MANAGER)
-  async exportToExcel(@Res() res: Response) {
-    const buffer = await this.leadsService.exportToExcel();
-    const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
-    
-    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send(buffer);
+  async exportToExcel(@Res({ passthrough: false }) res: Response) {
+    try {
+      const buffer = await this.leadsService.exportToExcel();
+      const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
+      
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      res.setHeader('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
+      res.setHeader('Content-Length', buffer.length.toString());
+      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('X-Content-Type-Options', 'nosniff');
+      
+      // Enviar el buffer directamente
+      res.end(buffer, 'binary');
+    } catch (error) {
+      console.error('Error al exportar Excel:', error);
+      if (!res.headersSent) {
+        res.status(500).json({ error: 'Error al generar el archivo Excel' });
+      }
+    }
   }
 }
 

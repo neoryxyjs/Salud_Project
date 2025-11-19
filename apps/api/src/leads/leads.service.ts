@@ -335,7 +335,7 @@ export class LeadsService {
     };
 
     // Hoja 1: Resumen General
-    const generalData = leads.map(mapLeadToRow);
+    const generalData = leads.length > 0 ? leads.map(mapLeadToRow) : [{}];
     const generalSheet = XLSX.utils.json_to_sheet(generalData);
 
     // Hoja 2: Por Estado
@@ -350,7 +350,9 @@ export class LeadsService {
 
     const statusSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(statusGroups).forEach((status) => {
-      const statusData = statusGroups[status].map(mapLeadToRow);
+      const statusData = statusGroups[status].length > 0 
+        ? statusGroups[status].map(mapLeadToRow) 
+        : [{}];
       const statusMap: { [key: string]: string } = {
         new: 'Nuevos',
         contacted: 'Contactados',
@@ -374,7 +376,9 @@ export class LeadsService {
 
     const regionSheets: { [key: string]: XLSX.WorkSheet } = {};
     Object.keys(regionGroups).forEach((region) => {
-      const regionData = regionGroups[region].map(mapLeadToRow);
+      const regionData = regionGroups[region].length > 0 
+        ? regionGroups[region].map(mapLeadToRow) 
+        : [{}];
       const sheetName = region.length > 31 ? region.substring(0, 31) : region; // Excel limita nombres a 31 caracteres
       regionSheets[sheetName] = XLSX.utils.json_to_sheet(regionData);
     });
@@ -424,9 +428,15 @@ export class LeadsService {
 
     XLSX.utils.book_append_sheet(workbook, statsSheet, 'Estadísticas');
 
-    // Generar buffer
-    const buffer = XLSX.write(workbook, { type: 'buffer', bookType: 'xlsx' });
-    return buffer;
+    // Generar buffer - asegurarse de que sea un Buffer válido
+    const buffer = XLSX.write(workbook, { 
+      type: 'buffer', 
+      bookType: 'xlsx',
+      compression: true,
+    });
+    
+    // Asegurarse de que sea un Buffer de Node.js
+    return Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer);
   }
 
   private calculateStats(leads: any[]) {

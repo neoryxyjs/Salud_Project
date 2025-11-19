@@ -216,16 +216,30 @@ export default function LeadsPage() {
         responseType: 'blob',
       });
       
+      // Crear blob directamente desde la respuesta
+      const blob = response.data instanceof Blob 
+        ? response.data 
+        : new Blob([response.data], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          });
+      
+      // Verificar que el blob tenga contenido
+      if (blob.size === 0) {
+        throw new Error('El archivo descargado está vacío');
+      }
+      
       // Crear un enlace temporal para descargar el archivo
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
       const filename = `leads_export_${new Date().toISOString().split('T')[0]}.xlsx`;
       link.setAttribute('download', filename);
       document.body.appendChild(link);
       link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
+      setTimeout(() => {
+        document.body.removeChild(link);
+        window.URL.revokeObjectURL(url);
+      }, 100);
     } catch (error) {
       console.error('Error al exportar:', error);
       alert('Error al exportar los leads. Por favor, intenta nuevamente.');
