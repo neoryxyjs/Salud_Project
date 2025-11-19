@@ -443,6 +443,182 @@ export class LeadsService {
     return finalBuffer;
   }
 
+  async importFromExcel(buffer: Buffer, userId?: string) {
+    console.log('📥 IMPORTAR EXCEL INICIADO');
+    
+    try {
+      // 1. LEER EL WORKBOOK
+      const workbook = XLSX.read(buffer, { type: 'buffer' });
+      
+      if (!workbook.SheetNames || workbook.SheetNames.length === 0) {
+        throw new Error('El archivo Excel no contiene hojas');
+      }
+
+      console.log(`📊 Hojas encontradas: ${workbook.SheetNames.join(', ')}`);
+
+      // Mapeo inverso: de español a inglés
+      const statusMap: { [key: string]: string } = {
+        'Nuevo': 'new',
+        'Contactado': 'contacted',
+        'Calificado': 'qualified',
+        'Convertido': 'converted',
+        'Perdido': 'lost',
+      };
+
+      const reasonMap: { [key: string]: string } = {
+        'Muy cara': 'muy_cara',
+        'La isapre me cubre poco': 'cubre_poco',
+        'Me subieron el plan de salud': 'subieron_plan',
+        'Mejorar coberturas': 'mejorar_coberturas',
+        'No me gusta mi Isapre actual': 'no_gusta',
+        'Otros': 'otros',
+      };
+
+      // 2. PROCESAR TODAS LAS HOJAS
+      const allLeads: any[] = [];
+      const processedIds = new Set<string>();
+
+      workbook.SheetNames.forEach((sheetName) => {
+        const sheet = workbook.Sheets[sheetName];
+        const data = XLSX.utils.sheet_to_json(sheet);
+
+        console.log(`📄 Procesando hoja "${sheetName}": ${data.length} filas`);
+
+        data.forEach((row: any, index: number) => {
+          try {
+            // Mapear columnas del Excel a campos del Lead
+            const leadId = row['ID'] || row['id'];
+            const name = row['Nombre'] || row['nombre'] || '';
+            const email = row['Email'] || row['email'] || '';
+            const phone = row['Teléfono'] || row['telefono'] || '';
+            const rut = row['RUT'] || row['rut'] || '';
+            const region = row['Región'] || row['region'] || '';
+            const currentInsurer = row['Isapre Actual'] || row['isapre_actual'] || '';
+            const comments = row['Comentarios'] || row['comentarios'] || '';
+            const notes = row['Notas'] || row['notas'] || '';
+            
+            // Traducir estado de español a inglés
+            const statusSpanish = row['Estado'] || row['estado'] || 'Nuevo';
+            const status = statusMap[statusSpanish] || statusSpanish.toLowerCase() || 'new';
+            
+            // Traducir motivos de español a inglés
+            const reasonsText = row['Motivos'] || row['motivos'] || '';
+            const reasonsArray: string[] = [];
+            if (reasonsText) {
+              const reasonsList = reasonsText.split(',').map((r: string) => r.trim());
+              reasonsList.forEach((reasonText: string) => {
+                const reasonId = reasonMap[reasonText] || reasonText;
+                if (reasonId && !reasonsArray.includes(reasonId)) {
+                  reasonsArray.push(reasonId);
+                }
+              });
+            }
+
+            // Validar datos mínimos
+            if (!name || !email) {
+              console.warn(`⚠️ Fila ${index + 1} en "${sheetName}" omitida: falta nombre o email`);
+              return;
+            }
+
+            // Evitar duplicados si ya procesamos este ID
+            if (leadId && processedIds.has(leadId)) {
+              console.log(`⏭️ Lead con ID ${leadId} ya procesado, omitiendo`);
+              return;
+            }
+
+            const leadData = {
+              name,
+              email,
+              phone: phone || null,
+              rut: rut || null,
+              region: region || null,
+              currentInsurer: currentInsurer || null,
+              reasons: reasonsArray,
+              comments: comments || null,
+              notes: notes || null,
+              status,
+              userId: userId || null,
+            };
+
+            allLeads.push({
+              id: leadId,
+              data: leadData,
+            });
+
+            if (leadId) {
+              processedIds.add(leadId);
+            }
+          } catch (error) {
+            console.error(`❌ Error procesando fila ${index + 1} en "${sheetName}":`, error);
+          }
+        });
+      });
+
+      console.log(`📊 Total de leads a procesar: ${allLeads.length}`);
+
+      // 3. CREAR O ACTUALIZAR LEADS
+      const results = {
+        created: 0,
+        updated: 0,
+        errors: 0,
+        errorsList: [] as string[],
+      };
+
+      for (const { id, data } of allLeads) {
+        try {
+          if (id) {
+            // Intentar actualizar si existe
+            const existing = await this.prisma.lead.findUnique({
+              where: { id },
+            });
+
+            if (existing) {
+              await this.prisma.lead.update({
+                where: { id },
+                data,
+              });
+              results.updated++;
+              console.log(`✅ Lead ${id} actualizado`);
+            } else {
+              // Crear con el ID especificado
+              await this.prisma.lead.create({
+                data: {
+                  ...data,
+                  id,
+                },
+              });
+              results.created++;
+              console.log(`✅ Lead ${id} creado`);
+            }
+          } else {
+            // Crear nuevo lead sin ID
+            await this.prisma.lead.create({
+              data,
+            });
+            results.created++;
+            console.log(`✅ Nuevo lead creado`);
+          }
+        } catch (error: any) {
+          results.errors++;
+          const errorMsg = `Error procesando lead ${id || 'nuevo'}: ${error.message}`;
+          results.errorsList.push(errorMsg);
+          console.error(`❌ ${errorMsg}`);
+        }
+      }
+
+      console.log('📊 RESUMEN DE IMPORTACIÓN:', results);
+
+      return {
+        success: true,
+        message: `Importación completada: ${results.created} creados, ${results.updated} actualizados, ${results.errors} errores`,
+        ...results,
+      };
+    } catch (error: any) {
+      console.error('❌ ERROR AL IMPORTAR EXCEL:', error);
+      throw new Error(`Error al importar el archivo Excel: ${error.message}`);
+    }
+  }
+
   private calculateStats(leads: any[]) {
     const stats = {
       total: leads.length,

@@ -12,7 +12,10 @@ import {
   Res,
   StreamableFile,
   Header,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { LeadsService } from './leads.service';
 import { CreateLeadDto } from './dto/create-lead.dto';
@@ -162,6 +165,25 @@ export class LeadsController {
   @Roles(Role.ADMIN, Role.MANAGER)
   removeSampleLeads() {
     return this.leadsService.removeSampleLeads();
+  }
+
+  @Post('import')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(Role.ADMIN, Role.MANAGER)
+  @UseInterceptors(FileInterceptor('file'))
+  async importFromExcel(
+    @UploadedFile() file: any,
+    @Request() req: any,
+  ) {
+    if (!file) {
+      throw new BadRequestException('No se proporcionó ningún archivo');
+    }
+
+    if (!file.mimetype.includes('spreadsheet') && !file.mimetype.includes('excel')) {
+      throw new BadRequestException('El archivo debe ser un Excel (.xlsx)');
+    }
+
+    return this.leadsService.importFromExcel(file.buffer, req.user?.id);
   }
 }
 

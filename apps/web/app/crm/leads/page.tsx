@@ -21,7 +21,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { api } from '@/lib/api';
-import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User, Download } from 'lucide-react';
+import { MoreHorizontal, Search, Phone, Mail, FileText, Clock, Plus, User, Download, Upload } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -84,6 +84,7 @@ export default function LeadsPage() {
     status: 'new',
     notes: '',
   });
+  const [isImporting, setIsImporting] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -207,6 +208,52 @@ export default function LeadsPage() {
         status: selectedLead.status,
         notes: selectedLead.notes,
       });
+    }
+  };
+
+  const handleImportExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Validar que sea un archivo Excel
+    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+      alert('Por favor, selecciona un archivo Excel (.xlsx o .xls)');
+      return;
+    }
+
+    setIsImporting(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const response = await api.post('/leads/import', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+
+      const result = response.data;
+      
+      alert(
+        `Importación completada:\n` +
+        `- ${result.created} leads creados\n` +
+        `- ${result.updated} leads actualizados\n` +
+        `${result.errors > 0 ? `- ${result.errors} errores` : ''}`
+      );
+
+      // Refrescar la lista de leads
+      queryClient.invalidateQueries({ queryKey: ['leads'] });
+      
+      // Limpiar el input
+      if (event.target) {
+        event.target.value = '';
+      }
+    } catch (error: any) {
+      console.error('Error al importar:', error);
+      const errorMessage = error.response?.data?.message || error.message || 'Error desconocido';
+      alert(`Error al importar el archivo: ${errorMessage}`);
+    } finally {
+      setIsImporting(false);
     }
   };
 
@@ -348,6 +395,27 @@ export default function LeadsPage() {
           </p>
         </div>
         <div className="flex items-center gap-2">
+          <input
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={handleImportExcel}
+            className="hidden"
+            id="import-excel-input"
+            disabled={isImporting}
+          />
+          <label htmlFor="import-excel-input">
+            <Button 
+              asChild
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground cursor-pointer"
+              disabled={isImporting}
+            >
+              <span>
+                <Upload className="mr-2 h-4 w-4" />
+                {isImporting ? 'Importando...' : 'Importar Excel'}
+              </span>
+            </Button>
+          </label>
           <Button 
             onClick={handleExportExcel}
             variant="outline"
