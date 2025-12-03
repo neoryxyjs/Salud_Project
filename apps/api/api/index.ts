@@ -31,9 +31,46 @@ async function bootstrap() {
     );
 
     nestApp.use(cookieParser());
+    
+    // Configurar CORS con validación de origen
+    const allowedOrigins = process.env.FRONTEND_URL
+      ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
+      : ['https://www.soluciondesalud.cl', 'https://soluciondesalud.cl', 'http://localhost:3000'];
+    
+    const originValidator = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
+      if (!origin) {
+        return callback(null, true);
+      }
+      
+      // Permitir localhost en desarrollo
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+      
+      // Permitir cualquier URL de Vercel
+      if (origin.includes('.vercel.app')) {
+        return callback(null, true);
+      }
+      
+      // Permitir el dominio de producción
+      if (origin.includes('soluciondesalud.cl')) {
+        return callback(null, true);
+      }
+      
+      // Permitir orígenes explícitos en FRONTEND_URL
+      if (allowedOrigins.some(allowed => origin === allowed || origin.startsWith(allowed))) {
+        return callback(null, true);
+      }
+      
+      callback(null, false);
+    };
+    
     nestApp.enableCors({
-      origin: process.env.FRONTEND_URL || '*',
+      origin: originValidator,
       credentials: true,
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+      exposedHeaders: ['Content-Type', 'Authorization'],
     });
 
     nestApp.useGlobalPipes(

@@ -29,6 +29,7 @@ model Insurer {
   name      String
   slug      String   @unique
   logoUrl   String?
+  gesFactor Float?   // Factor GES para cálculo de precios con factores etarios
   plans     Plan[]
   createdAt DateTime @default(now())
 }

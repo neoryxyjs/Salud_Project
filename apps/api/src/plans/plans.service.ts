@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { GetPlansDto } from './dto/get-plans.dto';
+import { calculatePrice } from './utils/age-factors';
 
 @Injectable()
 export class PlansService {
@@ -25,18 +26,35 @@ export class PlansService {
 
     // Filter and calculate prices based on filters
     let filteredPlans = plans.map((plan) => {
-      // Try to find matching tier
-      const matchingTier = plan.tiers.find(
-        (tier) =>
-          (!filters.region || tier.region === filters.region) &&
-          (!filters.age ||
-            (filters.age >= tier.ageFrom && filters.age <= tier.ageTo)) &&
-          (!filters.cargas || tier.cargas === filters.cargas),
-      );
+      let price: number;
 
-      const price = matchingTier
-        ? matchingTier.priceCLP
-        : plan.basePriceCLP;
+      // Si la ISAPRE tiene gesFactor y hay edad, usar la fórmula con factores etarios
+      if (plan.insurer.gesFactor !== null && plan.insurer.gesFactor !== undefined && filters.age) {
+        // Usar fórmula: FACTOR_ETARIO * PRECIO_BASE + GES
+        // isCotizante = true (siempre calculamos para el cotizante principal)
+        price = calculatePrice(
+          plan.basePriceCLP,
+          filters.age,
+          plan.insurer.gesFactor,
+          true, // cotizante
+        );
+
+        // Si hay cargas, necesitaríamos calcular el precio total incluyendo cargas
+        // Por ahora solo calculamos para el cotizante
+      } else {
+        // Fallback: Try to find matching tier (sistema antiguo)
+        const matchingTier = plan.tiers.find(
+          (tier) =>
+            (!filters.region || tier.region === filters.region) &&
+            (!filters.age ||
+              (filters.age >= tier.ageFrom && filters.age <= tier.ageTo)) &&
+            (!filters.cargas || tier.cargas === filters.cargas),
+        );
+
+        price = matchingTier
+          ? matchingTier.priceCLP
+          : plan.basePriceCLP;
+      }
 
       return {
         ...plan,

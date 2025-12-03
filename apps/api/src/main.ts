@@ -159,12 +159,12 @@ async function bootstrap() {
     next();
   });
   
-  // Configurar CORS para aceptar todas las URLs de Vercel
+  // Configurar CORS para aceptar todas las URLs de Vercel y el dominio de producción
   const allowedOrigins = process.env.FRONTEND_URL
     ? process.env.FRONTEND_URL.split(',').map(url => url.trim())
-    : ['http://localhost:3000'];
+    : ['http://localhost:3000', 'https://www.soluciondesalud.cl', 'https://soluciondesalud.cl'];
   
-  // Función para validar origen (acepta localhost y cualquier URL de vercel.app)
+  // Función para validar origen (acepta localhost, vercel.app y soluciondesalud.cl)
   const originValidator = (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin) {
       // Permitir requests sin origin (ej: Postman, curl)
@@ -178,6 +178,11 @@ async function bootstrap() {
     
     // Permitir cualquier URL de Vercel
     if (origin.includes('.vercel.app')) {
+      return callback(null, true);
+    }
+    
+    // Permitir el dominio de producción (con y sin www)
+    if (origin.includes('soluciondesalud.cl')) {
       return callback(null, true);
     }
     
