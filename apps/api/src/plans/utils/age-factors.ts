@@ -35,3 +35,4 @@ export function calculatePrice(
   // Redondear a entero (precios en CLP)
   return Math.round(calculatedPrice);
 }
+

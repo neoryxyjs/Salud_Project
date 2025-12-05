@@ -321,15 +321,15 @@ export default function HomePage() {
           {/* Hero Section */}
           <div className="flex max-w-[58rem] mx-auto flex-col items-center gap-4 sm:gap-6 text-center w-full">
             <div className="space-y-4 sm:space-y-6 w-full px-2">
-              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-tight drop-shadow-lg text-foreground">
-                Compara Planes de Salud
+              <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.1] drop-shadow-lg text-foreground">
+                Estás pagando de más por tu Isapre
                 <br />
-                <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent drop-shadow-md">
-                  Encuentra el Mejor Plan
+                <span className="bg-gradient-to-r from-primary to-orange-600 bg-clip-text text-transparent drop-shadow-md text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
+                  Descubre en 1 minuto cómo puedes ahorrar en tu plan de salud
                 </span>
               </h1>
               <p className="max-w-[42rem] mx-auto leading-relaxed text-foreground/95 text-base sm:text-lg md:text-xl sm:leading-8 text-balance px-2 drop-shadow-md font-semibold">
-                Compara planes de salud de las principales Isapres de Chile. Encuentra el plan que mejor se adapte a tus necesidades y presupuesto.
+                Más del 70% de los chilenos paga sobreprecio por su plan de salud sin saberlo. Comparamos automáticamente las mejores alternativas de todas las Isapres para que ahorres sin perder cobertura.
               </p>
             </div>
             
